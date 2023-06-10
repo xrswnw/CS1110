@@ -1,0 +1,14 @@
+usb_istr.pbi: E:\AnyID\HFReader\software\CS1110\Boot\USB\src\usb_istr.c \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc\usb_lib.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc/usb_type.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc/usb_conf.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc/usb_regs.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc/usb_def.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc/usb_core.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc/usb_init.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc/usb_mem.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc/usb_int.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc/usb_istr.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc\usb_prop.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc\usb_pwr.h \
+  E:\AnyID\HFReader\software\CS1110\Boot\CS1110\..\USB\inc\usb_istr.h

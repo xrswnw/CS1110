@@ -1,0 +1,15 @@
+"D:\IAR\arm\bin\armproc.dll" 
+
+"D:\IAR\arm\bin\armjlink2.dll" 
+
+"D:\AnyID\HFReader\software\FC101\STBoot\FC101\Build\Exe\Boot.out" 
+
+--plugin="D:\IAR\arm\bin\armbat.dll" 
+
+--device_macro="D:\IAR\arm\config\debugger\GD\GD32F10x.dmac" 
+
+--flash_loader="D:\IAR\arm\config\flashloader\GD\FlashGD32F103x8.board" 
+
+
+
+

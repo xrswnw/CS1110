@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspace>
+    <project>
+        <path>$WS_DIR$\..\Boot\CS1110\Boot.ewp</path>
+    </project>
+    <project>
+        <path>$WS_DIR$\CS1110.ewp</path>
+    </project>
+    <batchBuild />
+</workspace>
