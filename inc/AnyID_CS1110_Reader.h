@@ -4,12 +4,20 @@
 #include "AnyID_CS1110_Config.h"
 #include "AnyID_ST25R391x.h"
 #include "AnyID_CS1110_DishLcm.h"
-#include "AnyID_CS1110_Key.h"
-#include "AnyID_CS1110_Wight.h"
 #include "AnyID_CS1110_Uart.h"
 #include "AnyID_ST25R391x_ISO15693.h"
 #include "AnyID_CS1110_FRam.h"
 #include  "stdlib.h"
+#include "AnyID_CS1110_Key.h"
+#include "AnyID_CS1110_Sound.h"
+#include "AnyID_CS1110_Wight.h"
+#include "AnyID_CS1110_SysTick_HL.h"
+#include "AnyID_FRam.h"
+#include "AnyID_CS1110_RTC.h"
+#include "AnyID_Uart_Receive.h"
+#include "AnyID_CS1110_FlashM25.h"
+#include "AnyID_CS1110_Rfid.h"
+#include "AnyID_Cs1110_WDG_HL.h"
 
 #define READER_RSP_OFFLINE_DATA_LEN             28
 #define READER_VERSION_SIZE               50

@@ -1,6 +1,6 @@
 #include "AnyID_CS1110_Reader.h"
 
-const u8 READER_VERSION[READER_VERSION_SIZE]@0x08005000 = " CS1110 23061000 G230200";
+const u8 READER_VERSION[READER_VERSION_SIZE]@0x08005000 = " CS1110 23061600 G230200";
 
 DISH_INFO g_sDishTempInfo = {0};
 READER_DEVICE_PARAMETER g_sDeviceParamenter = {0};
@@ -19,7 +19,7 @@ u32  g_nTickLink = 0;
 
 char g_nBufTxt[LCM_TXT_LEN_MAX] = "未绑定托盘"; 
 char g_nBufTxt1[LCM_TXT_LEN_MAX] = ""; 
-char g_aReaderVersion[8] = "23061000";
+char g_aReaderVersion[8] = "23061100";
 
 void Reader_Delayms(u32 n)
 {
@@ -62,7 +62,6 @@ void Reader_Init()
     {
         g_sLcmInfo.flag = LCM_FLAG_PAGE_LINK_CHG;
      }
-    //g_sDeviceParamenter.uiMode = READER_UI_MODE_WHITE;
     g_sDeviceParamenter.reWorkMode = READER_MODE_NORMAL;
     Reader_Font_ChgCorol(g_sDeviceParamenter.uiMode);
 }
@@ -306,66 +305,6 @@ void Reader_DisplayIp(READER_DEVICE_PARAMETER *pBuffer)
 }
 
 
-/*
-u8 Reader_RfidGetValue(u8 mode, READER_RFID_INFO *pRfidInfo)
-{
-    u8 state = 0;
-    u8 i = 0;
-    u8 tempUid[READER_UID_MAX_NUM * ISO15693_SIZE_UID] = {0};
-    
-    St25r3916_OpenAntenna();
-    Reader_Delayms(4);
-
-    
-    if(mode == READER_RFID_READ_UID)
-    {    
-        pRfidInfo->tick++;
-        state = ISO15693_Inventory(0, 0, tempUid);
-        if(state == ISO15693_ERR_SUC)
-        {
-            pRfidInfo->okTick++;
-            pRfidInfo->errTick = 0;
-            if(pRfidInfo->okTick == 2)
-            {
-                pRfidInfo->state = RFID_TAG_IN;
-                memcpy(pRfidInfo->uid, tempUid, ISO15693_SIZE_UID);
-            }
-            else if((pRfidInfo->okTick >2))
-            {
-                 pRfidInfo->state = RFID_TAG_KEEP;
-                for(i = 0 ; i < ISO15693_SIZE_UID; i++)
-                {
-                    if(pRfidInfo->uid[i] != tempUid[i])
-                    {
-                        pRfidInfo->okTick = 0;
-                        pRfidInfo->errTick += 15;
-                        pRfidInfo->state = RFID_TAG_OUT;
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            pRfidInfo->errTick ++;
-            if(pRfidInfo->errTick >= 15)                                      //餐盘离开后1.5s上报数据
-            {  
-                if(g_sDeviceParamenter.reWorkMode == READER_MODE_NORMAL)
-                {
-                  pRfidInfo->okTick = 0;
-                }
-                pRfidInfo->state = RFID_TAG_OUT;
-            }
-        }
-    }
-    St25r3916_CloseAntenna(); 
-    return state;
-}
-
-
-*/
-
-
 u8 Reader_RfidGetValue(u8 *pBuffer, READER_RFID_INFO *pRfidInfo)
 {
     u8 state = 0;
@@ -438,7 +377,7 @@ u8 Reader_DisplayTest(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo)
     u8 state = 0;
     
     percentage = ((float)g_sReaderRfidTempInfo.okTick / g_sReaderRfidTempInfo.tick )* 10000;
-    //GPB_ChgValue(gpbInfo->wightTemp[0],Buf);
+
     if(gpbInfo->wightTemp & 0x10000000)
     {
         sprintf(Buf, "%dg", 0 - Sound_GetValue(g_sGpbInfo.wightTemp));
@@ -685,7 +624,6 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                        (memcmp(&g_sRaderInfo.dishInfo.spec, &g_sDishTempInfo.spec, 2)) || (memcmp(&g_sRaderInfo.dishInfo.type, &g_sDishTempInfo.type, 1)))
                     {
                         memcpy(&g_sRaderInfo.dishInfo.dishName, &g_sDishTempInfo.dishName, NAME_NUM);
-                        //memcpy(&g_sRaderInfo.dishInfo.tagInfo,  &g_sDishTempInfo.tagInfo, sizeof(DISH_TAG_INFO) * 4);
                         memcpy(&g_sRaderInfo.dishInfo.unitPrice, &g_sDishTempInfo.unitPrice, 4);
                         memcpy(&g_sRaderInfo.dishInfo.spec,  &g_sDishTempInfo.spec, 2);
                         memcpy(&g_sRaderInfo.dishInfo.type, &g_sDishTempInfo.type, 1);
@@ -705,8 +643,8 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                 }
                 else
                 {
-                    g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
-                    g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
+                    g_sDeviceRspFrame.flag = READER_FRAME_FLAG_FAIL;
+                    g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
                }
                
                g_sDeviceRspFrame.len = Reader_Format_Heart(&g_sDeviceRspFrame, rtc, Sound_GetValue(g_sGpbInfo.wightTemp));   //重量数据代填
@@ -718,7 +656,6 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                 bOk = *(pFrame + READER_PERSON_MONEY_LEN + 1 + 1);
                 if(Reader_ChkReUid(pFrame + READER_PERSON_UID_LEN, g_sReaderRfidTempInfo.uid) && bOk == READER_RES_OK)
                 {
-                    //memcpy(&g_sRaderInfo.personInfo, 0 , sizeof(PERSON_INFO));
                     memcpy(&g_sRaderInfo.personInfo.money, pFrame + READER_PERSON_UID_LEN + 12, 4);
                     g_sRaderInfo.personInfo.state = READER_RESFRAME_PERSON_OK;
                     g_sRaderInfo.total = *(pFrame + READER_PERSON_MONEY_LEN);
@@ -730,8 +667,8 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                 else
                 {
                     g_sRaderInfo.personInfo.state = READER_RESFRAME_PERSON_FAIL;
-                    g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
-                    g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
+                    g_sDeviceRspFrame.flag = READER_FRAME_FLAG_FAIL;
+                    g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
                 }
                 g_sDeviceRspFrame.len = Device_ResponseFrame(NULL, 0, &g_sDeviceRspFrame);
             }
@@ -1227,9 +1164,6 @@ void Reader_Font_ChgCorol(u8 background)
         Lcm_DishWriteColor(LCM_TXT_ADDR_MAIN_COLOR, LCM_FONT_COROL_WHITE);
         Lcm_DishWriteColor(LCM_TXT_ADDR_NO_MEAL_COLOR, LCM_FONT_COROL_WHITE);
         Lcm_DishWriteColor(LCM_TXT_ADDR_NAME_2_COLOR, LCM_FONT_COROL_WHITE);
-        
-        //Lcm_DishWriteColor(LCM_TXT_ADDR_LINK_TXT_COLOR, LCM_FONT_COROL_WHITE);
-       // Lcm_DishWriteColor(LCM_TXT_ADDR_SCOOP_MONEY_COLOR, LCM_FONT_COROL_WHITE);
         Lcm_DishWriteColor(LCM_TXT_ADDR_SCOOP_WITGH_COLOR, LCM_FONT_COROL_WHITE);
     }
     else
@@ -1242,8 +1176,6 @@ void Reader_Font_ChgCorol(u8 background)
         Lcm_DishWriteColor(LCM_TXT_ADDR_NO_MEAL_COLOR, LCM_FONT_COROL_BLACK);
         Lcm_DishWriteColor(LCM_TXT_ADDR_LINK_TXT_COLOR, LCM_FONT_COROL_BLACK);
         Lcm_DishWriteColor(LCM_TXT_ADDR_NAME_2_COLOR, LCM_FONT_COROL_BLACK);
-        //Lcm_DishWriteColor(LCM_TXT_ADDR_SCOOP_MONEY_COLOR, LCM_FONT_COROL_WHITE);
-        //Lcm_DishWriteColor(LCM_TXT_ADDR_SCOOP_WITGH_COLOR, LCM_FONT_COROL_WHITE);
         Lcm_DishWriteColor(LCM_TXT_ADDR_LINK_INFO_COLOR, LCM_FONT_COROL_BLACK);
     }
     Lcm_SelectPage(g_sLcmInfo.page + g_sDeviceParamenter.uiMode);

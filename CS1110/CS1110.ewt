@@ -1278,7 +1278,7 @@
             <name>$PROJ_DIR$\..\src\Anyid_CS1110_Key.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\src\Anyid_Cs1110_Key_HL.c</name>
+            <name>$PROJ_DIR$\..\src\Anyid_CS1110_Key_HL.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\src\Anyid_CS1110_Reader.c</name>
@@ -1293,10 +1293,10 @@
             <name>$PROJ_DIR$\..\src\AnyID_CS1110_RTC.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\src\Anyid_Cs1110_Sound.c</name>
+            <name>$PROJ_DIR$\..\src\Anyid_CS1110_Sound.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\src\Anyid_Cs1110_Sound_HL.c</name>
+            <name>$PROJ_DIR$\..\src\Anyid_CS1110_Sound_HL.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\src\AnyID_CS1110_ST25R391x_HL.c</name>
@@ -1314,10 +1314,13 @@
             <name>$PROJ_DIR$\..\src\AnyID_CS1110_Uart_HL.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\src\Anyid_Cs1110_Wight.c</name>
+            <name>$PROJ_DIR$\..\src\AnyID_Cs1110_WDG_HL.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\src\Anyid_Cs1110_Wight_HL.c</name>
+            <name>$PROJ_DIR$\..\src\Anyid_CS1110_Wight.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\src\Anyid_CS1110_Wight_HL.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\src\AnyID_FlashM25.c</name>

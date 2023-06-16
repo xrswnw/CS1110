@@ -4,13 +4,9 @@ u32 g_nSysState = SYS_STAT_IDLE;
 
 u32 g_nSysGLed = 0;
 u32 g_nSysBLed = 0;
-#define SYS_ENABLE_WDT              0
 
-#if SYS_ENABLE_WDT
-    #define SYS_ENABLE_TEST         0
-#else
-    #define SYS_ENABLE_TEST         1
-#endif
+
+
 
 void Sys_Delayms(u32 n)
 {
@@ -166,20 +162,28 @@ void Sys_Init(void)
     Reader_WriteOffLineDataNum();
     Reader_ReadOffLineDataNum();
     Fram_Demo();
-   
+    
+
     Rfid_Init();
     Lcm_Init();
-    Sys_Delayms(1000);                           //LCD初始化时间，暂定
+#if SYS_ENABLE_WDT
+    WDG_FeedIWDog();
+#endif
+    
+    Sys_Delayms(500);                           //LCD初始化时间，暂定
+    
+    
+#if SYS_ENABLE_WDT
+    WDG_FeedIWDog();
+#endif
+    
     Reader_Init();
     Sound_Init();
     GPB_Init();
 
     Uart_Init();
     
- #if SYS_ENABLE_WDT
-    WDG_FeedIWDog();
-#endif
-
+    Flash_Demo();
     //SysTick 初始化 5ms
 
     /*
@@ -196,6 +200,8 @@ void Sys_Init(void)
     
     
     Sys_EnableInt();
+    
+
     
     
 }
@@ -411,6 +417,9 @@ void Sys_KeyTask()
             }
         }
     }
+#if SYS_ENABLE_WDT
+    WDG_FeedIWDog();
+#endif
     
     Key_Control(&g_sKeyValue);
 
@@ -515,7 +524,7 @@ void Sys_GPBTask()
                         if(sampleTick >= GPB_STAT_SAMPLE_NUM )
                         {
                             sampleTick = 0;
-                            g_sGpbInfo.wightValue = GPB_GetWightValue(sampleWitgh);
+                            g_sGpbInfo.wightValue = Sound_GetValue(sampleWitgh);
                         }
                     }
                     else
@@ -730,6 +739,7 @@ void Sys_UartTask(void)
 void Sys_LcmTask()
 {
 
+ 
     if(USART_GetFlagStatus(LCM_DISH_PORT, USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE))
     {
         Lcm_Stop();
@@ -779,9 +789,20 @@ void Sys_LcmTask()
 
 void Sys_TestTask()
 {
-
+  
+  /*
+  Lcm_SelectPage(1);
+Sys_Delayms(5);
+    Lcm_SelectPage(2);
+    Sys_Delayms(5);
+      Lcm_SelectPage(3);
+      Sys_Delayms(5);
+        Lcm_SelectPage(4);
+        Sys_Delayms(5);
+*/
     //Reader_Seek_Inq(tempData);
   /*u8 test = 0;//测试页面切换
+
     if(a_CheckStateBit(g_nSysState, SYS_STAT_LCM_TX))  
     {  
         a_ClearStateBit(g_nSysState, SYS_STAT_LCM_TX);
@@ -801,32 +822,6 @@ void Sys_TestTask()
     }*/
   
   
-  
-          if(a_CheckStateBit(g_nSysState, SYS_STAT_TEST))
-        { 
-            a_ClearStateBit(g_nSysState, SYS_STAT_TEST);  
-            u16 static id = SOUND_VOC_PUT_TAG;
-            
-            Reader_DisplayTest(&g_sRaderInfo.dishInfo , &g_sGpbInfo);
-            Reader_ChgTag(g_sReaderRfidTempInfo.state);
-            
-            //if(id != SOUND_VOC_PUT_OVER)
-            {   
-                g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
-                g_sSoundInfo.txBuf.data = id;
-                if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
-                {
-                    g_sSoundInfo.state = SOUND_STAT_TX; 
-                    id++;
-                    if(id == SOUND_VOC_OFF_LINE + 1)
-                    {   
-                      id = SOUND_VOC_PUT_TAG;
-                        //id = SOUND_VOC_PUT_OVER;
-                    }
-                } 
-            }
-
-        }
 
     
 
@@ -1034,7 +1029,7 @@ void Sys_ReaderTask()
             Reader_DisplayTest(&g_sRaderInfo.dishInfo , &g_sGpbInfo);
             Reader_ChgTag(g_sReaderRfidTempInfo.state);
             
-            //if(id != SOUND_VOC_PUT_OVER)
+            if(1)
             {   
                 g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
                 g_sSoundInfo.txBuf.data = id;
@@ -1045,7 +1040,7 @@ void Sys_ReaderTask()
                     if(id == SOUND_VOC_OFF_LINE + 1)
                     {   
                       id = SOUND_VOC_PUT_TAG;
-                        //id = SOUND_VOC_PUT_OVER;
+
                     }
                 } 
             }
@@ -1155,6 +1150,9 @@ void Sys_ReaderTask()
 
         }
     }
+#if SYS_ENABLE_WDT
+    WDG_FeedIWDog();
+#endif
 
     
 }

@@ -74,11 +74,11 @@ void Lcm_DishDelayms(u32 n)
 void Lcm_DishWriteBuffer(u8 *pFrame, u16 len)
 {
     u16 i = 0;
-    //Lcm_DishDelayms(2);
+    Lcm_DishDelayms(2);
     for(i = 0; i < len; i++)
     {
         (LCM_DISH_PORT)->DR = (pFrame[i] & (u16)0x01FF);
-        //while(((LCM_DISH_PORT)->SR & USART_FLAG_TXE) == (u16)RESET);
+        while(((LCM_DISH_PORT)->SR & USART_FLAG_TXE) == (u16)RESET);       //删除导致数据发送不完整
     }
 }
 

@@ -2,20 +2,10 @@
 #define _ANYID_CS1110_SYSCFG_H
 
 #include "AnyID_CS1110_Config.h"
-#include "AnyID_CS1110_Key.h"
-#include "AnyID_CS1110_Sound.h"
-#include "AnyID_CS1110_Wight.h"
-#include "AnyID_CS1110_ST25R391x_HL.h"
-#include "AnyID_ST25R391x.h"
-#include "AnyID_CS1110_SysTick_HL.h"
-#include "AnyID_ST25R391x_ISO15693.h"
-#include "AnyID_CS1110_DishLcm.h"
-#include "AnyID_FRam.h"
-#include "AnyID_CS1110_RTC.h"
-#include "AnyID_Uart_Receive.h"
+
+
 #include "AnyID_CS1110_Reader.h"
-#include "AnyID_CS1110_FlashM25.h"
-#include "AnyID_CS1110_Rfid.h"
+
 
 
 extern u32 g_nSysState;

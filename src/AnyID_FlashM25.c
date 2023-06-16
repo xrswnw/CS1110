@@ -78,7 +78,7 @@ BOOL Flash_WriteBuffer(u32 addr, u16 len, u8 *pBuffer)
 
     //pageSize = 256
     if(addr & FLASH_PAGE_MASK)
-    {
+    {           
         size = FLASH_PAGE_SIZE - (addr & FLASH_PAGE_MASK);
         if(len < size)
         {

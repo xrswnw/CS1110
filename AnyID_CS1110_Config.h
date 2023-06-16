@@ -19,6 +19,9 @@
 //#define SYS_PROTOCOL_ISO14443B          0x20
 #define SYS_PROTOCOL_MASK               0xF0
 
+#define SYS_ENABLE_WDT              1
+
+
 //STM32平台相关
 #if (defined(_ANYID_STM32_) || defined(_ANYID_GD32_))
     #include "stm32f10x.h"

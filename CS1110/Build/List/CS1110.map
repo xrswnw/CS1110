@@ -1,0 +1,939 @@
+###############################################################################
+#
+# IAR ELF Linker V8.40.1.212/W32 for ARM                  16/Jun/2023  10:52:20
+# Copyright 2007-2019 IAR Systems AB.
+#
+#    Output file  =  E:\AnyID\Git\YY\CS1110\CS1110\Build\Exe\CS1110.out
+#    Map file     =  E:\AnyID\Git\YY\CS1110\CS1110\Build\List\CS1110.map
+#    Command line =
+#        -f C:\Users\Administrator\AppData\Local\Temp\EW1FFD.tmp
+#        (E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_DishLcm.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_DishLcm_HL.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_Flash_HL.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_FlashM25.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_FRam.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_FRam_HL.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\Anyid_CS1110_Key.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\Anyid_CS1110_Key_HL.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\Anyid_CS1110_Reader.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\Anyid_Cs1110_Rfid.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\Anyid_Cs1110_Rfid_HL.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_RTC.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\Anyid_CS1110_Sound.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\Anyid_CS1110_Sound_HL.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_ST25R391x_HL.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_SysCfg.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_SysTick_HL.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_Uart.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_CS1110_Uart_HL.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_Cs1110_WDG_HL.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\Anyid_CS1110_Wight.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\Anyid_CS1110_Wight_HL.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_FlashM25.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_FRam.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_ST25R391x.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_ST25R391x_ISO15693.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_Stdlib.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\AnyID_Uart_Receive.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\main.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\misc.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\startup_stm32f10x_hd.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_adc.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_bkp.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_dma.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_exti.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_flash.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_gpio.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_it.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_iwdg.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_pwr.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_rcc.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_rtc.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_spi.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_tim.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\stm32f10x_usart.o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj\system_stm32f10x.o --redirect
+#        _Printf=_PrintfFull --redirect _Scanf=_ScanfFull --no_out_extension -o
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\Exe\CS1110.out --map
+#        E:\AnyID\Git\YY\CS1110\CS1110\Build\List\CS1110.map --config
+#        E:\AnyID\Git\YY\CS1110\CS1110\GD32F303xC.icf --semihosting --entry
+#        __iar_program_start --vfe --text_out locale)
+#
+###############################################################################
+
+*******************************************************************************
+*** RUNTIME MODEL ATTRIBUTES
+***
+
+CppFlavor       = *
+__SystemLibrary = DLib
+__dlib_version  = 6
+
+
+*******************************************************************************
+*** HEAP SELECTION
+***
+
+The basic heap was selected because no calls to memory allocation
+functions were found in the application outside of system library
+functions, and there are calls to deallocation functions in the
+application.
+
+
+*******************************************************************************
+*** PLACEMENT SUMMARY
+***
+
+"A0":  place at address 0x800'4000 { ro section .intvec };
+"P1":  place in [from 0x800'4000 to 0x803'ffff] { ro };
+define block CSTACK with size = 2K, alignment = 8 { };
+define block HEAP with size = 1K, alignment = 8 { };
+"P2":  place in [from 0x2000'0000 to 0x2000'bfff] {
+          rw, block CSTACK, block HEAP };
+initialize by copy { rw };
+
+  Section            Kind         Address    Size  Object
+  -------            ----         -------    ----  ------
+"A0":                                       0x130
+  .intvec            ro code   0x800'4000   0x130  startup_stm32f10x_hd.o [1]
+                             - 0x800'4130   0x130
+
+"P1", part 1 of 2:                           0xce
+  .text              ro code   0x800'4130    0x66  ABImemset.o [4]
+  .text              ro code   0x800'4198     0x6  ABImemclr.o [4]
+  Initializer bytes  const     0x800'419e    0x60  <for P2-1>
+                             - 0x800'41fe    0xce
+
+Absolute sections:                           0x32
+  .rodata            const     0x800'5000    0x32  Anyid_CS1110_Reader.o [1]
+                             - 0x800'5032    0x32
+
+"P1", part 2 of 2:                         0x96f4
+  .text              ro code   0x800'5034  0x1dd4  Anyid_CS1110_Reader.o [1]
+  .text              ro code   0x800'6e08   0x236  AnyID_FRam.o [1]
+  .text              ro code   0x800'7040    0x48  AnyID_Stdlib.o [1]
+  .text              ro code   0x800'7088   0x1ac  AnyID_CS1110_FRam.o [1]
+  .text              ro code   0x800'7234    0x3a  zero_init3.o [4]
+  .text              ro code   0x800'7270    0x40  sprintf.o [2]
+  .text              ro code   0x800'72b0   0x52c  AnyID_CS1110_DishLcm.o [1]
+  .text              ro code   0x800'77dc    0xa6  ABImemcpy.o [4]
+  .text              ro code   0x800'7882    0x1e  xencoding_8859_1.o [2]
+  .text              ro code   0x800'78a0    0x1c  U32ToFlt.o [3]
+  .text              ro code   0x800'78bc    0xfc  FltDiv.o [3]
+  .text              ro code   0x800'79b8    0xd8  FltMul.o [3]
+  .text              ro code   0x800'7a90    0x2a  FltToS32.o [3]
+  .text              ro code   0x800'7aba     0xa  xsprout.o [2]
+  .text              ro code   0x800'7ac4   0x234  Anyid_CS1110_Sound.o [1]
+  .text              ro code   0x800'7cf8    0x68  memcmp.o [4]
+  .text              ro code   0x800'7d60   0x228  AnyID_CS1110_FRam_HL.o [1]
+  .text              ro code   0x800'7f88  0x10c6  xprintffull.o [2]
+  .rodata            const     0x800'904e     0x2  xlocale_c.o [2]
+  .text              ro code   0x800'9050   0x2bc  AnyID_CS1110_DishLcm_HL.o [1]
+  .text              ro code   0x800'930c    0x36  strlen.o [4]
+  .rodata            const     0x800'9342     0x2  xlocale_c.o [2]
+  .text              ro code   0x800'9344   0x128  Anyid_CS1110_Sound_HL.o [1]
+  .text              ro code   0x800'946c    0x1a  U32ToDbl.o [3]
+  .rodata            const     0x800'9486     0x1  xlocale_c.o [2]
+  .text              ro code   0x800'9488   0x758  pow64.o [3]
+  .text              ro code   0x800'9be0   0x246  DblDiv.o [3]
+  .text              ro code   0x800'9e28   0x1a2  DblMul.o [3]
+  .text              ro code   0x800'9fcc    0x28  DblToU32.o [3]
+  .text              ro code   0x800'9ff4   0x180  stm32f10x_gpio.o [1]
+  .text              ro code   0x800'a174    0x7c  xlocale_c.o [2]
+  .text              ro code   0x800'a1f0    0x16  strchr.o [4]
+  .text              ro code   0x800'a208    0x40  xfail_s.o [2]
+  .text              ro code   0x800'a248    0x58  memchr.o [4]
+  .text              ro code   0x800'a2a0    0x70  frexp.o [3]
+  .text              ro code   0x800'a310    0x2e  DblCmpLe.o [3]
+  .text              ro code   0x800'a340    0x2e  DblCmpGe.o [3]
+  .text              ro code   0x800'a370   0x13a  ldexp.o [3]
+  .text              ro code   0x800'a4ac    0x3a  DblToS32.o [3]
+  .text              ro code   0x800'a4e8    0x22  S32ToDbl.o [3]
+  .text              ro code   0x800'a50c    0xe2  DblSub.o [3]
+  .text              ro code   0x800'a5ee     0xa  xmbcurmax.o [2]
+  .text              ro code   0x800'a5f8   0x230  I64DivMod.o [4]
+  .text              ro code   0x800'a828   0x2de  stm32f10x_usart.o [1]
+  .text              ro code   0x800'ab08    0xb8  misc.o [1]
+  .text              ro code   0x800'abc0   0x17c  stm32f10x_dma.o [1]
+  .text              ro code   0x800'ad3c    0x20  DblCmpEq.o [3]
+  .text              ro code   0x800'ad5c   0x17a  DblAdd.o [3]
+  .text              ro code   0x800'aed8   0x374  iar_Exp64.o [3]
+  .text              ro code   0x800'b24c     0x6  abort.o [2]
+  .text              ro code   0x800'b254     0x2  I64DivZer.o [4]
+  .text              ro code   0x800'b258   0x338  stm32f10x_rcc.o [1]
+  .text              ro code   0x800'b590    0x14  exit.o [5]
+  .text              ro code   0x800'b5a4  0x13ac  AnyID_CS1110_SysCfg.o [1]
+  .text              ro code   0x800'c950    0x2c  stm32f10x_flash.o [1]
+  .text              ro code   0x800'c97c   0x120  Anyid_CS1110_Key.o [1]
+  .text              ro code   0x800'ca9c    0x22  AnyID_Cs1110_WDG_HL.o [1]
+  .text              ro code   0x800'cac0   0x11c  AnyID_CS1110_Flash_HL.o [1]
+  .text              ro code   0x800'cbdc    0xe4  AnyID_FlashM25.o [1]
+  .text              ro code   0x800'ccc0   0x234  Anyid_Cs1110_Rfid.o [1]
+  .text              ro code   0x800'cef4    0x40  stm32f10x_iwdg.o [1]
+  .text              ro code   0x800'cf34   0x2fc  Anyid_CS1110_Wight.o [1]
+  .text              ro code   0x800'd230    0x18  AnyID_CS1110_Uart.o [1]
+  .text              ro code   0x800'd248    0x34  AnyID_CS1110_FlashM25.o [1]
+  .text              ro code   0x800'd27c    0xa4  AnyID_CS1110_SysTick_HL.o [1]
+  .text              ro code   0x800'd320    0xcc  Anyid_CS1110_Key_HL.o [1]
+  .text              ro code   0x800'd3ec   0x2e0  Anyid_CS1110_Wight_HL.o [1]
+  .text              ro code   0x800'd6cc   0x164  Anyid_Cs1110_Rfid_HL.o [1]
+  .text              ro code   0x800'd830   0x144  AnyID_CS1110_Uart_HL.o [1]
+  .text              ro code   0x800'd974    0x78  stm32f10x_spi.o [1]
+  .rodata            const     0x800'd9f0   0x420  pow64.o [3]
+  .text              ro code   0x800'de10   0x2b0  stm32f10x_it.o [1]
+  .text              ro code   0x800'e0c0    0xea  AnyID_Uart_Receive.o [1]
+  .text              ro code   0x800'e1ac    0x94  stm32f10x_rtc.o [1]
+  .text              ro code   0x800'e240   0x110  system_stm32f10x.o [1]
+  .text              ro code   0x800'e350    0x78  lz77_init_single.o [4]
+  .text              ro code   0x800'e3c8    0x2c  main.o [1]
+  .text              ro code   0x800'e3f4    0x28  data_init.o [4]
+  .iar.init_table    const     0x800'e41c    0x20  - Linker created -
+  .rodata            const     0x800'e43c    0x20  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e45c    0x20  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e47c    0x20  Anyid_CS1110_Reader.o [1]
+  .text              ro code   0x800'e49c    0x1e  cmain.o [4]
+  .text              ro code   0x800'e4ba     0x4  low_level_init.o [2]
+  .text              ro code   0x800'e4be     0x4  exit.o [2]
+  .text              ro code   0x800'e4c4     0xa  cexit.o [4]
+  .rodata            const     0x800'e4d0    0x1c  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e4ec    0x10  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e4fc    0x10  AnyID_CS1110_SysCfg.o [1]
+  .rodata            const     0x800'e50c    0x10  AnyID_CS1110_SysCfg.o [1]
+  .text              ro code   0x800'e51c    0x10  startup_stm32f10x_hd.o [1]
+  .rodata            const     0x800'e52c     0xc  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e538     0xc  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e544     0xc  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e550     0xc  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e55c     0xc  AnyID_CS1110_SysCfg.o [1]
+  .rodata            const     0x800'e568     0xc  AnyID_CS1110_SysCfg.o [1]
+  .text              ro code   0x800'e574     0xc  cstartup_M.o [4]
+  .rodata            const     0x800'e580     0x8  AnyID_CS1110_DishLcm_HL.o [1]
+  .rodata            const     0x800'e588     0x8  AnyID_CS1110_DishLcm_HL.o [1]
+  .rodata            const     0x800'e590     0x8  AnyID_CS1110_Flash_HL.o [1]
+  .rodata            const     0x800'e598     0x8  AnyID_CS1110_Flash_HL.o [1]
+  .rodata            const     0x800'e5a0     0x8  AnyID_CS1110_FRam_HL.o [1]
+  .rodata            const     0x800'e5a8     0x8  AnyID_CS1110_FRam_HL.o [1]
+  .rodata            const     0x800'e5b0     0x8  Anyid_CS1110_Key_HL.o [1]
+  .rodata            const     0x800'e5b8     0x8  Anyid_CS1110_Key_HL.o [1]
+  .rodata            const     0x800'e5c0     0x8  Anyid_CS1110_Key_HL.o [1]
+  .rodata            const     0x800'e5c8     0x8  Anyid_CS1110_Key_HL.o [1]
+  .rodata            const     0x800'e5d0     0x8  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e5d8     0x8  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e5e0     0x8  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e5e8     0x8  Anyid_CS1110_Reader.o [1]
+  .rodata            const     0x800'e5f0     0x8  Anyid_Cs1110_Rfid_HL.o [1]
+  .rodata            const     0x800'e5f8     0x8  Anyid_Cs1110_Rfid_HL.o [1]
+  .rodata            const     0x800'e600     0x8  Anyid_Cs1110_Rfid_HL.o [1]
+  .rodata            const     0x800'e608     0x8  Anyid_CS1110_Sound_HL.o [1]
+  .rodata            const     0x800'e610     0x8  Anyid_CS1110_Sound_HL.o [1]
+  .rodata            const     0x800'e618     0x8  AnyID_CS1110_SysCfg.o [1]
+  .rodata            const     0x800'e620     0x8  AnyID_CS1110_SysCfg.o [1]
+  .rodata            const     0x800'e628     0x8  AnyID_CS1110_SysCfg.o [1]
+  .rodata            const     0x800'e630     0x8  AnyID_CS1110_Uart_HL.o [1]
+  .rodata            const     0x800'e638     0x8  AnyID_CS1110_Uart_HL.o [1]
+  .rodata            const     0x800'e640     0x8  AnyID_CS1110_Uart_HL.o [1]
+  .rodata            const     0x800'e648     0x8  Anyid_CS1110_Wight_HL.o [1]
+  .rodata            const     0x800'e650     0x8  Anyid_CS1110_Wight_HL.o [1]
+  .rodata            const     0x800'e658     0x8  Anyid_CS1110_Wight_HL.o [1]
+  .text              ro code   0x800'e660     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e664     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e668     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e66c     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e670     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e674     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e678     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e67c     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e680     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e684     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e688     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e68c     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e690     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e694     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e698     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e69c     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6a0     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6a4     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6a8     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6ac     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6b0     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6b4     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6b8     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6bc     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6c0     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6c4     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6c8     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6cc     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6d0     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6d4     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6d8     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6dc     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6e0     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6e4     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6e8     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6ec     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6f0     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6f4     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6f8     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e6fc     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e700     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e704     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e708     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e70c     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e710     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e714     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e718     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e71c     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e720     0x4  startup_stm32f10x_hd.o [1]
+  .text              ro code   0x800'e724     0x4  startup_stm32f10x_hd.o [1]
+  .rodata            const     0x800'e728     0x0  zero_init3.o [4]
+  .rodata            const     0x800'e728     0x0  lz77_init_single.o [4]
+                             - 0x800'e728  0x96f4
+
+"P2", part 1 of 3:                           0xce
+  P2-1                        0x2000'0000    0xce  <Init block>
+    .data            inited   0x2000'0000    0x20  Anyid_CS1110_Reader.o [1]
+    .data            inited   0x2000'0020     0x8  Anyid_CS1110_Reader.o [1]
+    .data            inited   0x2000'0028     0xc  AnyID_CS1110_RTC.o [1]
+    .data            inited   0x2000'0034     0x4  AnyID_CS1110_SysCfg.o [1]
+    .data            inited   0x2000'0038    0x10  stm32f10x_rcc.o [1]
+    .data            inited   0x2000'0048     0x4  stm32f10x_rcc.o [1]
+    .data            inited   0x2000'004c    0x38  xlocale_c.o [2]
+    .data            inited   0x2000'0084    0x48  xlocale_c.o [2]
+    .data            inited   0x2000'00cc     0x2  AnyID_CS1110_SysCfg.o [1]
+                            - 0x2000'00ce    0xce
+
+"P2", part 2 of 3:                         0x2720
+  .bss               zero     0x2000'00d0   0xa30  Anyid_CS1110_Reader.o [1]
+  .bss               zero     0x2000'0b00   0x81c  Anyid_CS1110_Reader.o [1]
+  .bss               zero     0x2000'131c   0x438  Anyid_Cs1110_Rfid.o [1]
+  .bss               zero     0x2000'1754   0x410  AnyID_CS1110_Uart.o [1]
+  .bss               zero     0x2000'1b64   0x410  AnyID_CS1110_Uart.o [1]
+  .bss               zero     0x2000'1f74   0x410  AnyID_Uart_Receive.o [1]
+  .bss               zero     0x2000'2384   0x108  AnyID_CS1110_DishLcm.o [1]
+  .bss               zero     0x2000'248c    0x80  Anyid_CS1110_Wight.o [1]
+  .bss               zero     0x2000'250c    0x6c  Anyid_CS1110_Reader.o [1]
+  .bss               zero     0x2000'2578    0x50  AnyID_CS1110_DishLcm.o [1]
+  .bss               zero     0x2000'25c8    0x50  AnyID_CS1110_DishLcm.o [1]
+  .bss               zero     0x2000'2618    0x48  Anyid_CS1110_Reader.o [1]
+  .bss               zero     0x2000'2660    0x3c  AnyID_CS1110_FlashM25.o [1]
+  .bss               zero     0x2000'269c    0x3c  Anyid_CS1110_Reader.o [1]
+  .bss               zero     0x2000'26d8    0x38  Anyid_CS1110_Sound.o [1]
+  .bss               zero     0x2000'2710    0x34  AnyID_CS1110_FlashM25.o [1]
+  .bss               zero     0x2000'2744    0x28  AnyID_CS1110_FRam.o [1]
+  .bss               zero     0x2000'276c    0x20  Anyid_CS1110_Reader.o [1]
+  .bss               zero     0x2000'278c    0x18  Anyid_CS1110_Reader.o [1]
+  .bss               zero     0x2000'27a4     0x8  AnyID_CS1110_FRam.o [1]
+  .bss               zero     0x2000'27ac     0x8  Anyid_CS1110_Key.o [1]
+  .bss               zero     0x2000'27b4     0x8  Anyid_CS1110_Reader.o [1]
+  .bss               zero     0x2000'27bc     0x4  Anyid_CS1110_Reader.o [1]
+  .bss               zero     0x2000'27c0     0x4  AnyID_CS1110_SysCfg.o [1]
+  .bss               zero     0x2000'27c4     0x4  AnyID_CS1110_SysCfg.o [1]
+  .bss               zero     0x2000'27c8     0x4  AnyID_CS1110_SysCfg.o [1]
+  .bss               zero     0x2000'27cc     0x4  AnyID_CS1110_SysCfg.o [1]
+  .bss               zero     0x2000'27d0     0x4  AnyID_CS1110_SysTick_HL.o [1]
+  .bss               zero     0x2000'27d4     0x4  AnyID_CS1110_SysTick_HL.o [1]
+  .bss               zero     0x2000'27d8     0x4  xfail_s.o [2]
+  .bss               zero     0x2000'27dc     0x2  AnyID_CS1110_DishLcm.o [1]
+  .bss               zero     0x2000'27de     0x2  stm32f10x_it.o [1]
+  .bss               zero     0x2000'27e0     0x2  stm32f10x_it.o [1]
+  .bss               zero     0x2000'27e2     0x2  stm32f10x_it.o [1]
+  .bss               zero     0x2000'27e4     0x2  stm32f10x_it.o [1]
+  .bss               zero     0x2000'27e6     0x1  Anyid_CS1110_Reader.o [1]
+  .bss               zero     0x2000'27e7     0x1  Anyid_CS1110_Reader.o [1]
+  .bss               zero     0x2000'27e8     0x1  AnyID_CS1110_SysCfg.o [1]
+  .bss               zero     0x2000'27e9     0x1  AnyID_CS1110_SysCfg.o [1]
+  .bss               zero     0x2000'27ea     0x1  AnyID_CS1110_SysCfg.o [1]
+  .bss               zero     0x2000'27eb     0x1  AnyID_CS1110_SysCfg.o [1]
+  .bss               zero     0x2000'27ec     0x1  AnyID_CS1110_SysCfg.o [1]
+                            - 0x2000'27ed  0x271d
+
+"P2", part 3 of 3:                          0x800
+  CSTACK                      0x2000'27f0   0x800  <Block>
+    CSTACK           uninit   0x2000'27f0   0x800  <Block tail>
+                            - 0x2000'2ff0   0x800
+
+Unused ranges:
+
+         From           To      Size
+         ----           --      ----
+   0x800'41fe   0x800'4fff     0xe02
+   0x800'5032   0x800'5033       0x2
+   0x800'e728   0x803'ffff  0x3'18d8
+  0x2000'00ce  0x2000'00cf       0x2
+  0x2000'2ff0  0x2000'bfff    0x9010
+
+
+*******************************************************************************
+*** INIT TABLE
+***
+
+          Address      Size
+          -------      ----
+Zero (__iar_zero_init3)
+    1 destination range, total size 0x271d:
+          0x2000'00d0  0x271d
+
+Copy/lz77 (__iar_lz77_init_single3)
+    1 source range, total size 0x60 (46% of destination):
+           0x800'419e    0x60
+    1 destination range, total size 0xce:
+          0x2000'0000    0xce
+
+
+
+*******************************************************************************
+*** MODULE SUMMARY
+***
+
+    Module                     ro code  ro data  rw data  ro data
+                                                           (abs)
+    ------                     -------  -------  -------  -------
+command line/config:
+    -------------------------------------------------------------
+    Total:
+
+E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj: [1]
+    AnyID_CS1110_DishLcm.o       1'324               426
+    AnyID_CS1110_DishLcm_HL.o      700       16
+    AnyID_CS1110_FRam.o            428                48
+    AnyID_CS1110_FRam_HL.o         552       16
+    AnyID_CS1110_FlashM25.o         52               112
+    AnyID_CS1110_Flash_HL.o        284       16
+    AnyID_CS1110_RTC.o                        6       12
+    AnyID_CS1110_SysCfg.o        5'036       83       27
+    AnyID_CS1110_SysTick_HL.o      164                 8
+    AnyID_CS1110_Uart.o             24             2'080
+    AnyID_CS1110_Uart_HL.o         324       24
+    AnyID_Cs1110_WDG_HL.o           34
+    AnyID_FRam.o                   566
+    AnyID_FlashM25.o               228
+    AnyID_Stdlib.o                  72
+    AnyID_Uart_Receive.o           234             1'040
+    Anyid_CS1110_Key.o             288                 8
+    Anyid_CS1110_Key_HL.o          204       32
+    Anyid_CS1110_Reader.o        7'636      238    5'034       50
+    Anyid_CS1110_Sound.o           564                56
+    Anyid_CS1110_Sound_HL.o        296       16
+    Anyid_CS1110_Wight.o           764               128
+    Anyid_CS1110_Wight_HL.o        736       24
+    Anyid_Cs1110_Rfid.o            564             1'080
+    Anyid_Cs1110_Rfid_HL.o         356       24
+    main.o                          44
+    misc.o                         184
+    startup_stm32f10x_hd.o         520
+    stm32f10x_dma.o                380
+    stm32f10x_flash.o               44
+    stm32f10x_gpio.o               384
+    stm32f10x_it.o                 688                 8
+    stm32f10x_iwdg.o                64
+    stm32f10x_rcc.o                824        9       20
+    stm32f10x_rtc.o                148
+    stm32f10x_spi.o                120
+    stm32f10x_usart.o              734
+    system_stm32f10x.o             272
+    -------------------------------------------------------------
+    Total:                      25'836      504   10'087       50
+
+dl7M_tlf.a: [2]
+    abort.o                          6
+    exit.o                           4
+    low_level_init.o                 4
+    sprintf.o                       64
+    xencoding_8859_1.o              30
+    xfail_s.o                       64                 4
+    xlocale_c.o                    124       65      128
+    xmbcurmax.o                     10
+    xprintffull.o                4'294
+    xsprout.o                       10
+    -------------------------------------------------------------
+    Total:                       4'610       65      132
+
+m7M_tl.a: [3]
+    DblAdd.o                       378
+    DblCmpEq.o                      32
+    DblCmpGe.o                      46
+    DblCmpLe.o                      46
+    DblDiv.o                       582
+    DblMul.o                       418
+    DblSub.o                       226
+    DblToS32.o                      58
+    DblToU32.o                      40
+    FltDiv.o                       252
+    FltMul.o                       216
+    FltToS32.o                      42
+    S32ToDbl.o                      34
+    U32ToDbl.o                      26
+    U32ToFlt.o                      28
+    frexp.o                        112
+    iar_Exp64.o                    884
+    ldexp.o                        314
+    pow64.o                      1'880    1'056
+    -------------------------------------------------------------
+    Total:                       5'614    1'056
+
+rt7M_tl.a: [4]
+    ABImemclr.o                      6
+    ABImemcpy.o                    166
+    ABImemset.o                    102
+    I64DivMod.o                    560
+    I64DivZer.o                      2
+    cexit.o                         10
+    cmain.o                         30
+    cstartup_M.o                    12
+    data_init.o                     40
+    lz77_init_single.o             120
+    memchr.o                        88
+    memcmp.o                       104
+    strchr.o                        22
+    strlen.o                        54
+    zero_init3.o                    58
+    -------------------------------------------------------------
+    Total:                       1'374
+
+shb_l.a: [5]
+    exit.o                          20
+    -------------------------------------------------------------
+    Total:                          20
+
+    Gaps                            37        6
+    Linker created                           32    2'048
+-----------------------------------------------------------------
+    Grand Total:                37'491    1'663   12'267       50
+
+
+*******************************************************************************
+*** ENTRY LIST
+***
+
+Entry                       Address   Size  Type      Object
+-----                       -------   ----  ----      ------
+.iar.init_table$$Base    0x800'e41c          --   Gb  - Linker created -
+.iar.init_table$$Limit   0x800'e43c          --   Gb  - Linker created -
+?main                    0x800'e49d         Code  Gb  cmain.o [4]
+ADCPrescTable           0x2000'0048    0x4  Data  Lc  stm32f10x_rcc.o [1]
+APBAHBPrescTable        0x2000'0038   0x10  Data  Lc  stm32f10x_rcc.o [1]
+BusFault_Handler         0x800'de17    0x2  Code  Gb  stm32f10x_it.o [1]
+CSTACK$$Base            0x2000'27f0          --   Gb  - Linker created -
+CSTACK$$Limit           0x2000'2ff0          --   Gb  - Linker created -
+CacheMore                0x800'a179   0x28  Code  Lc  xlocale_c.o [2]
+DMA1_Channel4_IRQHandler
+                         0x800'df75   0x22  Code  Gb  stm32f10x_it.o [1]
+DMA1_Channel5_IRQHandler
+                         0x800'df51   0x24  Code  Gb  stm32f10x_it.o [1]
+DMA1_Channel6_IRQHandler
+                         0x800'ded9   0x24  Code  Gb  stm32f10x_it.o [1]
+DMA1_Channel7_IRQHandler
+                         0x800'defd   0x1a  Code  Gb  stm32f10x_it.o [1]
+DMA_DeInit               0x800'abc1   0xf0  Code  Gb  stm32f10x_dma.o [1]
+DMA_ITConfig             0x800'aced   0x18  Code  Gb  stm32f10x_dma.o [1]
+DMA_Init                 0x800'acb1   0x3c  Code  Gb  stm32f10x_dma.o [1]
+DebugMon_Handler         0x800'de1d    0x2  Code  Gb  stm32f10x_it.o [1]
+Device_ResponseFrame     0x800'5e79  0x16a  Code  Gb  Anyid_CS1110_Reader.o [1]
+FLASH_CS_COM             0x800'e590    0x8  Data  Gb  AnyID_CS1110_Flash_HL.o [1]
+FLASH_PORT_SPI           0x800'e598    0x8  Data  Gb  AnyID_CS1110_Flash_HL.o [1]
+FLASH_PrefetchBufferCmd
+                         0x800'c963   0x14  Code  Gb  stm32f10x_flash.o [1]
+FLASH_SetLatency         0x800'c951   0x12  Code  Gb  stm32f10x_flash.o [1]
+FRAM_SCL_PORT            0x800'e5a8    0x8  Data  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRAM_SDA_PORT            0x800'e5a0    0x8  Data  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRam_Delayms             0x800'7dab   0x12  Code  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRam_I2CAck              0x800'7e45   0x30  Code  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRam_I2CDelay            0x800'7d9d    0xe  Code  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRam_I2CNoAck            0x800'7e75   0x30  Code  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRam_I2CReceiveByte      0x800'7f31   0x4e  Code  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRam_I2CSendByte         0x800'7ee7   0x4a  Code  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRam_I2CStart            0x800'7dbd   0x58  Code  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRam_I2CStop             0x800'7e15   0x30  Code  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRam_I2CWaitAck          0x800'7ea5   0x42  Code  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRam_InitInterface       0x800'7d61   0x3c  Code  Gb  AnyID_CS1110_FRam_HL.o [1]
+FRam_ReadBuffer          0x800'6e09   0xe2  Code  Gb  AnyID_FRam.o [1]
+FRam_WriteBuffer         0x800'6f97   0xa8  Code  Gb  AnyID_FRam.o [1]
+FRam_WritePage           0x800'6eeb   0xac  Code  Gb  AnyID_FRam.o [1]
+FlashTempData           0x2000'2710   0x34  Data  Gb  AnyID_CS1110_FlashM25.o [1]
+Flash_Delay16us          0x800'cbc1   0x1c  Code  Gb  AnyID_CS1110_Flash_HL.o [1]
+Flash_Demo               0x800'd249   0x2a  Code  Gb  AnyID_CS1110_FlashM25.o [1]
+Flash_Init               0x800'cbdd   0x1a  Code  Gb  AnyID_FlashM25.o [1]
+Flash_InitInterface      0x800'cac1   0xac  Code  Gb  AnyID_CS1110_Flash_HL.o [1]
+Flash_ReadBuffer         0x800'cbf7   0xc6  Code  Gb  AnyID_FlashM25.o [1]
+Flash_WriteByte          0x800'cb6d   0x46  Code  Gb  AnyID_CS1110_Flash_HL.o [1]
+Fram_Demo                0x800'52ad   0x36  Code  Gb  Anyid_CS1110_Reader.o [1]
+Fram_ReadBootParams      0x800'7089  0x108  Code  Gb  AnyID_CS1110_FRam.o [1]
+Fram_WriteBackupBootParams
+                         0x800'71eb   0x44  Code  Gb  AnyID_CS1110_FRam.o [1]
+Fram_WriteBootParams     0x800'7191   0x5a  Code  Gb  AnyID_CS1110_FRam.o [1]
+GPB_Adjust               0x800'd1db   0x44  Code  Gb  Anyid_CS1110_Wight.o [1]
+GPB_CheckFrame           0x800'd163   0x44  Code  Gb  Anyid_CS1110_Wight.o [1]
+GPB_ConfigInt            0x800'd4b5   0x2e  Code  Gb  Anyid_CS1110_Wight_HL.o [1]
+GPB_GetCrc16             0x800'd10d   0x56  Code  Gb  Anyid_CS1110_Wight.o [1]
+GPB_Init                 0x800'cf35   0x5e  Code  Gb  Anyid_CS1110_Wight.o [1]
+GPB_InitInterface        0x800'd3ed   0xc8  Code  Gb  Anyid_CS1110_Wight_HL.o [1]
+GPB_InitRxDma            0x800'd573   0x96  Code  Gb  Anyid_CS1110_Wight_HL.o [1]
+GPB_InitTxDma            0x800'd4e3   0x90  Code  Gb  Anyid_CS1110_Wight_HL.o [1]
+GPB_PORT_CTRL            0x800'e658    0x8  Data  Gb  Anyid_CS1110_Wight_HL.o [1]
+GPB_PORT_RX              0x800'e650    0x8  Data  Gb  Anyid_CS1110_Wight_HL.o [1]
+GPB_PORT_TX              0x800'e648    0x8  Data  Gb  Anyid_CS1110_Wight_HL.o [1]
+GPB_RFormatFrame         0x800'cf93   0x8c  Code  Gb  Anyid_CS1110_Wight.o [1]
+GPB_Stop                 0x800'd609   0x5c  Code  Gb  Anyid_CS1110_Wight_HL.o [1]
+GPB_TransmitCmd          0x800'd1a7   0x34  Code  Gb  Anyid_CS1110_Wight.o [1]
+GPB_WFormatFrame         0x800'd01f   0xee  Code  Gb  Anyid_CS1110_Wight.o [1]
+GPB_WriteBuffer          0x800'd677   0x34  Code  Gb  Anyid_CS1110_Wight_HL.o [1]
+GPB_WriteByte            0x800'd665   0x12  Code  Gb  Anyid_CS1110_Wight_HL.o [1]
+GPIO_Init                0x800'9ff5   0xea  Code  Gb  stm32f10x_gpio.o [1]
+GPIO_PinRemapConfig      0x800'a0e7   0x84  Code  Gb  stm32f10x_gpio.o [1]
+GPIO_SetBits             0x800'a0df    0x8  Code  Gb  stm32f10x_gpio.o [1]
+HardFault_Handler        0x800'de13    0x2  Code  Gb  stm32f10x_it.o [1]
+IWDG_Enable              0x800'cf1d    0xa  Code  Gb  stm32f10x_iwdg.o [1]
+IWDG_ReloadCounter       0x800'cf13    0xa  Code  Gb  stm32f10x_iwdg.o [1]
+IWDG_SetPrescaler        0x800'ceff    0xa  Code  Gb  stm32f10x_iwdg.o [1]
+IWDG_SetReload           0x800'cf09    0xa  Code  Gb  stm32f10x_iwdg.o [1]
+IWDG_WriteAccessCmd      0x800'cef5    0xa  Code  Gb  stm32f10x_iwdg.o [1]
+KEY_PORT0                0x800'e5b8    0x8  Data  Gb  Anyid_CS1110_Key_HL.o [1]
+KEY_PORT1                0x800'e5c0    0x8  Data  Gb  Anyid_CS1110_Key_HL.o [1]
+KEY_PORT2                0x800'e5c8    0x8  Data  Gb  Anyid_CS1110_Key_HL.o [1]
+KEY_POW_PORT             0x800'e5b0    0x8  Data  Gb  Anyid_CS1110_Key_HL.o [1]
+Key_Control              0x800'c993   0x1a  Code  Gb  Anyid_CS1110_Key.o [1]
+Key_GetValue             0x800'd389   0x54  Code  Gb  Anyid_CS1110_Key_HL.o [1]
+Key_Init                 0x800'c97d   0x16  Code  Gb  Anyid_CS1110_Key.o [1]
+Key_InitInterface        0x800'd321   0x68  Code  Gb  Anyid_CS1110_Key_HL.o [1]
+Key_Value_Main           0x800'c9ad   0x5c  Code  Gb  Anyid_CS1110_Key.o [1]
+Key_Value_Test           0x800'ca09   0x78  Code  Gb  Anyid_CS1110_Key.o [1]
+LCM_DISH_PORT_RX         0x800'e588    0x8  Data  Gb  AnyID_CS1110_DishLcm_HL.o [1]
+LCM_DISH_PORT_TX         0x800'e580    0x8  Data  Gb  AnyID_CS1110_DishLcm_HL.o [1]
+Lcm_BackgroundCtr        0x800'7797   0x2a  Code  Gb  AnyID_CS1110_DishLcm.o [1]
+Lcm_ChgPageFormatFrame   0x800'76bd   0x76  Code  Gb  AnyID_CS1110_DishLcm.o [1]
+Lcm_DishConfigInt        0x800'90fd   0x2e  Code  Gb  AnyID_CS1110_DishLcm_HL.o [1]
+Lcm_DishDelayms          0x800'912b   0x12  Code  Gb  AnyID_CS1110_DishLcm_HL.o [1]
+Lcm_DishInitInterface    0x800'9051   0xac  Code  Gb  AnyID_CS1110_DishLcm_HL.o [1]
+Lcm_DishWriteBuffer      0x800'913d   0x34  Code  Gb  AnyID_CS1110_DishLcm_HL.o [1]
+Lcm_DishWriteColor       0x800'7495   0x28  Code  Gb  AnyID_CS1110_DishLcm.o [1]
+Lcm_DishWriteTxt         0x800'74bd  0x100  Code  Gb  AnyID_CS1110_DishLcm.o [1]
+Lcm_DishWriteUniCodeTxt
+                         0x800'75bd  0x100  Code  Gb  AnyID_CS1110_DishLcm.o [1]
+Lcm_DishWriteVarFrame    0x800'7357   0x72  Code  Gb  AnyID_CS1110_DishLcm.o [1]
+Lcm_DishWriteVarUniCodeFrame
+                         0x800'73c9   0x7c  Code  Gb  AnyID_CS1110_DishLcm.o [1]
+Lcm_FormatFrame          0x800'7733   0x64  Code  Gb  AnyID_CS1110_DishLcm.o [1]
+Lcm_Init                 0x800'72b1   0xa6  Code  Gb  AnyID_CS1110_DishLcm.o [1]
+Lcm_InitRxDma            0x800'91f7   0x96  Code  Gb  AnyID_CS1110_DishLcm_HL.o [1]
+Lcm_InitTxDma            0x800'9171   0x86  Code  Gb  AnyID_CS1110_DishLcm_HL.o [1]
+Lcm_SelectIco            0x800'746b   0x2a  Code  Gb  AnyID_CS1110_DishLcm.o [1]
+Lcm_SelectPage           0x800'7445   0x26  Code  Gb  AnyID_CS1110_DishLcm.o [1]
+Lcm_Stop                 0x800'928d   0x62  Code  Gb  AnyID_CS1110_DishLcm_HL.o [1]
+MemManage_Handler        0x800'de15    0x2  Code  Gb  stm32f10x_it.o [1]
+NMI_Handler              0x800'de11    0x2  Code  Gb  stm32f10x_it.o [1]
+NVIC_Init                0x800'ab13   0x66  Code  Gb  misc.o [1]
+NVIC_PriorityGroupConfig
+                         0x800'ab09    0xa  Code  Gb  misc.o [1]
+NVIC_SetVectorTable      0x800'ab79    0xc  Code  Gb  misc.o [1]
+PendSV_Handler           0x800'de1f    0x2  Code  Gb  stm32f10x_it.o [1]
+RCC_ADCCLKConfig         0x800'b385   0x10  Code  Gb  stm32f10x_rcc.o [1]
+RCC_AHBPeriphClockCmd    0x800'b46d   0x1c  Code  Gb  stm32f10x_rcc.o [1]
+RCC_APB1PeriphClockCmd   0x800'b4a5   0x1c  Code  Gb  stm32f10x_rcc.o [1]
+RCC_APB1PeriphResetCmd   0x800'b4dd   0x1c  Code  Gb  stm32f10x_rcc.o [1]
+RCC_APB2PeriphClockCmd   0x800'b489   0x1c  Code  Gb  stm32f10x_rcc.o [1]
+RCC_APB2PeriphResetCmd   0x800'b4c1   0x1c  Code  Gb  stm32f10x_rcc.o [1]
+RCC_DeInit               0x800'b259   0x40  Code  Gb  stm32f10x_rcc.o [1]
+RCC_GetClocksFreq        0x800'b395   0xd8  Code  Gb  stm32f10x_rcc.o [1]
+RCC_GetFlagStatus        0x800'b4f9   0x46  Code  Gb  stm32f10x_rcc.o [1]
+RCC_GetSYSCLKSource      0x800'b343    0xa  Code  Gb  stm32f10x_rcc.o [1]
+RCC_HCLKConfig           0x800'b34d   0x10  Code  Gb  stm32f10x_rcc.o [1]
+RCC_HSEConfig            0x800'b299   0x3a  Code  Gb  stm32f10x_rcc.o [1]
+RCC_PCLK1Config          0x800'b35d   0x10  Code  Gb  stm32f10x_rcc.o [1]
+RCC_PCLK2Config          0x800'b36d   0x12  Code  Gb  stm32f10x_rcc.o [1]
+RCC_PLLCmd               0x800'b329    0xa  Code  Gb  stm32f10x_rcc.o [1]
+RCC_PLLConfig            0x800'b311   0x18  Code  Gb  stm32f10x_rcc.o [1]
+RCC_SYSCLKConfig         0x800'b333   0x10  Code  Gb  stm32f10x_rcc.o [1]
+RCC_USBCLKConfig         0x800'b37f    0x6  Code  Gb  stm32f10x_rcc.o [1]
+RCC_WaitForHSEStartUp    0x800'b2d3   0x3e  Code  Gb  stm32f10x_rcc.o [1]
+READER_VERSION           0x800'5000   0x32  Data  Gb  Anyid_CS1110_Reader.o [1]
+RFID_PORT_CTRL           0x800'e600    0x8  Data  Gb  Anyid_Cs1110_Rfid_HL.o [1]
+RFID_PORT_RX             0x800'e5f8    0x8  Data  Gb  Anyid_Cs1110_Rfid_HL.o [1]
+RFID_PORT_TX             0x800'e5f0    0x8  Data  Gb  Anyid_Cs1110_Rfid_HL.o [1]
+RTC_ClearFlag            0x800'e1ff    0xa  Code  Gb  stm32f10x_rtc.o [1]
+RTC_EnterConfigMode      0x800'e1ad    0xc  Code  Gb  stm32f10x_rtc.o [1]
+RTC_ExitConfigMode       0x800'e1b9    0xe  Code  Gb  stm32f10x_rtc.o [1]
+RTC_GetITStatus          0x800'e209   0x26  Code  Gb  stm32f10x_rtc.o [1]
+RTC_IRQHandler           0x800'e019   0x2a  Code  Gb  stm32f10x_it.o [1]
+RTC_SetCounter           0x800'e1c7   0x1a  Code  Gb  stm32f10x_rtc.o [1]
+RTC_WaitForLastTask      0x800'e1e1    0xa  Code  Gb  stm32f10x_rtc.o [1]
+RTC_WaitForSynchro       0x800'e1eb   0x14  Code  Gb  stm32f10x_rtc.o [1]
+Reader_ChgPage           0x800'67e1   0x56  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_ChgTag            0x800'56af   0x80  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_ChkMoney          0x800'6b6b  0x186  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_ChkReUid          0x800'6b39   0x32  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_DisplayDish       0x800'6855  0x2d4  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_DisplayIp         0x800'53d3   0x62  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_DisplayLable      0x800'574d  0x272  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_DisplayTest       0x800'5555  0x142  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_Font_ChgCorol     0x800'6cf5   0xce  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_Format_Cfg        0x800'6421  0x1b0  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_Format_GetPerson
+                         0x800'5fed  0x140  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_Format_Heart      0x800'62d5  0x13c  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_Format_Meal       0x800'6135  0x194  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_GetWight          0x800'5697   0x18  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_Init              0x800'5035   0x6c  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_Lable             0x800'65d5  0x20c  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_ProcessUartFrame
+                         0x800'59bf  0x4b2  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_ReadDeviceParamenter
+                         0x800'50a1  0x166  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_ReadOffLineDataNum
+                         0x800'5207   0x16  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_ReadOffLineDatas
+                         0x800'521d   0x1c  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_RfidGetValue      0x800'5435  0x120  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_Seek_Id           0x800'52e3   0x52  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_Seek_Inq          0x800'5381   0x52  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_Seek_Num          0x800'5335   0x4c  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_WriteDeviceParamenter
+                         0x800'5239   0x32  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_WriteOffLineDataNum
+                         0x800'526b   0x26  Code  Gb  Anyid_CS1110_Reader.o [1]
+Reader_WriteOffLineDatas
+                         0x800'5291   0x1c  Code  Gb  Anyid_CS1110_Reader.o [1]
+Region$$Table$$Base      0x800'e41c          --   Gb  - Linker created -
+Region$$Table$$Limit     0x800'e43c          --   Gb  - Linker created -
+Rfid_ConfigInt           0x800'd77b   0x2e  Code  Gb  Anyid_Cs1110_Rfid_HL.o [1]
+Rfid_EnableInt           0x800'd7a9   0x30  Code  Gb  Anyid_Cs1110_Rfid_HL.o [1]
+Rfid_Format_GetUid       0x800'cdc9  0x110  Code  Gb  Anyid_Cs1110_Rfid.o [1]
+Rfid_Init                0x800'ccc1   0x18  Code  Gb  Anyid_Cs1110_Rfid.o [1]
+Rfid_InitInterface       0x800'd6cd   0xae  Code  Gb  Anyid_Cs1110_Rfid_HL.o [1]
+Rfid_ReceiveFrame        0x800'ccd9   0xf0  Code  Gb  Anyid_Cs1110_Rfid.o [1]
+Rfid_TransmitCmd         0x800'ced9   0x18  Code  Gb  Anyid_Cs1110_Rfid.o [1]
+Rfid_WriteBuffer         0x800'd7d9   0x42  Code  Gb  Anyid_Cs1110_Rfid_HL.o [1]
+SOUND_PORT_RX            0x800'e610    0x8  Data  Gb  Anyid_CS1110_Sound_HL.o [1]
+SOUND_PORT_TX            0x800'e608    0x8  Data  Gb  Anyid_CS1110_Sound_HL.o [1]
+SPI_Cmd                  0x800'd9b3   0x1e  Code  Gb  stm32f10x_spi.o [1]
+SPI_I2S_GetFlagStatus    0x800'd9d9   0x14  Code  Gb  stm32f10x_spi.o [1]
+SPI_I2S_ReceiveData      0x800'd9d5    0x4  Code  Gb  stm32f10x_spi.o [1]
+SPI_I2S_SendData         0x800'd9d1    0x4  Code  Gb  stm32f10x_spi.o [1]
+SPI_Init                 0x800'd975   0x3e  Code  Gb  stm32f10x_spi.o [1]
+STick_InitSysTick        0x800'd2d9   0x26  Code  Gb  AnyID_CS1110_SysTick_HL.o [1]
+SVC_Handler              0x800'de1b    0x2  Code  Gb  stm32f10x_it.o [1]
+SYS_LED_BLUE             0x800'e620    0x8  Data  Gb  AnyID_CS1110_SysCfg.o [1]
+SYS_LED_GREEN            0x800'e628    0x8  Data  Gb  AnyID_CS1110_SysCfg.o [1]
+SYS_LED_RED              0x800'e618    0x8  Data  Gb  AnyID_CS1110_SysCfg.o [1]
+SetSysClock              0x800'e27d    0x8  Code  Lc  system_stm32f10x.o [1]
+SetSysClockTo72          0x800'e285   0xb0  Code  Lc  system_stm32f10x.o [1]
+Sound_ConfigInt          0x800'93d1   0x2e  Code  Gb  Anyid_CS1110_Sound_HL.o [1]
+Sound_EnableInt          0x800'93ff   0x30  Code  Gb  Anyid_CS1110_Sound_HL.o [1]
+Sound_FormaFrame         0x800'7b6b   0x76  Code  Gb  Anyid_CS1110_Sound.o [1]
+Sound_GetValue           0x800'7ca1   0x4c  Code  Gb  Anyid_CS1110_Sound.o [1]
+Sound_Init               0x800'7ac5   0x1e  Code  Gb  Anyid_CS1110_Sound.o [1]
+Sound_InitInterface      0x800'9345   0x8c  Code  Gb  Anyid_CS1110_Sound_HL.o [1]
+Sound_ReceiveFrame       0x800'7ae3   0x88  Code  Gb  Anyid_CS1110_Sound.o [1]
+Sound_Sum                0x800'7be1   0x44  Code  Gb  Anyid_CS1110_Sound.o [1]
+Sound_TransmitCmd        0x800'7c6f   0x32  Code  Gb  Anyid_CS1110_Sound.o [1]
+Sound_WriteBuffer        0x800'942f   0x2c  Code  Gb  Anyid_CS1110_Sound_HL.o [1]
+Sounde_Chk               0x800'7c25   0x4a  Code  Gb  Anyid_CS1110_Sound.o [1]
+SysTick_CLKSourceConfig
+                         0x800'ab85   0x1c  Code  Gb  misc.o [1]
+SysTick_Config           0x800'd2a9   0x30  Code  Lc  AnyID_CS1110_SysTick_HL.o [1]
+SysTick_Handler          0x800'de21   0x48  Code  Gb  stm32f10x_it.o [1]
+Sys_CfgClock             0x800'b5b7   0x76  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_CfgNVIC              0x800'b655   0x18  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_CfgPeriphClk         0x800'b62d   0x28  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_CtrlIOInit           0x800'b66d   0x5c  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_Delayms              0x800'b5a5   0x12  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_GPBTask              0x800'bb6b  0x1e4  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_GPBTask::sampleTick
+                        0x2000'27e9    0x1  Data  Lc  AnyID_CS1110_SysCfg.o [1]
+Sys_GPBTask::sampleWitgh
+                        0x2000'27cc    0x4  Data  Lc  AnyID_CS1110_SysCfg.o [1]
+Sys_Init                 0x800'b6c9   0xa0  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_KeyTask              0x800'b99b   0xdc  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_KeyTask::k          0x2000'27e8    0x1  Data  Lc  AnyID_CS1110_SysCfg.o [1]
+Sys_LcmTask              0x800'c007  0x13a  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_LedTask              0x800'b769  0x232  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_LedTask{1}{2}::ledTimers
+                        0x2000'27c8    0x4  Data  Lc  AnyID_CS1110_SysCfg.o [1]
+Sys_ReaderTask           0x800'c1a3  0x6fc  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_ReaderTask::offLink
+                        0x2000'27ec    0x1  Data  Lc  AnyID_CS1110_SysCfg.o [1]
+Sys_ReaderTask::sampleTick
+                        0x2000'27ea    0x1  Data  Lc  AnyID_CS1110_SysCfg.o [1]
+Sys_ReaderTask::upLink  0x2000'27eb    0x1  Data  Lc  AnyID_CS1110_SysCfg.o [1]
+Sys_ReaderTask{1}{38}{39}{40}::id
+                        0x2000'00cc    0x2  Data  Lc  AnyID_CS1110_SysCfg.o [1]
+Sys_RfidTask             0x800'bd4f   0xfc  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_SoundTask            0x800'ba77   0xf4  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_TestTask             0x800'c1a1    0x2  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+Sys_UartTask             0x800'be4b  0x1bc  Code  Gb  AnyID_CS1110_SysCfg.o [1]
+SystemInit               0x800'e241   0x3c  Code  Gb  system_stm32f10x.o [1]
+UART4_IRQHandler         0x800'de69   0x36  Code  Gb  stm32f10x_it.o [1]
+UART5_IRQHandler         0x800'dfd7   0x42  Code  Gb  stm32f10x_it.o [1]
+UART_PORT_POE            0x800'e640    0x8  Data  Gb  AnyID_CS1110_Uart_HL.o [1]
+UART_PORT_RX             0x800'e638    0x8  Data  Gb  AnyID_CS1110_Uart_HL.o [1]
+UART_PORT_TX             0x800'e630    0x8  Data  Gb  AnyID_CS1110_Uart_HL.o [1]
+USART1_IRQHandler        0x800'df17   0x3a  Code  Gb  stm32f10x_it.o [1]
+USART2_IRQHandler        0x800'de9f   0x3a  Code  Gb  stm32f10x_it.o [1]
+USART3_IRQHandler        0x800'df97   0x40  Code  Gb  stm32f10x_it.o [1]
+USART_ClearFlag          0x800'aa67   0x10  Code  Gb  stm32f10x_usart.o [1]
+USART_ClearITPendingBit
+                         0x800'aae1   0x26  Code  Gb  stm32f10x_usart.o [1]
+USART_Cmd                0x800'a9a5   0x1e  Code  Gb  stm32f10x_usart.o [1]
+USART_DMACmd             0x800'aa33   0x18  Code  Gb  stm32f10x_usart.o [1]
+USART_DeInit             0x800'a829   0x90  Code  Gb  stm32f10x_usart.o [1]
+USART_GetFlagStatus      0x800'aa4b   0x1c  Code  Gb  stm32f10x_usart.o [1]
+USART_GetITStatus        0x800'aa77   0x6a  Code  Gb  stm32f10x_usart.o [1]
+USART_ITConfig           0x800'a9c3   0x70  Code  Gb  stm32f10x_usart.o [1]
+USART_Init               0x800'a8b9   0xd6  Code  Gb  stm32f10x_usart.o [1]
+Uart_ConfigInt           0x800'd8e1   0x22  Code  Gb  AnyID_CS1110_Uart_HL.o [1]
+Uart_EnableInt           0x800'd903   0x30  Code  Gb  AnyID_CS1110_Uart_HL.o [1]
+Uart_Init                0x800'd231   0x18  Code  Gb  AnyID_CS1110_Uart.o [1]
+Uart_InitInterface       0x800'd831   0xb0  Code  Gb  AnyID_CS1110_Uart_HL.o [1]
+Uart_ReceiveFrame        0x800'e0c1   0xea  Code  Gb  AnyID_Uart_Receive.o [1]
+Uart_WriteBuffer         0x800'd933   0x2c  Code  Gb  AnyID_CS1110_Uart_HL.o [1]
+UsageFault_Handler       0x800'de19    0x2  Code  Gb  stm32f10x_it.o [1]
+WDG_InitIWDG             0x800'ca9d   0x22  Code  Gb  AnyID_Cs1110_WDG_HL.o [1]
+_Encoding_8859_1_Mbrlen
+                         0x800'7895    0x2  Code  Gb  xencoding_8859_1.o [2]
+_Encoding_8859_1_Wctomb
+                         0x800'7883   0x12  Code  Gb  xencoding_8859_1.o [2]
+_LitobFull               0x800'8e9b  0x10a  Code  Lc  xprintffull.o [2]
+_Locale_lconv           0x2000'004c   0x38  Data  Lc  xlocale_c.o [2]
+_PrintfFull              0x800'7f89  0xcc4  Code  Gb  xprintffull.o [2]
+_PutcharsFull            0x800'900d   0x2e  Code  Lc  xprintffull.o [2]
+_PutstrFull              0x800'8ddb   0xc0  Code  Lc  xprintffull.o [2]
+_PuttxtFull              0x800'8ccf  0x10c  Code  Lc  xprintffull.o [2]
+_SProut                  0x800'7abb    0xa  Code  Gb  xsprout.o [2]
+__ICFEDIT_region_RAM_end__ {Abs}
+                        0x2000'bfff         Data  Gb  <internal module>
+__ICFEDIT_region_RAM_start__ {Abs}
+                        0x2000'0000         Data  Gb  <internal module>
+__NVIC_SetPriority       0x800'd27d   0x2c  Code  Lc  AnyID_CS1110_SysTick_HL.o [1]
+__aeabi_cdcmpeq          0x800'ad3d         Code  Gb  DblCmpEq.o [3]
+__aeabi_cdcmple          0x800'a311         Code  Gb  DblCmpLe.o [3]
+__aeabi_cdrcmple         0x800'a341         Code  Gb  DblCmpGe.o [3]
+__aeabi_d2iz             0x800'a4ad         Code  Gb  DblToS32.o [3]
+__aeabi_d2uiz            0x800'9fcd         Code  Gb  DblToU32.o [3]
+__aeabi_dadd             0x800'ad5d         Code  Gb  DblAdd.o [3]
+__aeabi_ddiv             0x800'9be1         Code  Gb  DblDiv.o [3]
+__aeabi_dmul             0x800'9e29         Code  Gb  DblMul.o [3]
+__aeabi_dsub             0x800'a50d         Code  Gb  DblSub.o [3]
+__aeabi_f2iz             0x800'7a91         Code  Gb  FltToS32.o [3]
+__aeabi_fdiv             0x800'78bd         Code  Gb  FltDiv.o [3]
+__aeabi_fmul             0x800'79b9         Code  Gb  FltMul.o [3]
+__aeabi_i2d              0x800'a4e9         Code  Gb  S32ToDbl.o [3]
+__aeabi_ldiv0            0x800'b255         Code  Gb  I64DivZer.o [4]
+__aeabi_memclr           0x800'4199         Code  Gb  ABImemclr.o [4]
+__aeabi_memcpy           0x800'77dd         Code  Gb  ABImemcpy.o [4]
+__aeabi_memcpy4          0x800'77fd         Code  Gb  ABImemcpy.o [4]
+__aeabi_memcpy8          0x800'77fd         Code  Gb  ABImemcpy.o [4]
+__aeabi_memset           0x800'4131         Code  Gb  ABImemset.o [4]
+__aeabi_ui2d             0x800'946d         Code  Gb  U32ToDbl.o [3]
+__aeabi_ui2f             0x800'78a1         Code  Gb  U32ToFlt.o [3]
+__aeabi_uldivmod         0x800'a5f9         Code  Gb  I64DivMod.o [4]
+__cmain                  0x800'e49d         Code  Gb  cmain.o [4]
+__exit                   0x800'b591   0x14  Code  Gb  exit.o [5]
+__iar_Exp64              0x800'aed9  0x320  Code  Gb  iar_Exp64.o [3]
+__iar_Fail_s             0x800'a209   0x1c  Code  Gb  xfail_s.o [2]
+__iar_Mbcurmax           0x800'a5ef    0xa  Code  Gb  xmbcurmax.o [2]
+__iar_Memchr             0x800'a249         Code  Gb  memchr.o [4]
+__iar_Memset             0x800'4131         Code  Gb  ABImemset.o [4]
+__iar_Memset_word        0x800'4139         Code  Gb  ABImemset.o [4]
+__iar_Strchr             0x800'a1f1         Code  Gb  strchr.o [4]
+__iar_dadd               0x800'a51d         Code  Gb  DblSub.o [3]
+__iar_data_init3         0x800'e3f5   0x28  Code  Gb  data_init.o [4]
+__iar_dsub               0x800'ad6d         Code  Gb  DblAdd.o [3]
+__iar_dsubStart          0x800'ad7f         Code  Gb  DblAdd.o [3]
+__iar_frexp              0x800'a2ad         Code  Gb  frexp.o [3]
+__iar_frexp64            0x800'a2a1         Code  Gb  frexp.o [3]
+__iar_frexpl             0x800'a2ad         Code  Gb  frexp.o [3]
+__iar_globLocale        0x2000'0084   0x48  Data  Lc  xlocale_c.o [2]
+__iar_global_Locale      0x800'a175    0x4  Code  Gb  xlocale_c.o [2]
+__iar_ldexp64            0x800'a371         Code  Gb  ldexp.o [3]
+__iar_lz77_init_single3
+                         0x800'e351   0x78  Code  Gb  lz77_init_single.o [4]
+__iar_pow64              0x800'9489  0x6d0  Code  Gb  pow64.o [3]
+__iar_pow_medium         0x800'9489  0x6d0  Code  Gb  pow64.o [3]
+__iar_pow_medium64       0x800'9489  0x6d0  Code  Gb  pow64.o [3]
+__iar_pow_mediuml        0x800'9489  0x6d0  Code  Gb  pow64.o [3]
+__iar_program_start      0x800'e575         Code  Gb  cstartup_M.o [4]
+__iar_scalbln64          0x800'a371         Code  Gb  ldexp.o [3]
+__iar_scalbn64           0x800'a371         Code  Gb  ldexp.o [3]
+__iar_zero_init3         0x800'7235   0x3a  Code  Gb  zero_init3.o [4]
+__low_level_init         0x800'e4bb    0x4  Code  Gb  low_level_init.o [2]
+__vector_table           0x800'4000         Data  Gb  startup_stm32f10x_hd.o [1]
+_call_main               0x800'e4a9         Code  Gb  cmain.o [4]
+_exit                    0x800'e4c5         Code  Gb  cexit.o [4]
+_gLocale_mblen           0x800'a1dd    0x4  Code  Gb  xlocale_c.o [2]
+_gLocale_mblenInt        0x800'a1a1   0x2c  Code  Gb  xlocale_c.o [2]
+_gLocale_wctomb          0x800'a1e1    0x4  Code  Gb  xlocale_c.o [2]
+_gLocale_wctombInt       0x800'a1d9    0x4  Code  Gb  xlocale_c.o [2]
+_main                    0x800'e4b7         Code  Gb  cmain.o [4]
+a_GetCrc                 0x800'7041   0x48  Code  Gb  AnyID_Stdlib.o [1]
+abort                    0x800'b24d    0x6  Code  Gb  abort.o [2]
+exit                     0x800'e4bf    0x4  Code  Gb  exit.o [2]
+frexp                    0x800'a2a1         Code  Gb  frexp.o [3]
+frexpl                   0x800'a2a1         Code  Gb  frexp.o [3]
+g_aReaderVersion        0x2000'0020    0x8  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_nBufTxt               0x2000'0000   0x20  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_nBufTxt1              0x2000'276c   0x20  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_nGpbDr                0x2000'27e0    0x2  Data  Gb  stm32f10x_it.o [1]
+g_nGpbSr                0x2000'27de    0x2  Data  Gb  stm32f10x_it.o [1]
+g_nLcmDr                0x2000'27e4    0x2  Data  Gb  stm32f10x_it.o [1]
+g_nLcmSr                0x2000'27e2    0x2  Data  Gb  stm32f10x_it.o [1]
+g_nReaderGpbState       0x2000'27e6    0x1  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_nSysBLed              0x2000'27c4    0x4  Data  Gb  AnyID_CS1110_SysCfg.o [1]
+g_nSysDelay             0x2000'27d4    0x4  Data  Gb  AnyID_CS1110_SysTick_HL.o [1]
+g_nSysGLed              0x2000'27c0    0x4  Data  Gb  AnyID_CS1110_SysCfg.o [1]
+g_nSysState             0x2000'0034    0x4  Data  Gb  AnyID_CS1110_SysCfg.o [1]
+g_nSysTick              0x2000'27d0    0x4  Data  Gb  AnyID_CS1110_SysTick_HL.o [1]
+g_nTempLink             0x2000'27e7    0x1  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_nTickLink             0x2000'27bc    0x4  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_sDeviceParamenter     0x2000'278c   0x18  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_sDeviceRspFrame       0x2000'00d0  0xa30  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_sDishTempInfo         0x2000'2618   0x48  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_sFlashData            0x2000'2660   0x3c  Data  Gb  AnyID_CS1110_FlashM25.o [1]
+g_sFramBootParams       0x2000'27a4    0x8  Data  Gb  AnyID_CS1110_FRam.o [1]
+g_sFramData             0x2000'2744   0x28  Data  Gb  AnyID_CS1110_FRam.o [1]
+g_sGpbInfo              0x2000'248c   0x80  Data  Gb  Anyid_CS1110_Wight.o [1]
+g_sKeyValue             0x2000'27ac    0x8  Data  Gb  Anyid_CS1110_Key.o [1]
+g_sLcmDishRcvFrame      0x2000'2578   0x50  Data  Gb  AnyID_CS1110_DishLcm.o [1]
+g_sLcmDishRcvTempFrame  0x2000'25c8   0x50  Data  Gb  AnyID_CS1110_DishLcm.o [1]
+g_sLcmDishTxFrame       0x2000'2384  0x108  Data  Gb  AnyID_CS1110_DishLcm.o [1]
+g_sLcmInfo              0x2000'27dc    0x2  Data  Gb  AnyID_CS1110_DishLcm.o [1]
+g_sRaderInfo            0x2000'250c   0x6c  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_sReaderLedInfo        0x2000'27b4    0x8  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_sReaderOffLineInfo    0x2000'269c   0x3c  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_sReaderRfidTempInfo   0x2000'0b00  0x81c  Data  Gb  Anyid_CS1110_Reader.o [1]
+g_sRfidInfo             0x2000'131c  0x438  Data  Gb  Anyid_Cs1110_Rfid.o [1]
+g_sRfidRcvTempFrame     0x2000'1b64  0x410  Data  Gb  AnyID_CS1110_Uart.o [1]
+g_sRtcTime              0x2000'0028    0xc  Data  Gb  AnyID_CS1110_RTC.o [1]
+g_sSoundInfo            0x2000'26d8   0x38  Data  Gb  Anyid_CS1110_Sound.o [1]
+g_sUartRcvFrame         0x2000'1f74  0x410  Data  Gb  AnyID_Uart_Receive.o [1]
+g_sUartRcvTempFrame     0x2000'1754  0x410  Data  Gb  AnyID_CS1110_Uart.o [1]
+ldexp                    0x800'a371         Code  Gb  ldexp.o [3]
+ldexpl                   0x800'a371         Code  Gb  ldexp.o [3]
+lnbias                   0x800'd9f0  0x420  Data  Lc  pow64.o [3]
+localeconv               0x800'a1e5    0x4  Code  Gb  xlocale_c.o [2]
+main                     0x800'e3c9   0x2c  Code  Gb  main.o [1]
+memchr                   0x800'a249         Code  Gb  memchr.o [4]
+memcmp                   0x800'7cf9         Code  Gb  memcmp.o [4]
+pow                      0x800'9489  0x6d0  Code  Gb  pow64.o [3]
+powl                     0x800'9489  0x6d0  Code  Gb  pow64.o [3]
+scalbln                  0x800'a371         Code  Gb  ldexp.o [3]
+scalblnl                 0x800'a371         Code  Gb  ldexp.o [3]
+scalbn                   0x800'a371         Code  Gb  ldexp.o [3]
+scalbnl                  0x800'a371         Code  Gb  ldexp.o [3]
+scale                    0x800'8fa5   0x46  Code  Lc  xprintffull.o [2]
+sec_hand                0x2000'27d8    0x4  Data  Lc  xfail_s.o [2]
+sprintf                  0x800'7271   0x40  Code  Gb  sprintf.o [2]
+strchr                   0x800'a1f1         Code  Gb  strchr.o [4]
+strlen                   0x800'930d         Code  Gb  strlen.o [4]
+
+
+[1] = E:\AnyID\Git\YY\CS1110\CS1110\Build\Obj
+[2] = dl7M_tlf.a
+[3] = m7M_tl.a
+[4] = rt7M_tl.a
+[5] = shb_l.a
+
+  37'491 bytes of readonly  code memory
+   1'663 bytes of readonly  data memory (+ 50 absolute)
+  12'267 bytes of readwrite data memory
+
+Errors: none
+Warnings: none
