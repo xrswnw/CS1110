@@ -1,12 +1,12 @@
 ###############################################################################
 #
-# IAR ELF Linker V8.40.1.212/W32 for ARM                  16/Jun/2023  10:52:30
+# IAR ELF Linker V8.40.1.212/W32 for ARM                  25/Jun/2023  18:36:24
 # Copyright 2007-2019 IAR Systems AB.
 #
 #    Output file  =  E:\AnyID\Git\YY\CS1110\Boot\CS1110\Build\Exe\Boot.out
 #    Map file     =  E:\AnyID\Git\YY\CS1110\Boot\CS1110\Build\List\Boot.map
 #    Command line =
-#        -f C:\Users\Administrator\AppData\Local\Temp\EW45E0.tmp
+#        -f C:\Users\Administrator\AppData\Local\Temp\EW1984.tmp
 #        (E:\AnyID\Git\YY\CS1110\Boot\CS1110\Build\Obj\AnyID_Boot_FRam.o
 #        E:\AnyID\Git\YY\CS1110\Boot\CS1110\Build\Obj\AnyID_Boot_FRam_HL.o
 #        E:\AnyID\Git\YY\CS1110\Boot\CS1110\Build\Obj\AnyID_Boot_SysCfg.o
@@ -327,7 +327,7 @@ Fram_WriteBootParamenter
                          0x800'10a1   0x5a  Code  Gb  AnyID_Boot_FRam.o [1]
 GPIO_Init                0x800'0bfd   0xea  Code  Gb  stm32f10x_gpio.o [1]
 GPIO_PinRemapConfig      0x800'0cef   0x84  Code  Gb  stm32f10x_gpio.o [1]
-GPIO_ResetBits           0x800'0ce7    0x8  Code  Gb  stm32f10x_gpio.o [1]
+GPIO_SetBits             0x800'0ce7    0x8  Code  Gb  stm32f10x_gpio.o [1]
 HardFault_Handler        0x800'21b7    0x2  Code  Gb  stm32f10x_it.o [1]
 JumpAddress             0x2000'1b4c    0x4  Data  Gb  AnyID_Boot_SysCfg.o [1]
 Jump_To_Application     0x2000'1b48    0x4  Data  Gb  AnyID_Boot_SysCfg.o [1]

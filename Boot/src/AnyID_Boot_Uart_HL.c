@@ -13,16 +13,15 @@ void Uart_InitInterface(u32 baudrate)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
+    GPIO_InitStructure.GPIO_Pin = UART_PORT_POE.Pin;
+    GPIO_Init(UART_PORT_POE.Port, &GPIO_InitStructure);
+    GPIO_SetBits(UART_PORT_POE.Port, UART_PORT_POE.Pin);
     USART_DeInit(UART_PORT);
 
     GPIO_InitStructure.GPIO_Pin = UART_PORT_TX.Pin;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(UART_PORT_TX.Port, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin = UART_PORT_POE.Pin;
-    GPIO_Init(UART_PORT_POE.Port, &GPIO_InitStructure);
-    GPIO_ResetBits(UART_PORT_POE.Port, UART_PORT_POE.Pin);
 
     GPIO_InitStructure.GPIO_Pin = UART_PORT_RX.Pin;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;

@@ -140,6 +140,14 @@
 
 #define LCM_TXT_ADDR_LINK_INFO_COLOR     0x2320
 
+
+
+
+#define LCM_TXT_TEST_LEN                 8
+#define LCM_TXT_TEST_BUTTON_LEN          3
+#define LCM_TXT_OFFSET_NULL              0
+
+#define LCM_TXT_SUCCES_FULL              10000
 //Õº∆¨±‰¡øœ‘ æ
 #define LCM_ICO_ADDR_LOGO                0x3010
 #define LCM_ICO_ADDR_GROUND              0x3020

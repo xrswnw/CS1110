@@ -40,6 +40,9 @@
 #define SOUND_VOC_OFF_LINE              0x0004
 #define SOUND_VOC_PUT_OVER              0xFFFF
 
+#define SOUND_TEST_FLAG_DISABLE         0x0000
+#define SOUND_TEST_FLAG_ENABLE          0x0001
+
 #define SOUND_VOC_STOP_TIM              800
 #define Sound_IsRcvFrame(rcvFrame)               ((rcvFrame).state == SOUND_STAT_RCV || (rcvFrame).state == SOUND_STAT_OVR)
 #define Sound_ResetFrame(rcvFrame)               do{(rcvFrame).state = SOUND_STAT_IDLE ; (rcvFrame).repeat =0;}while(0)
@@ -67,6 +70,7 @@ typedef struct soundInfo{
     u8 flag;
     u8 repeat;
     u8 index;
+    u16 testFlag;
     u32 tick; 
     SOUND_TX_BUF txBuf;
     SOUND_RX_BUF rxBuf;

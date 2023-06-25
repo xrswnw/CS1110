@@ -77,7 +77,7 @@ void Rfid_Delayms(u32 n)
 void Rfid_WriteBuffer(u8 *pFrame, u16 len)
 {
     u16 i = 0;
-	Rfid_EnableTx();
+    Rfid_EnableTx();
     for(i = 0; i < len; i++)
     {
         (RFID_PORT)->DR = (pFrame[i] & (u16)0x01FF);

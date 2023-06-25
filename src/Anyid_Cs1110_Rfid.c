@@ -122,8 +122,9 @@ u8 Rfid_Format_GetUid(u8 cmd,  RFID_INFO *pOpResult)
 }
 
 
-void Rfid_TransmitCmd()
+void Rfid_TransmitCmd(u32 tick)
 {
+    g_sRfidInfo.tick = tick;
     g_sRfidInfo.len = Rfid_Format_GetUid(RFID_GET_UID, &g_sRfidInfo);
     Rfid_WriteBuffer(g_sRfidInfo.buffer, g_sRfidInfo.len);
 }

@@ -2,7 +2,8 @@
 
 GPB_INFO g_sGpbInfo = {0};
 GPB_RX_BUF g_sGpbTempRcv = {0};
-
+WIGHT_INFO g_sWigthInfo = {0};
+WIGHT_INFO g_sWightTempInfo = {0};
 void GPB_Init()
 {	
     GPB_InitInterface(GPB_BAUDRARE);
@@ -180,21 +181,31 @@ void GPB_ChgValue(u32 value, char *buf)
     }
     else if( 100000 <= tempValue < 1000000)
     {
-        sprintf(buf, "%d%d%d.%d%d%dKg", (value & 0x000FFFFF) / 100000, (value & 0x000FFFFF) / 1000, (value & 0x000FFFFF) / 1000, ((value & 0x000FFFFF) % 1000) / 100, ((value & 0x000FFFFF) % 100) / 10, ((value & 0x000FFFFF) % 100) % 10); 
+        sprintf(buf, "%d%d%d.%d%d%dkg", (value & 0x000FFFFF) / 100000, (value & 0x000FFFFF) / 1000, (value & 0x000FFFFF) / 1000, ((value & 0x000FFFFF) % 1000) / 100, ((value & 0x000FFFFF) % 100) / 10, ((value & 0x000FFFFF) % 100) % 10); 
     }
 }
 
 
-u32 GPB_GetWightValue(u32 sampleValue)
+
+
+void Witgh_CalAvg(WIGHT_INFO *pInfo, u32 value)
 {
-    u32 value;
-    u32 temp = 0;
-    temp = (sampleValue & 0x00F00000) >> 20;
-    value = ((sampleValue & 0x000FFFFF) / pow(10,temp)) * 1000;
-    if(sampleValue & 0x10000000)
+    //16´°¿ÚÆ½»¬ÂË²¨
+    pInfo->index++;
+    pInfo->sum -= pInfo->buffer[pInfo->index & 0x0F];
+    if(pInfo->index == 0)
     {
-      value = -value;
+        pInfo->index = GPB_SAMPLE_NUM;
     }
-    return value;
+    pInfo->buffer[pInfo->index & 0x0F] = value;
+    pInfo->sum += value;
+    if(pInfo->index >= GPB_SAMPLE_NUM)
+    {
+        pInfo->avg = pInfo->sum >> 4;
+    }
+    else
+    {
+        pInfo->avg = pInfo->sum / pInfo->index;
+    }
 }
 

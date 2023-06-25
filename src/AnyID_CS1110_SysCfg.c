@@ -113,9 +113,9 @@ void Sys_CfgNVIC(void)
 }
 
 
-const PORT_INF SYS_LED_RED   = {GPIOC, GPIO_Pin_0};
+const PORT_INF SYS_LED_RED   = {GPIOC, GPIO_Pin_2};
 const PORT_INF SYS_LED_BLUE  = {GPIOC, GPIO_Pin_1};
-const PORT_INF SYS_LED_GREEN = {GPIOC, GPIO_Pin_2};
+const PORT_INF SYS_LED_GREEN = {GPIOC, GPIO_Pin_0};
 
 void Sys_CtrlIOInit(void)
 {
@@ -150,29 +150,32 @@ void Sys_Init(void)
     WDG_InitIWDG();
 #endif
     
-
-
     Sys_LedRedOn();
+    Sys_Delayms(500); 
+#if SYS_ENABLE_WDT
+    WDG_FeedIWDog();
+#endif
     Sys_LedGreenOn();
+    Sys_Delayms(500); 
+#if SYS_ENABLE_WDT
+    WDG_FeedIWDog();
+#endif
     Sys_LedBlueOn();
+    Sys_Delayms(500); 
+#if SYS_ENABLE_WDT
+    WDG_FeedIWDog();
+#endif
     FRam_InitInterface();
     Flash_InitInterface();
     Flash_Init();
 
     Reader_WriteOffLineDataNum();
     Reader_ReadOffLineDataNum();
-    Fram_Demo();
     
-
     Rfid_Init();
     Lcm_Init();
-#if SYS_ENABLE_WDT
-    WDG_FeedIWDog();
-#endif
     
     Sys_Delayms(500);                           //LCD初始化时间，暂定
-    
-    
 #if SYS_ENABLE_WDT
     WDG_FeedIWDog();
 #endif
@@ -180,30 +183,16 @@ void Sys_Init(void)
     Reader_Init();
     Sound_Init();
     GPB_Init();
-
-    Uart_Init();
-    
-    Flash_Demo();
-    //SysTick 初始化 5ms
-
-    /*
-    Reader_ReadOffLineDatas((0 * FRAM_OFFLINE_DATA) + FRAM_OFF_LINE_ADDR, FRAM_OFFLINE_DATA_LEN, g_sFramData.pBuffer);
-    Reader_ReadOffLineDatas((1 * FRAM_OFFLINE_DATA) + FRAM_OFF_LINE_ADDR, FRAM_OFFLINE_DATA_LEN, g_sFramData.pBuffer);
-    Reader_ReadOffLineDatas((2 * FRAM_OFFLINE_DATA) + FRAM_OFF_LINE_ADDR, FRAM_OFFLINE_DATA_LEN, g_sFramData.pBuffer);
-    */  
     Sys_LedRedOff();
+    
+    Uart_Init();
     Sys_LedGreenOff();
     Sys_LedBlueOff();
+   
     STick_InitSysTick();
-    
-    Reader_DisplayIp(&g_sDeviceParamenter);
-    
-    
-    Sys_EnableInt();
-    
 
-    
-    
+    Reader_DisplayIp(&g_sDeviceParamenter);
+    Sys_EnableInt();
 }
 
 void Sys_LedTask(void)
@@ -214,90 +203,58 @@ void Sys_LedTask(void)
         ledTimers++;
         a_ClearStateBit(g_nSysState, SYS_STAT_RUNLED);
         
-        if(a_CheckStateBit(g_sGpbInfo.mode, GPB_WORK_SET_ZERO))
+        if(a_CheckStateBit(g_nSysState, SYS_STAT_GPB_FAIL) || a_CheckStateBit(g_nSysState, SYS_STAT_RFID_FAIL) || a_CheckStateBit(g_nSysState, SYS_STAT_LINE_OFF))
         {
-            a_ClearStateBit(g_nSysState, GPB_WORK_SET_ZERO);
-            Sys_LedBlueOn();
-        }
-        else
-        {
-            Sys_LedBlueOff();
-        }
-        
-   
-        
-        if(a_CheckStateBit(g_nSysState, SYS_STAT_GPB_FAIL))
-        {
-             a_ClearStateBit(g_nSysState, SYS_STAT_GPB_FAIL);
-            if(ledTimers & 0x04)
-            {
-               Sys_LedBlueOn();
-            }
-            else 
-            {
-                Sys_LedBlueOff();
-            }
-        }
-        else
-        {
-            Sys_LedBlueOff();
-        }
-        
-        if(a_CheckStateBit(g_nSysState, SYS_STAT_RFID_KEEP))
-        {
-            Sys_LedRedOn();
-        }
-        else
-        {
-             Sys_LedRedOff();
-        }
-        
-        if(ledTimers & 0x0A)               
-        {
-            
-            if(a_CheckStateBit(g_nSysState, SYS_STAT_PUT_TAG)) 
-            {
-                g_nSysGLed = g_nSysTick;
-                if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
-                {
-                    g_sSoundInfo.state = SOUND_STAT_TX; 
-                }
-                 
-                a_ClearStateBit(g_nSysState, SYS_STAT_PUT_TAG);//
-                a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
-            }
-            if(a_CheckStateBit(g_nSysState, SYS_STAT_BIND_TAG)) 
-            {
-                g_nSysBLed = g_nSysTick;
-                if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
-                {
-                    g_sSoundInfo.state = SOUND_STAT_TX; 
-                } 
-                a_ClearStateBit(g_nSysState, SYS_STAT_BIND_TAG);//
-                a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_B_LED_DELAY);
-            }
-            
-            if(a_CheckStateBit(g_nSysState, SYS_STAT_OVER_OFFLINE)) 
-            {
-                g_nSysBLed = g_nSysTick;
-                if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
-                {
-                    g_sSoundInfo.state = SOUND_STAT_TX; 
-                } 
-                a_ClearStateBit(g_nSysState, SYS_STAT_OVER_OFFLINE);//
-                a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_G_LED_DELAY);
-            }
-            
-            if(a_CheckStateBit(g_nSysState, SYS_STAT_LINE_OFF | SYS_STAT_CLASH_TAG)) 
-            {
-                if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
-                {
-                    g_sSoundInfo.state = SOUND_STAT_TX; 
-                } 
-                a_ClearStateBit(g_nSysState, SYS_STAT_LINE_OFF | SYS_STAT_CLASH_TAG);//
-            }
+
+             Sys_LedRedOn();
 
         }
+        else
+        {
+            Sys_LedRedOff();
+        } 
+        if(a_CheckStateBit(g_nSysState, SYS_STAT_READER_MARK_OK))
+        {
+             Sys_LedGreenOn();
+        }
+        else
+        {
+            Sys_LedGreenOff();
+        } 
+        
+
+            
+        if(a_CheckStateBit(g_nSysState, SYS_STAT_PUT_TAG)) 
+        {
+            g_nSysGLed = g_nSysTick;
+            if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
+            {
+                g_sSoundInfo.state = SOUND_STAT_TX; 
+            }
+            a_ClearStateBit(g_nSysState, SYS_STAT_PUT_TAG);
+            a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
+        }
+        if( a_CheckStateBit(g_nSysState, SYS_STAT_BIND_TAG)) 
+        {
+            g_nSysGLed = g_nSysTick;
+            if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
+            {
+            g_sSoundInfo.state = SOUND_STAT_TX; 
+            }
+            a_ClearStateBit(g_nSysState, SYS_STAT_BIND_TAG);
+            a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
+        }
+        if(a_CheckStateBit(g_nSysState, SYS_STAT_CLASH_TAG)) 
+        {
+            g_nSysGLed = g_nSysTick;
+            if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
+            {
+            g_sSoundInfo.state = SOUND_STAT_TX; 
+            }
+            a_ClearStateBit(g_nSysState, SYS_STAT_CLASH_TAG);
+            a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
+        }
+
         
         if(a_CheckStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY))
         {
@@ -312,42 +269,11 @@ void Sys_LedTask(void)
             if(g_nSysGLed + READER_LED_TIM < g_nSysTick)
             {
                 Sys_LedRedOff();
-                 a_ClearStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
+                a_ClearStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
                 
             }
         } 
-        if(a_CheckStateBit(g_sReaderLedInfo.state, SYS_STAT_B_LED_DELAY))
-        {
-            if(ledTimers & 0x01)
-            {
-                Sys_LedBlueOn();
-            }
-            else 
-            {
-                Sys_LedBlueOff();
-            }
-            if(g_nSysBLed + READER_LED_TIM < g_nSysTick)
-            {
-                Sys_LedBlueOff();
-                a_ClearStateBit(g_sReaderLedInfo.state, SYS_STAT_B_LED_DELAY);
-            }
-        }
-        if(a_CheckStateBit(g_sReaderLedInfo.state, SYS_STAT_G_LED_DELAY))
-        {
-            if(ledTimers & 0x01)
-            {
-                Sys_LedBlueOn();
-            }
-            else 
-            {
-                Sys_LedBlueOff();
-            }
-            if(g_nSysBLed + READER_LED_TIM < g_nSysTick)
-            {
-                Sys_LedBlueOff();
-                a_ClearStateBit(g_sReaderLedInfo.state, SYS_STAT_G_LED_DELAY);
-            }
-        }
+
     }
 }
 
@@ -369,7 +295,7 @@ void Sys_KeyTask()
             }
             else
             {
-                g_sKeyValue.value = 0x00;
+                g_sKeyValue.value = 0;
             }
         }
         else if(g_sKeyValue.state == KEY_STAT_SAMPLE)
@@ -382,7 +308,7 @@ void Sys_KeyTask()
                 }
                 else
                 {
-                    g_sKeyValue.value = 0x00;
+                    g_sKeyValue.value = 0;
                 }
                 g_sKeyValue.state =KEY_STAT_OK;
             }
@@ -486,8 +412,6 @@ void Sys_SoundTask()
     
 void Sys_GPBTask()
 {
-    static u8 sampleTick = 0;
-    static u32 sampleWitgh = 0;
     if(USART_GetFlagStatus(GPB_PORT, USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE))
     {
 	GPB_Stop();
@@ -511,27 +435,16 @@ void Sys_GPBTask()
         {
             if(GPB_CheckFrame(&g_sGpbInfo.rxBuf))
             { 
-                g_sGpbInfo.wightTemp =  (g_sGpbInfo.rxBuf.buffer[GPB_WIGHT_VALUE_POS] << 24)     |
-                                        (g_sGpbInfo.rxBuf.buffer[GPB_WIGHT_VALUE_POS + 1] << 16) |
-                                        (g_sGpbInfo.rxBuf.buffer[GPB_WIGHT_VALUE_POS + 2] <<  8) |
-                                        (g_sGpbInfo.rxBuf.buffer[GPB_WIGHT_VALUE_POS + 3] << 0)  ;
+                g_sGpbInfo.witghSmple = Gpb_GetValue(g_sGpbInfo.rxBuf.buffer) & 0x000FFFFF;
+                Witgh_CalAvg(&g_sWightTempInfo, Sound_GetValue(Gpb_GetValue(g_sGpbInfo.rxBuf.buffer)));
+                g_sGpbInfo.wightTemp = g_sWightTempInfo.avg;
+                g_sWightTempInfo.flag = Gpb_GetValue(g_sGpbInfo.rxBuf.buffer) & GPB_WITGH_MASK_VALUE;
                 if(!a_CheckStateBit(g_sReaderRfidTempInfo.state, RFID_TAG_KEEP))
                 {
-                    if((g_sGpbInfo.wightTemp - sampleWitgh <= 3) || (sampleWitgh - g_sGpbInfo.wightTemp <= 3))
-                    {
-                        sampleTick ++;
-                        sampleWitgh = g_sGpbInfo.wightTemp;
-                        if(sampleTick >= GPB_STAT_SAMPLE_NUM )
-                        {
-                            sampleTick = 0;
-                            g_sGpbInfo.wightValue = Sound_GetValue(sampleWitgh);
-                        }
-                    }
-                    else
-                    {
-                         sampleWitgh = g_sGpbInfo.wightTemp;
-                         sampleTick = 0;
-                    }
+                    Witgh_CalAvg(&g_sWigthInfo, Sound_GetValue(Gpb_GetValue(g_sGpbInfo.rxBuf.buffer)));
+                    g_sWigthInfo.flag = Gpb_GetValue(g_sGpbInfo.rxBuf.buffer) & GPB_WITGH_MASK_VALUE;
+                    g_sGpbInfo.wightValue = g_sWigthInfo.avg;
+                  
                 }
                 a_ClearStateBit(g_nSysState, SYS_STAT_GPB_FAIL); 
             }
@@ -581,28 +494,15 @@ void Sys_GPBTask()
     {
         g_sGpbInfo.repeat = 0; 
     }
+    
+    
+    
+    //Witgh_CalAvg(&g_sWigthInfo, Sound_GetValue(sampleWitgh));
 
 }
 
 void Sys_RfidTask()
 {
-  
-/*
-    if(a_CheckStateBit(g_nSysState, SYS_STAT_AUTO_RFID))
-    {   
-        a_ClearStateBit(g_nSysState, SYS_STAT_AUTO_RFID);
-        if(Reader_RfidGetValue(READER_RFID_READ_UID, &g_sReaderRfidTempInfo) == ISO15693_ERR_SUC)
-        {
-            a_SetStateBit(g_nSysState, SYS_STAT_RFID_KEEP);
-        }else
-        {
-            a_ClearStateBit(g_nSysState, SYS_STAT_RFID_KEEP);
-        }
-    }
-    */ 
-   
-
-    
     if(USART_GetFlagStatus(RFID_PORT, USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE))
     {
         USART_ClearFlag(RFID_PORT, USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE);
@@ -639,6 +539,8 @@ void Sys_RfidTask()
                         a_ClearStateBit(g_nSysState, SYS_STAT_RFID_KEEP);
                     }
                 }
+               a_ClearStateBit(g_nSysState, SYS_STAT_RFID_FAIL);
+               g_sRfidInfo.state = RFID_STAT_IDLE;
             }
         }
         Uart_ResetFrame(&g_sRfidRcvTempFrame);
@@ -646,10 +548,34 @@ void Sys_RfidTask()
     
     if((a_CheckStateBit(g_sRfidInfo.state, RFID_STAT_TX)))//
     {   
-        a_ClearStateBit(g_sRfidInfo.state, RFID_STAT_TX);
-        Rfid_TransmitCmd();   
+        g_sRfidInfo.state = RFID_STAT_WAIT;
+        Rfid_TransmitCmd(g_nSysTick);   
     }
  
+    if((a_CheckStateBit(g_sRfidInfo.state, RFID_STAT_WAIT)))//
+    {   
+        if(g_sRfidInfo.tick + 21 < g_nSysTick)
+        {
+            g_sRfidInfo.tick = g_nSysTick;
+            g_sRfidInfo.state = RFID_STAT_TX;
+            g_sRfidInfo.repat ++;
+            if(g_sRfidInfo.repat > 3)
+            {
+                g_sRfidInfo.repat = 0;
+                a_SetStateBit(g_nSysState, SYS_STAT_RFID_FAIL);
+            }
+            else
+            {
+                g_sRfidInfo.state = RFID_STAT_TX;
+            }
+        }
+    }
+    
+    //
+        
+    
+
+    
 }
 
 
@@ -694,7 +620,7 @@ void Sys_UartTask(void)
         Uart_ResetFrame(&g_sUartRcvTempFrame);
     }
     
-    if((a_CheckStateBit(g_nSysState, SYS_STAT_UARTTX)))//
+    if((a_CheckStateBit(g_nSysState, SYS_STAT_UARTTX)))
     {   
         a_ClearStateBit(g_nSysState, SYS_STAT_UARTTX);
         Uart_WriteBuffer(g_sDeviceRspFrame.buffer, g_sDeviceRspFrame.len);
@@ -705,7 +631,7 @@ void Sys_UartTask(void)
         }
     }
     
-    if((a_CheckStateBit(g_nSysState, SYS_STAT_UARTRX)))//
+    if((a_CheckStateBit(g_nSysState, SYS_STAT_UARTRX)))
     {   
         a_ClearStateBit(g_nSysState, SYS_STAT_UARTRX);
         Uart_WriteBuffer(g_sDeviceRspFrame.buffer, g_sDeviceRspFrame.len);
@@ -713,7 +639,7 @@ void Sys_UartTask(void)
 
     }
     
-    if((a_CheckStateBit(g_nSysState, SYS_STAT_UART_WAIT)))//
+    if((a_CheckStateBit(g_nSysState, SYS_STAT_UART_WAIT)))
     {   
         if(g_sDeviceRspFrame.tick + REDAER_UP_DATA_TICK < g_nSysTick) 
         {
@@ -861,8 +787,9 @@ void Sys_ReaderTask()
         if(a_CheckStateBit(g_sReaderRfidTempInfo.state, RFID_TAG_OUT) && (!a_CheckStateBit(g_nSysState, SYS_STAT_GPB_FAIL)))
         {
             memset(&g_sRaderInfo.personInfo, 0, sizeof(PERSON_INFO));
-            if((Lcm_ChkPage(LCM_PAGE_MAIN_WHITE) || Lcm_ChkPage(LCM_PAGE_INFO_WHITE)) )
+            if((Lcm_ChkPage(LCM_PAGE_MAIN_WHITE) || Lcm_ChkPage(LCM_PAGE_INFO_WHITE)))
             {
+                a_ClearStateBit(g_nSysState, SYS_STAT_READER_MARK_OK);
                 if(Lcm_ChkPage(LCM_PAGE_MAIN_WHITE))
                 {
                     if(!a_CheckStateBit(g_sReaderRfidTempInfo.state, RFID_TAG_KEEP))
@@ -870,9 +797,9 @@ void Sys_ReaderTask()
                         if(a_CheckStateBit(g_nSysState, SYS_STAT_MODE_NORMAL))
                         {
                              a_ClearStateBit(g_nSysState, SYS_STAT_MODE_NORMAL) ;
-                            if(!(Reader_GetWight(&g_sGpbInfo) & 0x10000000))                                                                    /*g_sGpbInfo.wightValue > Sound_GetValue(g_sGpbInfo.wightTemp)  && */
+                            if(((g_sGpbInfo.witghSmple - g_sGpbInfo.wightValue) & 0x80000000))                                                                   
                             {
-                                if(Reader_GetWight(&g_sGpbInfo) > g_sDeviceParamenter.scoWt)                                                           //未放托盘，但产生取用量
+                                if(g_sGpbInfo.wightValue - g_sGpbInfo.witghSmple > g_sDeviceParamenter.scoWt)                                                           //未放托盘，但产生取用量
                                 {
                                     sampleTick ++;
                                     if(sampleTick >= GPB_STAT_SAMPLE_NUM - 1)
@@ -916,63 +843,60 @@ void Sys_ReaderTask()
         {
             if(Lcm_ChkPage(LCM_PAGE_MAIN_WHITE))
             {
-                //if(g_sRaderInfo.personInfo.state == READER_RESFRAME_PERSON_OK)                        //获取用户信息
+                if(g_sDeviceParamenter.totalMode == READER_TOTAL_MODE_AIR)
                 {
-                    if(g_sDeviceParamenter.totalMode == READER_TOTAL_MODE_AIR)
-                    {
-
-                       Lcm_SetPage(LCM_FLAG_PAGE_INFO_CHG);
-                    }
-                    else if(g_sDeviceParamenter.totalMode == READER_TOTAL_MODE_AFTER)
-                    {
-                        Lcm_SetPage(LCM_FLAG_PAGE_INFO_CHG);
-                        a_ClearStateBit(g_nSysState, SYS_STAT_PUT_TAG);
-                    }
+                    Lcm_SetPage(LCM_FLAG_PAGE_INFO_CHG);
                 }
-                
+                else if(g_sDeviceParamenter.totalMode == READER_TOTAL_MODE_AFTER)
+                {
+                    Lcm_SetPage(LCM_FLAG_PAGE_INFO_CHG);
+                    a_ClearStateBit(g_nSysState, SYS_STAT_PUT_TAG);
+                }
             }
             else if(Lcm_ChkPage(LCM_PAGE_INFO_WHITE))
             {
-                if(g_sDeviceParamenter.totalMode == READER_TOTAL_MODE_AIR)
+                memset(g_nBufTxt,0, LCM_INFO_TXT_SIZE);
+                if(g_sDeviceParamenter.totalMode == READER_TOTAL_MODE_AIR && !a_CheckStateBit(g_nSysState, SYS_STAT_LINE_OFF))
                 {
-                  
                     if(g_sRaderInfo.personInfo.bind == READER_PERSON_BIND_FAIL)
                     {
                         Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_WARN);
                         g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
                         g_sSoundInfo.txBuf.data = SOUND_VOC_NO_BIND;
                         a_SetStateBit(g_nSysState, SYS_STAT_BIND_TAG);  
+                        a_ClearStateBit(g_nSysState, SYS_STAT_READER_MARK_OK);
                     }
                     else
                     {
                         a_ClearStateBit(g_nSysState, SYS_STAT_PUT_TAG);
-                    }
-                    if(g_sRaderInfo.personInfo.allergy == READER_PERSON_ALLERGY)
-                    {
-                        memset(g_nBufTxt,0, LCM_INFO_TXT_SIZE);
-                        memcpy(g_nBufTxt, "您对该菜品过敏", 14);
-                        Lcm_BackgroundCtr(LCM_BACKGROUND_STR_LDRAK, LCM_BACKGROUND_ADDR_INFO);
-                        Lcm_BackgroundCtr(LCM_BACKGROUND_STR_HDRAK, LCM_BACKGROUND_ADDR_ALLERGY);
-                        Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_ALLERGY);
-                        Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_ALLERGY_BACK);
-                        
-                    }
-                    else
-                    {
-                        Lcm_BackgroundCtr(LCM_BACKGROUND_STR_NORMAL, LCM_BACKGROUND_ADDR_INFO);
-                        Lcm_BackgroundCtr(LCM_BACKGROUND_STR_NORMAL, LCM_BACKGROUND_ADDR_ALLERGY);
-                        memset(g_nBufTxt,0, LCM_INFO_TXT_SIZE);
-                        Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_N, LCM_ICO_ADDR_ALLERGY);
-                        Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_N, LCM_ICO_ADDR_ALLERGY_BACK);
-                    }
+                         if(g_sRaderInfo.personInfo.allergy == READER_PERSON_ALLERGY)
+                        {
+                            memcpy(g_nBufTxt, "您对该菜品过敏", 14);
+                            Lcm_BackgroundCtr(LCM_BACKGROUND_STR_LDRAK, LCM_BACKGROUND_ADDR_INFO);
+                            Lcm_BackgroundCtr(LCM_BACKGROUND_STR_HDRAK, LCM_BACKGROUND_ADDR_ALLERGY);
+                            Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_ALLERGY);
+                            Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_ALLERGY_BACK);
+                            a_ClearStateBit(g_nSysState, SYS_STAT_READER_MARK_OK);
+                            
+                        }
+                        else
+                        {
+                            Lcm_BackgroundCtr(LCM_BACKGROUND_STR_NORMAL, LCM_BACKGROUND_ADDR_INFO);
+                            Lcm_BackgroundCtr(LCM_BACKGROUND_STR_NORMAL, LCM_BACKGROUND_ADDR_ALLERGY);
+                            Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_N, LCM_ICO_ADDR_ALLERGY);
+                            Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_N, LCM_ICO_ADDR_ALLERGY_BACK);
+                            a_SetStateBit(g_nSysState, SYS_STAT_READER_MARK_OK);
+                        }
+                    } 
                 }
-                else if(g_sDeviceParamenter.totalMode == READER_TOTAL_MODE_AFTER)
+                else //if(g_sDeviceParamenter.totalMode == READER_TOTAL_MODE_AFTER)
                 {
                     Lcm_BackgroundCtr(LCM_BACKGROUND_STR_NORMAL, LCM_BACKGROUND_ADDR_INFO);
                     Lcm_BackgroundCtr(LCM_BACKGROUND_STR_NORMAL, LCM_BACKGROUND_ADDR_ALLERGY);
                     memset(g_nBufTxt,0, LCM_INFO_TXT_SIZE);
                     Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_N, LCM_ICO_ADDR_ALLERGY);
                     Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_N, LCM_ICO_ADDR_ALLERGY_BACK);
+                    a_SetStateBit(g_nSysState, SYS_STAT_READER_MARK_OK);
             
                 }
             }
@@ -1002,16 +926,19 @@ void Sys_ReaderTask()
             }
             else if(g_nTempLink ==  READER_LINK_FAIL)
             {
-                memset(g_nBufTxt1,0, LCM_INFO_TXT_SIZE);
-                memcpy(g_nBufTxt1, "断开连接", 8);
-                Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_OFFLINE_BACK);
-                
                 if(g_nTickLink + READER_LINK_TIME * (READER_OFF_LINE_TICK + offLink) < g_nSysTick)
-                {
-                    offLink ++;
-                    g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
-                    g_sSoundInfo.txBuf.data = SOUND_VOC_OFF_LINE;
+                {               
+                    memset(g_nBufTxt1,0, LCM_INFO_TXT_SIZE);
+                    memcpy(g_nBufTxt1, "断开连接", 8);
+                    Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_OFFLINE_BACK);
                     a_SetStateBit(g_nSysState, SYS_STAT_LINE_OFF);
+                    if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
+                    {
+                        g_sSoundInfo.state = SOUND_STAT_TX; 
+                        g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
+                        g_sSoundInfo.txBuf.data = SOUND_VOC_OFF_LINE;
+                    }
+                    offLink ++; 
                 }
                 
             }
@@ -1026,10 +953,10 @@ void Sys_ReaderTask()
             a_ClearStateBit(g_nSysState, SYS_STAT_TEST);  
             u16 static id = SOUND_VOC_PUT_TAG;
             
-            Reader_DisplayTest(&g_sRaderInfo.dishInfo , &g_sGpbInfo);
+            Reader_DisplayTest(&g_sRaderInfo.dishInfo , &g_sWigthInfo);
             Reader_ChgTag(g_sReaderRfidTempInfo.state);
             
-            if(1)
+            if(g_sSoundInfo.testFlag == SOUND_TEST_FLAG_ENABLE)
             {   
                 g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
                 g_sSoundInfo.txBuf.data = id;
@@ -1039,8 +966,8 @@ void Sys_ReaderTask()
                     id++;
                     if(id == SOUND_VOC_OFF_LINE + 1)
                     {   
+                      g_sSoundInfo.testFlag = SOUND_TEST_FLAG_DISABLE; 
                       id = SOUND_VOC_PUT_TAG;
-
                     }
                 } 
             }
@@ -1130,6 +1057,7 @@ void Sys_ReaderTask()
                 }
             }
         }
+        a_ClearStateBit(g_nSysState, SYS_STAT_OVER_OFFLINE);
     }
     
     if(a_CheckStateBit(g_nTempLink, READER_LINK_FAIL))

@@ -120,12 +120,7 @@ void Sound_TransmitCmd(u8 cmd, u8 feedback,u16 data)
 u32 Sound_GetValue(u32 sampleValue)
 {
     u32 value;
-    u32 temp = 0;
-    temp = (sampleValue & 0x00F00000) >> 20;
-    value = ((sampleValue & 0x000FFFFF) / pow(10,temp)) * 1000;
-    if(sampleValue & 0x10000000)
-    {
-      value = -value;
-    }
+
+    value = (u32)(((sampleValue & 0x000FFFFF) / pow(10,(sampleValue & 0x00F00000) >> 20)) * 1000);
     return value;
 }

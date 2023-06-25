@@ -25,6 +25,7 @@
 #define RFID_FRAME_LEN              30
 typedef struct rfidInfo{
     u8 state;
+    u8 repat;
     u16 len;
     u8 buffer[RFID_FRAME_LEN];
     u32 tick;
@@ -34,6 +35,6 @@ extern RFID_INFO g_sRfidInfo;
 
 void Rfid_Init();
 u8 Rfid_Format_GetUid(u8 cmd,  RFID_INFO *pOpResult);
-void Rfid_TransmitCmd();
+void Rfid_TransmitCmd(u32 tick);
 void Rfid_ReceiveFrame(u8 byte, UART_RCVFRAME *pRcvFrame);
 #endif

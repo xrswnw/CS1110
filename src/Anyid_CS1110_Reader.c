@@ -1,6 +1,6 @@
 #include "AnyID_CS1110_Reader.h"
 
-const u8 READER_VERSION[READER_VERSION_SIZE]@0x08005000 = " CS1110 23061600 G230200";
+const u8 READER_VERSION[READER_VERSION_SIZE]@0x08005000 = " CS1110 23062500 G230200";
 
 DISH_INFO g_sDishTempInfo = {0};
 READER_DEVICE_PARAMETER g_sDeviceParamenter = {0};
@@ -112,7 +112,7 @@ BOOL Reader_ReadDeviceParamenter(void)                                         /
         g_sDeviceParamenter.ip[0] = 192;
         g_sDeviceParamenter.ip[1] = 168;
         g_sDeviceParamenter.ip[2] = 1;
-        g_sDeviceParamenter.ip[3] = 22;
+        g_sDeviceParamenter.ip[3] = 11;
         g_sDeviceParamenter.rfWorkMode = READER_RFID_READ_UID;
         g_sDeviceParamenter.totalMode = READER_TOTAL_MODE_AIR;
         g_sDeviceParamenter.uiMode = READER_UI_MODE_WHITE;
@@ -370,30 +370,34 @@ u8 Reader_RfidGetValue(u8 *pBuffer, READER_RFID_INFO *pRfidInfo)
     return state;
 }
 
-u8 Reader_DisplayTest(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo)                                                                  
+u8 Reader_DisplayTest(DISH_INFO *pDishInfo, WIGHT_INFO *witghInfo)                                                                  
 {
     char Buf[LCM_TXT_LEN_MAX] = ""; 
     u16 percentage = 0;
     u8 state = 0;
     
     percentage = ((float)g_sReaderRfidTempInfo.okTick / g_sReaderRfidTempInfo.tick )* 10000;
-
-    if(gpbInfo->wightTemp & 0x10000000)
+    
+    /*if(witghInfo->flag == GPB_WITGH_FLAG_MINUS)
     {
-        sprintf(Buf, "%dg", 0 - Sound_GetValue(g_sGpbInfo.wightTemp));
+        sprintf(Buf, "-%dg", witghInfo->avg);
     }
     else
+    {*/
+        sprintf(Buf, "%dg", witghInfo->avg); 
+   // }
+    if(percentage == 0xFFFF)
     {
-        sprintf(Buf, "%dg", Sound_GetValue(g_sGpbInfo.wightTemp)); 
+        percentage = LCM_TXT_SUCCES_FULL;
     }
      
-    Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_1, 8, Buf, LCM_DISH_TX_MODE_LEFT, 0);
+    Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_1, LCM_TXT_TEST_LEN, Buf, LCM_DISH_TX_MODE_LEFT, LCM_TXT_OFFSET_NULL);
     sprintf(Buf, "%d个", g_sReaderRfidTempInfo.num);   
-    Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_BUTTON_2, 3, Buf, LCM_DISH_TX_MODE_MID, 0);
+    Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_BUTTON_2, LCM_TXT_TEST_BUTTON_LEN, Buf, LCM_DISH_TX_MODE_MID, LCM_TXT_OFFSET_NULL);
     sprintf(Buf, "%d", g_sReaderRfidTempInfo.tick );    
-    Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_2, 6, Buf, LCM_DISH_TX_MODE_LEFT, 0);
+    Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_2, LCM_TXT_TEST_LEN, Buf, LCM_DISH_TX_MODE_LEFT, LCM_TXT_OFFSET_NULL);
     sprintf(Buf, "%d%d.%d%d%", percentage / 1000 ,(percentage % 1000) / 100, (percentage % 100) / 10, (percentage % 100) % 10 );
-    Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_3, 6, Buf, LCM_DISH_TX_MODE_LEFT, 0);
+    Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_3, LCM_TXT_TEST_LEN, Buf, LCM_DISH_TX_MODE_LEFT, LCM_TXT_OFFSET_NULL);
     
     
     return state;
@@ -404,33 +408,9 @@ u32 Reader_GetWight(GPB_INFO *gpbInfo)
 {
     u32 tempValue = 0;
 
-    u32 value = Sound_GetValue(g_sGpbInfo.wightTemp);
-    //tempValue =  g_sGpbInfo.wightValue - value;
-    
-    tempValue = g_sGpbInfo.wightValue - value;
-    /*
-    if((g_sGpbInfo.wightTemp & 0x10000000) && g_sDeviceParamenter.reWorkMode == READER_MODE_TEST )           
-    {
-        tempValue =  g_sGpbInfo.wightValue + value;
-    }
-    else
-    {
-        if(g_sGpbInfo.wightValue - value > 0)
-        {
-          tempValue =  g_sGpbInfo.wightValue - value;        
-        }
-        else
-        {
-          tempValue =  value - g_sGpbInfo.wightValue;
-        }
-     
-    }
-*/
-
-
+    tempValue = g_sWigthInfo.avg - g_sWightTempInfo.avg ;//g_sGpbInfo.wightTemp  - g_sGpbInfo.wightTemp;
+   //g_sWightTempInfo.avg - g_sWigthInfo.avg  
     return tempValue;
-    
-
 }
 
 void Reader_ChgTag(u8 stat)                                                                                               //测试模式RFID状态区分              
@@ -901,14 +881,14 @@ u8 Reader_Format_Cfg(u8 mode, READER_RSPFRAME *pOpResult, READER_DEVICE_PARAMETE
         pOpResult->buffer[pos++] = (pParameter->scoWt >> 16) & 0xFF;
         pOpResult->buffer[pos++] = (pParameter->scoWt >> 24) & 0xFF;
 
-        memcpy(pOpResult->buffer + pos, g_aReaderVersion, READER_VERSION_LEN);
+        memcpy(pOpResult->buffer + pos, (u8 *)&READER_VERSION + 8, READER_VERSION_LEN);
         pos += READER_VERSION_LEN; 
         pOpResult->buffer[pos++] = 0x00;                //配置标志，无用，暂留
         pOpResult->buffer[pos++] = UART_FRAME_PARAM_RFU;
     }
     else
     {   
-        memcpy(pOpResult->buffer + pos, g_aReaderVersion, READER_VERSION_LEN);
+        memcpy(pOpResult->buffer + pos, (u8 *)&READER_VERSION + 8, READER_VERSION_LEN);
         pos += READER_VERSION_LEN;
         pOpResult->buffer[pos++] = pOpResult->flag;
         pOpResult->buffer[pos++] = pOpResult->err;//错误类别，暂未设立
@@ -985,6 +965,7 @@ void Reader_ChgPage(LCM_INFO *pLcmInfo)
         if(pLcmInfo->flag == LCM_FLAG_PAGE_TEST &&  g_sDeviceParamenter.uiMode == READER_UI_MODE_BLACK)
         {
             Lcm_SelectPage(LCM_FLAG_PAGE_TEST);
+            g_sSoundInfo.testFlag = SOUND_TEST_FLAG_ENABLE;
         }
         else
         {
@@ -995,6 +976,10 @@ void Reader_ChgPage(LCM_INFO *pLcmInfo)
             else
             {
                 Lcm_SelectPage(pLcmInfo->page + g_sDeviceParamenter.uiMode);
+                if(pLcmInfo->page + g_sDeviceParamenter.uiMode == LCM_FLAG_PAGE_TEST)
+                {
+                    g_sSoundInfo.testFlag = SOUND_TEST_FLAG_ENABLE;
+                }
             }
            
         }
@@ -1010,7 +995,7 @@ void Reader_DisplayDish(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo, LCM_INFO *pLcmI
     u32 tempValue = 0;
     
     
-    tempValue = Reader_GetWight(&g_sGpbInfo);
+    tempValue =  Gpb_Get_Dish_WightValue();
     switch(pLcmInfo->page)
     {
         case LCM_PAGE_MAIN_WHITE:
@@ -1038,7 +1023,7 @@ void Reader_DisplayDish(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo, LCM_INFO *pLcmI
           break;        
         case LCM_PAGE_INFO_WHITE:
 
-            if( g_sRaderInfo.dishInfo.state == READER_DISH_INFO_CHG)
+            if(g_sRaderInfo.dishInfo.state == READER_DISH_INFO_CHG)
             {
                 Reader_DisplayLable(&g_sRaderInfo.dishInfo);
                 Lcm_DishWriteTxt(LCM_TXT_ADDR_NAME, NAME_NUM / 2, (char *)pDishInfo->dishName + 1, LCM_DISH_TX_MODE_LEFT, 0);
@@ -1060,7 +1045,7 @@ void Reader_DisplayDish(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo, LCM_INFO *pLcmI
             Lcm_DishWriteTxt(LCM_TXT_ADDR_ARRERGY, LCM_TIP_TXT_SIZE, g_nBufTxt, LCM_DISH_TX_MODE_MID, 0);
             Lcm_DishWriteTxt(LCM_TXT_ADDR_LINK_STATE, 8, g_nBufTxt1, LCM_DISH_TX_MODE_MID, 0);
 
-            if((g_sGpbInfo.wightValue >= Sound_GetValue(g_sGpbInfo.wightTemp)) && (Reader_GetWight(&g_sGpbInfo) >=  g_sDeviceParamenter.scoWt) && !g_nReaderGpbState)  
+            if((Reader_GetWight(&g_sGpbInfo) >=  g_sDeviceParamenter.scoWt) && !g_nReaderGpbState)  
             {
                 pDishInfo->peice = tempValue * (pDishInfo->unitPrice) / (pDishInfo->spec);
                 g_nReaderGpbState = TRUE;
@@ -1070,23 +1055,13 @@ void Reader_DisplayDish(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo, LCM_INFO *pLcmI
                 tempValue = Reader_GetWight(&g_sGpbInfo);
                 pDishInfo->peice = tempValue * (pDishInfo->unitPrice) / (pDishInfo->spec);
             }
-            else 
-            {        
-                tempValue = 0;
-                pDishInfo->peice = 0;
-            }
                         
-            if(tempValue & 0x80000000)
+            if(tempValue & 0x10000000)
             {        
                 tempValue = 0;
                 pDishInfo->peice = 0;
             }
                        
-            if(tempValue)
-            {
-                        
-                        
-            }
             sprintf(Buf, "%d", tempValue);  
             Lcm_DishWriteUniCodeTxt(LCM_TXT_ADDR_WIGHT, 5, Buf, LCM_DISH_TX_MODE_MID, 0);
             Reader_ChkMoney(pDishInfo->peice, Buf);

@@ -97,7 +97,7 @@
 
 //
 #define READER_LINK_TIME                25000                   //125s
-#define READER_OFF_LINE_TICK            5                       //暂定两个心跳后，测试
+#define READER_OFF_LINE_TICK            1                       //暂定两个心跳后，测试
 #define READER_PERSON_BIND_FAIL         0x00
 #define READER_PERSON_ALLERGY           0x01
 
@@ -121,13 +121,13 @@
 #define REDAER_UP_GPB_NUM               3
 
 
+#define REDAER_LED_TIM                  0x0A
 
 
 
 
 
-
-#define READER_LED_TIM                  200
+#define READER_LED_TIM                  50
 
 #define READER_OFFLINE_DATA_BOUNDARY    2
 typedef struct flashDevicePar{  
@@ -318,7 +318,7 @@ BOOL Reader_ReadDeviceParamenter(void);
 u8 Reader_RfidTask(u8 mode, PERSON_INFO *personInfo, READER_RFID_INFO *rfidInfo);
 u8 Reader_RfidGetValue(u8 *pBuffer, READER_RFID_INFO *pRfidInfo);
 u8 Device_ResponseFrame(u8 *pParam, u8 len, READER_RSPFRAME *pOpResult);
-u8 Reader_DisplayTest(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo);
+u8 Reader_DisplayTest(DISH_INFO *pDishInfo, WIGHT_INFO *witghInfo)  ;
 u8 Reader_Format_Meal(u8 type,u8 *puid, READER_RSPFRAME *pOpResult, u32 rtc, u32 witgh);
 u8 Reader_Format_Heart( READER_RSPFRAME *pOpResult, u32 rtc,u32 witgh);
 u8 Reader_Format_Cfg(u8 mode, READER_RSPFRAME *pOpResult, READER_DEVICE_PARAMETER *pParameter);

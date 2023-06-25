@@ -23,6 +23,8 @@ extern u32 g_nSysState;
 #define SYS_STAT_RFID_KEEP              0x00000800
 #define SYS_STAT_MODE_NORMAL            0x00001000
 #define SYS_STAT_MODE_TEST              0x00020000
+#define SYS_STAT_RFID_FAIL              0x00040000
+#define SYS_STAT_READER_MARK_OK         0x00080000
 
 #define SYS_STAT_G_LED_DELAY            0x10000000
 #define SYS_STAT_B_LED_DELAY            0x20000000

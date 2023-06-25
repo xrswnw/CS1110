@@ -33,7 +33,10 @@
 #define GPB_WIGHT_VALUE_FAIL      	0x00
 #define GPBWIGHT_VALUE_NUM		3
 
+#define GPB_WITGH_MASK_VALUE            0x10000000
 
+#define GPB_WITGH_FLAG_PLUS             0
+#define GPB_WITGH_FLAG_MINUS            0x10000000
 #define GPB_WIGHT_VALUE_POS             0x03
 #define GPB_BUFFER_MAX_LEN             (256 + 32) 
 
@@ -43,11 +46,36 @@
 #define GPB_STAT_OPEN_SAMPLE            0x01
 #define GPB_STAT_STOP_SAMPLE            0x02
 
+#define GPB_SAMPLE_NUM                  16
+typedef struct wightInfo{
+    u32 flag;
+    u32 sum;
+    u32 avg;
+    u32 index;
+    u32 buffer[GPB_SAMPLE_NUM];
+    u32 alarmTick;
+}WIGHT_INFO;
+
+
+extern WIGHT_INFO g_sWightTempInfo;
+extern WIGHT_INFO g_sWigthInfo;
 
 #define GPB_STAT_SAMPLE_NUM             3
 #define Gpb_IsRcvFrame(rcvFrame)               ((rcvFrame).state == GPB_STAT_RCV || (rcvFrame).state == GPB_STAT_OVR)
 #define Gpb_ResetFrame(rcvFrame)               do{(rcvFrame).state = GPB_STAT_IDLE; rcvFrame.repeat=0;}while(0)
 
+#define Gpb_GetValue(p)                 ({\
+                                             u32 value;\
+                                             value = (*(p + GPB_WIGHT_VALUE_POS + 0) << 24) | (*(p + GPB_WIGHT_VALUE_POS + 1) << 16) | (*(p + GPB_WIGHT_VALUE_POS + 2) << 8) | (*(p + GPB_WIGHT_VALUE_POS + 3) << 0);\
+                                             (value);\
+                                         })\
+
+#define Gpb_Get_Dish_WightValue()       ({\
+                                            u32 value;\
+                                            value = g_sGpbInfo.wightValue - g_sGpbInfo.wightTemp;\
+                                            (value);\
+                                        })\
+                                           
 typedef struct wihgtTxBuf{
     u8 cmd;
     u16 regAdd;
@@ -77,7 +105,7 @@ typedef struct wihgtInfo{
     u8 index;
     u8 num;
     u8 mode;
-    u8 witghSmple;
+    u32 witghSmple;
     u32 wightValue;
     u32 wightTemp;
     u32 tick; 
@@ -99,6 +127,6 @@ u8 GPB_GetValue(GPB_INFO *pBuffer);
 u8 GPB_FormatFrame(u8 cmd,u16 regAdd,u16 regNum,u8 *pFrame);
 u16 GPB_GetCrc16(u8 *pBuffer, u8 len);
 u32 GPB_GetWightValue(u32 sampleValue);
-
+void Witgh_CalAvg(WIGHT_INFO *pInfo, u32 value);
 
 #endif
