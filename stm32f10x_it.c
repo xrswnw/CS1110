@@ -136,22 +136,14 @@ void SysTick_Handler(void)
 {
     g_nSysTick ++;
   //心跳时钟调整，设置5ms心跳     
-  /* 
-    if((g_nSysTick % 4) == 0)
-    {
-       a_SetStateBit(g_sGpbInfo.state, GPB_STAT_TX);     
-    }
-   */
+
     if((g_nSysTick % 11) == 0)
     {
-        a_SetStateBit(g_nSysState, SYS_STAT_KEY | SYS_STAT_TEST | SYS_STAT_RUNLED | SYS_STAT_LCM_FRESH | SYS_STAT_AUTO_RFID | SYS_STAT_CHK_LINK | SYS_STAT_CHK_UPDATA | SYS_STAT_MODE_NORMAL);
-        a_SetStateBit(g_sGpbInfo.state, GPB_STAT_TX);
+        a_SetStateBit(g_nSysState, SYS_STAT_TEST | SYS_STAT_RUNLED | SYS_STAT_AUTO_TIME );
+
     }
     
-    if((g_nSysTick % 21) == 0)
-    {
-         a_SetStateBit(g_sRfidInfo.state, RFID_STAT_TX);
-    }
+
 
   
 }

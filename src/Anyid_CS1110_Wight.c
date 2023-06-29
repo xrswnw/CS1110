@@ -109,7 +109,7 @@ BOOL GPB_CheckFrame(GPB_RX_BUF *pRcvFrame)
 
 void GPB_TransmitCmd(GPB_TX_BUF *pBuffer)
 {	
-    g_sGpbInfo.state =GPB_STAT_IDLE;
+
     g_sGpbInfo.txBuf.cmd = GPB_MODBUS_READ_REG;
     g_sGpbInfo.txBuf.regAdd = GPB_REG_ADDR_WGT;
     g_sGpbInfo.txBuf.regNum = 0x0002;
@@ -206,6 +206,11 @@ void Witgh_CalAvg(WIGHT_INFO *pInfo, u32 value)
     else
     {
         pInfo->avg = pInfo->sum / pInfo->index;
+    }
+    
+    if(pInfo->index > 0xFFFFFFFE)
+    {
+        pInfo->index = 0;
     }
 }
 

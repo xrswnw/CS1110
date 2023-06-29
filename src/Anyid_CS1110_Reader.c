@@ -1,8 +1,11 @@
 #include "AnyID_CS1110_Reader.h"
 
-const u8 READER_VERSION[READER_VERSION_SIZE]@0x08005000 = " CS1110 23062500 G230200";
+const u8 READER_VERSION[READER_VERSION_SIZE]@0x08005000 = " CS1110 23062901 G230200";
+
+u32 g_nReaderState = READER_STAT_IDLE;
 
 DISH_INFO g_sDishTempInfo = {0};
+READER_DTUINFO g_sReaderDtuInfo ={0};
 READER_DEVICE_PARAMETER g_sDeviceParamenter = {0};
 READER_INFO g_sRaderInfo ={0};
 READER_RFID_INFO g_sReaderRfidTempInfo= {0};
@@ -10,16 +13,18 @@ READER_RSPFRAME g_sDeviceRspFrame = {0};
 READER_IMPARAMS g_sReaderImParams = {0};
 READER_OFFLINE_INFO g_sReaderOffLineInfo = {0};
 READER_LED_INFO g_sReaderLedInfo = {0};
+READER_RSPFRAME g_sDeviceMealRspFrame = {0};
+
 
 BOOL g_nReaderGpbState = FALSE;
-
 u8 g_aReaderISO15693Uid[READER_OP_UID_MAX_NUM * ISO15693_SIZE_UID] = {0};
 u8 g_nTempLink = 0;
 u32  g_nTickLink = 0;
+u32 g_nRtcTime = 0;
 
 char g_nBufTxt[LCM_TXT_LEN_MAX] = "未绑定托盘"; 
 char g_nBufTxt1[LCM_TXT_LEN_MAX] = ""; 
-char g_aReaderVersion[8] = "23061100";
+
 
 void Reader_Delayms(u32 n)
 {
@@ -61,7 +66,7 @@ void Reader_Init()
     else
     {
         g_sLcmInfo.flag = LCM_FLAG_PAGE_LINK_CHG;
-     }
+    }
     g_sDeviceParamenter.reWorkMode = READER_MODE_NORMAL;
     Reader_Font_ChgCorol(g_sDeviceParamenter.uiMode);
 }
@@ -311,22 +316,35 @@ u8 Reader_RfidGetValue(u8 *pBuffer, READER_RFID_INFO *pRfidInfo)
     u8 i = 0;
     u8 tempUid[READER_UID_MAX_NUM * ISO15693_SIZE_UID] = {0};
     u8 num = 0;
-    num = *(pBuffer + 19 );
+    static BOOL tempState = FALSE;
+    static u8 linkTick = 5;
+    num = *(pBuffer + READER_RFID_UID_POST);
+    pRfidInfo->allTick ++;
     pRfidInfo->tick++;
     pRfidInfo->num = num;
     if(num)
     {
+        if(!tempState)
+        {
+            linkTick = 3;
+        }
+        else
+        {
+            linkTick = 5;
+        }
+        pRfidInfo->succesTick ++;    
         if(num == 0x01)
         {
+            tempState = FALSE;
             pRfidInfo->okTick++;
             pRfidInfo->errTick = 0;
-            memcpy(tempUid, pBuffer + 19 + 1 , ISO15693_SIZE_UID);
-            if(pRfidInfo->okTick == 2)
+            memcpy(tempUid, pBuffer + READER_RFID_UID_POST + 1 , ISO15693_SIZE_UID);
+            if(pRfidInfo->okTick == linkTick)
             {
                 pRfidInfo->state = RFID_TAG_IN;
                 memcpy(pRfidInfo->uid, tempUid, ISO15693_SIZE_UID);
             }
-            else if((pRfidInfo->okTick >2))
+            else if((pRfidInfo->okTick >linkTick))                          //标签重叠，由多便签变化为单标签，动态增加，后续归为
             {
                  pRfidInfo->state = RFID_TAG_KEEP;
                 for(i = 0 ; i < ISO15693_SIZE_UID; i++)
@@ -344,7 +362,7 @@ u8 Reader_RfidGetValue(u8 *pBuffer, READER_RFID_INFO *pRfidInfo)
         else
         {
             //多餐盘
-          
+            tempState = TRUE;
             pRfidInfo->okTick = 0;
             pRfidInfo->errTick += READER_RFID_MOVE_TIME;
             pRfidInfo->state = RFID_TAG_OUT;
@@ -359,11 +377,8 @@ u8 Reader_RfidGetValue(u8 *pBuffer, READER_RFID_INFO *pRfidInfo)
         pRfidInfo->errTick ++;
         if(pRfidInfo->errTick >= READER_RFID_MOVE_TIME)                                      //餐盘离开后1.5s上报数据
         {  
-            if(g_sDeviceParamenter.reWorkMode == READER_MODE_NORMAL)
-            {
-                pRfidInfo->okTick = 0;
-            }
-                pRfidInfo->state = RFID_TAG_OUT;
+            pRfidInfo->okTick = 0;
+            pRfidInfo->state = RFID_TAG_OUT;
         }
     }
 
@@ -376,16 +391,10 @@ u8 Reader_DisplayTest(DISH_INFO *pDishInfo, WIGHT_INFO *witghInfo)
     u16 percentage = 0;
     u8 state = 0;
     
-    percentage = ((float)g_sReaderRfidTempInfo.okTick / g_sReaderRfidTempInfo.tick )* 10000;
+    percentage = (u16)(((float)g_sReaderRfidTempInfo.succesTick / (float)g_sReaderRfidTempInfo.allTick ) * 10000);
     
-    /*if(witghInfo->flag == GPB_WITGH_FLAG_MINUS)
-    {
-        sprintf(Buf, "-%dg", witghInfo->avg);
-    }
-    else
-    {*/
-        sprintf(Buf, "%dg", witghInfo->avg); 
-   // }
+    sprintf(Buf, "%dg", g_sGpbInfo.wightTemp); 
+    
     if(percentage == 0xFFFF)
     {
         percentage = LCM_TXT_SUCCES_FULL;
@@ -394,7 +403,7 @@ u8 Reader_DisplayTest(DISH_INFO *pDishInfo, WIGHT_INFO *witghInfo)
     Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_1, LCM_TXT_TEST_LEN, Buf, LCM_DISH_TX_MODE_LEFT, LCM_TXT_OFFSET_NULL);
     sprintf(Buf, "%d个", g_sReaderRfidTempInfo.num);   
     Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_BUTTON_2, LCM_TXT_TEST_BUTTON_LEN, Buf, LCM_DISH_TX_MODE_MID, LCM_TXT_OFFSET_NULL);
-    sprintf(Buf, "%d", g_sReaderRfidTempInfo.tick );    
+    sprintf(Buf, "%d", g_sReaderRfidTempInfo.allTick );    
     Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_2, LCM_TXT_TEST_LEN, Buf, LCM_DISH_TX_MODE_LEFT, LCM_TXT_OFFSET_NULL);
     sprintf(Buf, "%d%d.%d%d%", percentage / 1000 ,(percentage % 1000) / 100, (percentage % 100) / 10, (percentage % 100) % 10 );
     Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_3, LCM_TXT_TEST_LEN, Buf, LCM_DISH_TX_MODE_LEFT, LCM_TXT_OFFSET_NULL);
@@ -408,8 +417,12 @@ u32 Reader_GetWight(GPB_INFO *gpbInfo)
 {
     u32 tempValue = 0;
 
-    tempValue = g_sWigthInfo.avg - g_sWightTempInfo.avg ;//g_sGpbInfo.wightTemp  - g_sGpbInfo.wightTemp;
-   //g_sWightTempInfo.avg - g_sWigthInfo.avg  
+    tempValue = g_sWigthInfo.avg - g_sWightTempInfo.avg ;
+    if(tempValue & 0x80000000)
+    {
+        tempValue = 0;
+    }
+
     return tempValue;
 }
 
@@ -541,18 +554,23 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
         case READER_CMD_RESET:
             if(paramsLen == 0)
             {
+                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.len = Device_ResponseFrame(NULL, 0, &g_sDeviceRspFrame);
             }
             break;
         case READER_CMD_GET_VERSION:
             if(paramsLen == 0)
             {
+                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.len = Device_ResponseFrame((u8 *)READER_VERSION, READER_VERSION_SIZE, &g_sDeviceRspFrame);
             }
             break;
         case READER_CMD_GET_CPUID:
             if(paramsLen == 0)
             {
+                g_nTickLink = g_nSysTick;
+                g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
+                g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
                 g_sDeviceRspFrame.len = Device_ResponseFrame((u8 *)STM32_CPUID_ADDR, STM32_CPUID_LEN, &g_sDeviceRspFrame);
             }
         case READER_CMD_SET_CFG:
@@ -561,7 +579,6 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                 if((*(pFrame+READER_SET_CFG + 2) == READER_UI_MODE_WHITE) || (*(pFrame+READER_SET_CFG + 2) == READER_UI_MODE_BLACK) && 
                     (*(pFrame+READER_SET_CFG + 3) == READER_TOTAL_MODE_AIR) || (*(pFrame+READER_SET_CFG + 3) == READER_TOTAL_MODE_AFTER))
                 {
-                  
                     g_sDeviceParamenter.rfu1 = *(pFrame+READER_SET_CFG + 1);
                     g_sDeviceParamenter.uiMode = *(pFrame+READER_SET_CFG + 2);    //暂时锁死
                     g_sDeviceParamenter.totalMode = *(pFrame+READER_SET_CFG + 3);
@@ -578,12 +595,14 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                     g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
                 
                 }
-                    g_sDeviceRspFrame.len = Reader_Format_Cfg(0, &g_sDeviceRspFrame, &g_sDeviceParamenter);
+                g_nTickLink = g_nSysTick;
+                g_sDeviceRspFrame.len = Reader_Format_Cfg(0, &g_sDeviceRspFrame, &g_sDeviceParamenter);
 
             }
         case READER_CMD_GET_CFG:
             if(paramsLen == 0)
             {
+                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
                 g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
                 g_sDeviceRspFrame.len = Reader_Format_Cfg(1, &g_sDeviceRspFrame, &g_sDeviceParamenter);
@@ -592,7 +611,8 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
         case READER_CMD_GET_HEART:
             if(paramsLen > 12)
             {
-                if( *(pFrame + READER_MEAL_NAME_LEN) < NAME_NUM  && *(pFrame + READER_MEAL_NAME_LEN + *(pFrame + READER_MEAL_NAME_LEN) + 1) <= 35)
+                u32 rtcTime = 0;
+                if( *(pFrame + READER_MEAL_NAME_LEN) < 64  && *(pFrame + READER_MEAL_NAME_LEN + *(pFrame + READER_MEAL_NAME_LEN) + 1) <= 35)
                 {
                     memset(&g_sDishTempInfo, 0, sizeof(DISH_INFO));
                     memcpy(&g_sDishTempInfo.dishName, pFrame + READER_MEAL_NAME_LEN, *(pFrame + READER_MEAL_NAME_LEN) + 1);
@@ -611,10 +631,12 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                         g_sRaderInfo.dishInfo.state = READER_DISH_INFO_CHG;
                     }
 
+                    memcpy(&rtcTime, pFrame + READER_MEAL_RTC_POS, 4);
                     g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
                     g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
                     g_nTempLink = READER_LINK_OK;
-                    g_nTickLink = g_nSysTick;
+                    
+                    RTC_SetTime(rtcTime);
                     if((Lcm_ChkPage(LCM_FLAG_PAGE_NULL_CHG) || Lcm_ChkPage(LCM_FLAG_PAGE_NULL_CHG + READER_UI_MODE_BLACK)) && ! Lcm_ChkPage(LCM_FLAG_PAGE_TEST))
                     {
                         Lcm_SetPage(LCM_FLAG_PAGE_MAIN_CHG); 
@@ -626,8 +648,8 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                     g_sDeviceRspFrame.flag = READER_FRAME_FLAG_FAIL;
                     g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
                }
-               
-               g_sDeviceRspFrame.len = Reader_Format_Heart(&g_sDeviceRspFrame, rtc, Sound_GetValue(g_sGpbInfo.wightTemp));   //重量数据代填
+               g_nTickLink = g_nSysTick;
+               g_sDeviceRspFrame.len = Reader_Format_Heart(&g_sDeviceRspFrame, rtcTime, Sound_GetValue(g_sGpbInfo.wightTemp));   //重量数据代填
             }
             break;
         case READER_CMD_GET_PERSON_INFO:
@@ -637,12 +659,14 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                 if(Reader_ChkReUid(pFrame + READER_PERSON_UID_LEN, g_sReaderRfidTempInfo.uid) && bOk == READER_RES_OK)
                 {
                     memcpy(&g_sRaderInfo.personInfo.money, pFrame + READER_PERSON_UID_LEN + 12, 4);
+                    
                     g_sRaderInfo.personInfo.state = READER_RESFRAME_PERSON_OK;
                     g_sRaderInfo.total = *(pFrame + READER_PERSON_MONEY_LEN);
                     g_sRaderInfo.personInfo.allergy = *(pFrame + READER_PERSON_MONEY_LEN );
                     g_sRaderInfo.personInfo.bind = *(pFrame + READER_PERSON_MONEY_LEN + 1);
                     g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
                     g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
+                    g_sDeviceRspFrame.succFlag = READER_RESFRAME_PERSON_OK;
                 }
                 else
                 {
@@ -650,6 +674,7 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                     g_sDeviceRspFrame.flag = READER_FRAME_FLAG_FAIL;
                     g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
                 }
+                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.len = Device_ResponseFrame(NULL, 0, &g_sDeviceRspFrame);
             }
             break;
@@ -657,16 +682,34 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
             if(paramsLen > 1)
             {
                 bOk = *(pFrame + READER_PERSON_UID_LEN + 12);
-                if(Reader_ChkReUid(pFrame + READER_PERSON_UID_LEN, g_sReaderRfidTempInfo.uid) && bOk == READER_RES_OK)
+                u32 maskRtc = 0x00000000;
+                u64 maskUid = 0xFFFFFFFFFFFFFFFF;
+                 if(Reader_ChkReUid(pFrame + READER_PERSON_UID_LEN, g_sFramData.pBuffer + 9) && bOk == READER_RES_OK  &&  !memcmp(pFrame + READER_PERSON_RTC_LEN, g_sFramData.pBuffer + READER_PERSON_RTC_LEN - 1, 4))
                 {
-                  //上传成功
+                                      //上传成功
                     g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
                     g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
-                    g_sDeviceRspFrame.state = READER_DATA_UP_OK;
-                    
-                  
+                    g_sDeviceMealRspFrame.state = READER_DATA_UP_OK;
                 }
-
+                else if(Reader_ChkReUid(pFrame + READER_PERSON_UID_LEN, g_sFramData.pBuffer + 9) && bOk == READER_RES_OK  &&  !memcmp(pFrame + READER_PERSON_RTC_LEN, &(g_sDeviceMealRspFrame.rtcTime), 4))
+                {
+                    g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
+                    g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
+                    g_sDeviceMealRspFrame.state = READER_DATA_UP_OK;
+                }
+                else if(!memcmp(pFrame + READER_PERSON_UID_LEN, &maskUid, 8) && !memcmp(pFrame + READER_PERSON_RTC_LEN, &maskRtc, 4) && bOk == READER_RES_OK)
+                {
+                    g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
+                    g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
+                    g_sDeviceMealRspFrame.state = READER_DATA_UP_OK;
+                }
+                else
+                {
+                    g_sRaderInfo.personInfo.state = READER_RESFRAME_PERSON_FAIL;
+                    g_sDeviceRspFrame.flag = READER_FRAME_FLAG_FAIL;
+                    g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
+                }
+                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.len = Device_ResponseFrame(NULL, 0, &g_sDeviceRspFrame);
             }
       break;
@@ -676,7 +719,7 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                 g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
                 g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
                 g_sDeviceRspFrame.state = READER_DATA_UP_OK;
-
+                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.len = Device_ResponseFrame(NULL, 0, &g_sDeviceRspFrame);
             }
       break;
@@ -694,11 +737,87 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
 }
 
 
+
+BOOL Reader_DtuUartFrame(u8 *pFrame, READER_DTUINFO *pDtuInfo, u16 len)
+{       
+    u8 cmd = 0;
+    u16 destAddr = 0;
+    u16 paramsLen = 0;
+    BOOL bOk = FALSE;
+
+
+    destAddr = *((u16 *)(pFrame + UART_FRAME_POS_DESTADDR));
+
+    if((destAddr != READER_FRAME_BROADCAST_ADDR) && (destAddr != g_sDeviceParamenter.addr))
+    {
+        return FALSE;
+    }
+    g_sDeviceRspFrame.destAddr = *((u16 *)(pFrame + UART_FRAME_POS_SRCADDR));
+    g_sDeviceRspFrame.len = 0;
+    cmd = *(pFrame + UART_FRAME_POS_CMD);
+
+    
+    if(pFrame[UART_FRAME_POS_LEN] == 0)
+    {
+        paramsLen = *((u16 *)(pFrame + UART_FRAME_POS_PAR));
+    }
+    else
+    {
+        paramsLen = len - UART_FRAME_MIN_LEN;
+    }
+    switch(cmd)
+    {
+        case READER_CMD_RESET:
+            if(paramsLen == 0)
+            {
+                g_sDeviceRspFrame.len = Device_ResponseFrame(NULL, 0, &g_sDeviceRspFrame);
+            }
+            break;
+        case READER_CMD_DRU_GPB:
+            if(paramsLen > 0)
+            {
+                bOk = TRUE;
+                
+            }
+            break;
+        case READER_CMD_DRU_SOUND:
+            if(paramsLen > 0)
+            {
+
+            }
+            break;
+        case READER_CMD_DRU_LED:
+            if(paramsLen > 0)
+            {
+               
+            }
+      break;
+        case READER_CMD_DRU_GET_KEY:
+            if(paramsLen > 0)
+            {
+
+            }
+      break;
+    
+    }
+
+     if(g_sDeviceRspFrame.len == 0 )
+    {
+        g_sDeviceRspFrame.flag = READER_RSPFRAME_FLAG_FAIL;
+        g_sDeviceRspFrame.err = READER_OPTAG_RESPONSE_PARERR;
+        g_sDeviceRspFrame.len = Device_ResponseFrame(NULL, 0, &g_sDeviceRspFrame);
+    }
+    
+    return bOk;//
+}
+
+
+
 u8 Device_ResponseFrame(u8 *pParam, u8 len, READER_RSPFRAME *pOpResult)
 {
     u16 pos = 0;
     u16 crc = 0;
-
+    pOpResult->status = READER_STATUS_ENTOURAGR;
     pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD1; // frame head first byte
     pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD2; // frame haed second byte
     pOpResult->buffer[pos++] = 0x00;   // length
@@ -747,7 +866,7 @@ u8 Reader_Format_GetPerson(u8 *puid,  READER_RSPFRAME *pOpResult, u32 rtc)
 {
     u16 pos = 0;
     u16 crc = 0;
-    
+    pOpResult->status = READER_STATUS_MASTER;
     pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD1; // frame head first byte
     pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD2; // frame haed second byte
     pOpResult->buffer[pos++] = 0x00;   // length
@@ -771,6 +890,8 @@ u8 Reader_Format_GetPerson(u8 *puid,  READER_RSPFRAME *pOpResult, u32 rtc)
     pOpResult->buffer[pos++] = (crc >> 8) & 0xFF;
 
     pOpResult->len = pos;
+    
+   
     return pos;
 
 
@@ -812,6 +933,8 @@ u8 Reader_Format_Meal(u8 type,u8 *puid, READER_RSPFRAME *pOpResult, u32 rtc, u32
     pOpResult->buffer[pos++] = (crc >> 8) & 0xFF;
 
     pOpResult->len = pos;
+    
+     pOpResult->rtcTime = rtc;   //存储上报RTC
     return pos;
 
 
@@ -822,7 +945,7 @@ u8 Reader_Format_Heart( READER_RSPFRAME *pOpResult, u32 rtc,u32 witgh)
 {
     u16 pos = 0;
     u16 crc = 0;
-    
+    pOpResult->status = READER_STATUS_ENTOURAGR;
     pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD1; // frame head first byte
     pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD2; // frame haed second byte
     pOpResult->buffer[pos++] = 0x00;   // length
@@ -830,6 +953,7 @@ u8 Reader_Format_Heart( READER_RSPFRAME *pOpResult, u32 rtc,u32 witgh)
     pOpResult->buffer[pos++] = (g_sDeviceParamenter.addr >> 8) & 0xFF;
     pOpResult->buffer[pos++] = (pOpResult->destAddr >> 0) & 0xFF;
     pOpResult->buffer[pos++] = (pOpResult->destAddr >> 8) & 0xFF;
+    pOpResult->buffer[pos++] = UART_FRAME_RESPONSE_FLAG;
     pOpResult->buffer[pos++] = pOpResult->cmd;;
     pOpResult->buffer[pos++] = UART_FRAME_PARAM_RFU;
 
@@ -843,6 +967,9 @@ u8 Reader_Format_Heart( READER_RSPFRAME *pOpResult, u32 rtc,u32 witgh)
     pOpResult->buffer[pos++] = (witgh >> 8) & 0xFF;
     pOpResult->buffer[pos++] = (witgh >> 16) & 0xFF;
     pOpResult->buffer[pos++] = (witgh >> 24) & 0xFF;
+    
+    pOpResult->buffer[pos++] = pOpResult->flag;
+    pOpResult->buffer[pos++] = pOpResult->err;//错误类别，暂未设立
 
     pOpResult->buffer[UART_FRAME_POS_LEN] = pos - 3 + 2; //减去帧头7E 55 LEN 的三个字节，加上CRC的两个字节
     crc = a_GetCrc(pOpResult->buffer + UART_FRAME_POS_LEN, pos - UART_FRAME_POS_LEN); //从LEN开始计算crc
@@ -859,7 +986,7 @@ u8 Reader_Format_Cfg(u8 mode, READER_RSPFRAME *pOpResult, READER_DEVICE_PARAMETE
 {
     u16 pos = 0;
     u16 crc = 0;
-    
+    pOpResult->status = READER_STATUS_ENTOURAGR;
     pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD1; // frame head first byte
     pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD2; // frame haed second byte
     pOpResult->buffer[pos++] = 0x00;   // length
@@ -994,8 +1121,10 @@ void Reader_DisplayDish(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo, LCM_INFO *pLcmI
     char nullBuf[LCM_TXT_LEN_MAX] = ""; 
     u32 tempValue = 0;
     
+    u8 witghSmpleTick = 0;
     
     tempValue =  Gpb_Get_Dish_WightValue();
+    pDishInfo->peice = 0;
     switch(pLcmInfo->page)
     {
         case LCM_PAGE_MAIN_WHITE:
@@ -1045,21 +1174,26 @@ void Reader_DisplayDish(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo, LCM_INFO *pLcmI
             Lcm_DishWriteTxt(LCM_TXT_ADDR_ARRERGY, LCM_TIP_TXT_SIZE, g_nBufTxt, LCM_DISH_TX_MODE_MID, 0);
             Lcm_DishWriteTxt(LCM_TXT_ADDR_LINK_STATE, 8, g_nBufTxt1, LCM_DISH_TX_MODE_MID, 0);
 
-            if((Reader_GetWight(&g_sGpbInfo) >=  g_sDeviceParamenter.scoWt) && !g_nReaderGpbState)  
+            if((Gpb_Get_Dish_WightValue() >=  g_sDeviceParamenter.scoWt) && !g_nReaderGpbState)  
             {
                 pDishInfo->peice = tempValue * (pDishInfo->unitPrice) / (pDishInfo->spec);
                 g_nReaderGpbState = TRUE;
             }
             else if(g_nReaderGpbState)
             {  
-                tempValue = Reader_GetWight(&g_sGpbInfo);
+                tempValue = Gpb_Get_Dish_WightValue();
                 pDishInfo->peice = tempValue * (pDishInfo->unitPrice) / (pDishInfo->spec);
             }
                         
-            if(tempValue & 0x10000000)
+            if(g_sWightTempInfo.flag & 0x80000000)
             {        
-                tempValue = 0;
-                pDishInfo->peice = 0;
+                witghSmpleTick ++ ;
+                if(witghSmpleTick > 5)
+                {
+                    tempValue = 0;
+                    pDishInfo->peice = 0;
+                    witghSmpleTick = 0;
+                }
             }
                        
             sprintf(Buf, "%d", tempValue);  

@@ -74,7 +74,7 @@ void Lcm_DishDelayms(u32 n)
 void Lcm_DishWriteBuffer(u8 *pFrame, u16 len)
 {
     u16 i = 0;
-    Lcm_DishDelayms(2);
+    //Lcm_DishDelayms(2);
     for(i = 0; i < len; i++)
     {
         (LCM_DISH_PORT)->DR = (pFrame[i] & (u16)0x01FF);

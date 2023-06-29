@@ -11,12 +11,12 @@
 #define GPB_REG_ADDR_SET_ADDR		0x000F
 
 
-#define GPB_STAT_IDLE 	                0x00
-#define GPB_STAT_RCV 		        0x01
-#define GPB_STAT_OVR 		        0x04
-#define GPB_STAT_TX 		        0x08
-#define GPB_STAT_TX_IDLE                0x10
-#define GPB_STAT_WAIT                   0x20
+#define GPB_STAT_IDLE 	                0x00000000
+#define GPB_STAT_RCV 		        0x00000001
+#define GPB_STAT_OVR 		        0x00000004
+#define GPB_STAT_TX 		        0x00000008
+#define GPB_STAT_TX_IDLE                0x00000010
+#define GPB_STAT_WAIT                   0x00000020
 
 #define GPB_FLAG_IDLE 	                0x00
 #define GPB_FLAG_CMD 		        0x01
@@ -60,7 +60,7 @@ typedef struct wightInfo{
 extern WIGHT_INFO g_sWightTempInfo;
 extern WIGHT_INFO g_sWigthInfo;
 
-#define GPB_STAT_SAMPLE_NUM             3
+#define GPB_STAT_SAMPLE_NUM             5
 #define Gpb_IsRcvFrame(rcvFrame)               ((rcvFrame).state == GPB_STAT_RCV || (rcvFrame).state == GPB_STAT_OVR)
 #define Gpb_ResetFrame(rcvFrame)               do{(rcvFrame).state = GPB_STAT_IDLE; rcvFrame.repeat=0;}while(0)
 
@@ -73,7 +73,7 @@ extern WIGHT_INFO g_sWigthInfo;
 #define Gpb_Get_Dish_WightValue()       ({\
                                             u32 value;\
                                             value = g_sGpbInfo.wightValue - g_sGpbInfo.wightTemp;\
-                                            (value);\
+                                              (value & 0x80000000? 0 : value);\
                                         })\
                                            
 typedef struct wihgtTxBuf{
@@ -99,12 +99,13 @@ typedef struct wihgtRxBuf{
 }GPB_RX_BUF;
 
 typedef struct wihgtInfo{
-    u8 state;
+    
     u8 flag;
     u8 repeat;
     u8 index;
     u8 num;
     u8 mode;
+    u32 state;
     u32 witghSmple;
     u32 wightValue;
     u32 wightTemp;

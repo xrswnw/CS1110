@@ -9,17 +9,20 @@ void RTC_Init(void)
 
     // Reset Backup Domain
     BKP_DeInit();
-
+    /*
     // Enable LSE
     RCC_LSEConfig(RCC_LSE_ON);
-   // RCC_LSICmd(ENABLE);
-
     // Wait till LSI is ready
-    while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET);
-    //while (RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET);
-
+    while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET);    
     // Select LSI as RTC Clock Source
     RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);
+    */
+    
+    RCC_LSICmd(ENABLE);
+    
+    while (RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET);
+    
+    RCC_RTCCLKConfig(RCC_RTCCLKSource_LSI);
 
     // Enable RTC Clock
     RCC_RTCCLKCmd(ENABLE);
@@ -38,7 +41,7 @@ void RTC_Init(void)
 
     // Set RTC prescaler: set RTC period to 1sec
 
-    RTC_SetPrescaler(32767);
+    RTC_SetPrescaler(RTC_LSI_TICK);
 
     // Wait until last write operation on RTC registers has finished
     RTC_WaitForLastTask();

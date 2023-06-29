@@ -52,10 +52,13 @@
 #define UART_COM_R485                   0x03
 typedef struct uartRcvFrame{
     u8 state;
+    u8 flag;
+    u8 repat;
     u16 index;
     u16 length;
     u8 buffer[UART_BUFFER_MAX_LEN];
     u32 idleTime;
+    u32 tick;
     u8 com;
 }UART_RCVFRAME;
 
@@ -76,7 +79,7 @@ void Uart_ReceiveFrame(u8 byte, UART_RCVFRAME *pRcvFrame);
 
 BOOL Uart_IsRcvFrameOver(UART_RCVFRAME *pRcvFrame);
 #define Uart_IsRcvFrame(rcvFrame)           ((rcvFrame).state == UART_STAT_TO || (rcvFrame).state == UART_STAT_END)
-#define Uart_ResetFrame(rcvFrame)           do{(rcvFrame)->state = UART_STAT_IDLE; (rcvFrame)->length = 0; (rcvFrame)->index = 0; (rcvFrame)->idleTime = 0;}while(0)
+#define Uart_ResetFrame(rcvFrame)           do{(rcvFrame)->state = UART_STAT_IDLE; (rcvFrame)->length = 0; (rcvFrame)->repat = 0;(rcvFrame)->index = 0; (rcvFrame)->idleTime = 0;}while(0)
 
 #define UART_FRAME_BROADCAST_ADDR           0xFFFF
 extern UART_RCVFRAME g_sUartRcvFrame;

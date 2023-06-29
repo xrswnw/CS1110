@@ -24,6 +24,31 @@
 #define READER_RFID_READ_UID              0x01
 #define READER_RFID_READ_BLOCK            0x02
 
+
+
+
+
+#define READER_STAT_IDLE                   0x00000000
+#define READER_STAT_DTU                    0x00000001
+#define READER_STAT_CHK_UPDATA             0x00000002
+#define READER_STAT_PUT_TAG                0x00000004
+#define READER_STAT_CLASH_TAG              0x00000008
+#define READER_STAT_UARTTX                 0x00000010
+#define READER_STAT_BIND_TAG               0x00000020
+#define READER_STAT_UART_WAIT              0x00000040
+#define READER_STAT_UARTRX                 0x00000080
+#define READER_STAT_RFID_KEEP              0x00000100
+#define READER_STAT_MODE_NORMAL            0x00000200
+#define READER_STAT_READER_MARK_OK         0x00000400
+#define READER_STAT_RFID_FAIL              0x00000800
+#define READER_STAT_KEY                    0x00001000
+#define READER_STAT_LCM_FRESH              0x00002000
+#define READER_STAT_CHK_LINK               0x00004000
+#define READER_STAT_UART_TX_WAIT           0x00008000
+
+
+
+
 #define RFID_ANT_OPEN                     0x00
 #define RFID_ANT_CLOSE                    0x01
 
@@ -48,6 +73,8 @@
 #define RFID_TAG_OUT                     0x04
 #define RFID_TAG_FAIL                    0x08
 
+#define READER_RFID_UID_POST             19
+
 #define READER_MODE_NORMAL               0x00
 #define READER_MODE_TEST                 0x01
 #define READER_MODE_STOP                 0x02
@@ -68,10 +95,21 @@
 #define READER_CMD_GET_MEAL_INFO            0x23
 #define READER_CMD_GET_HEART                0x25
 
+#define READER_CMD_DRU_GPB                  0x30
+#define READER_CMD_DRU_SOUND                0x31
+#define READER_CMD_DRU_LED                  0x32
+#define READER_CMD_DRU_LCD                  0x33
+#define READER_CMD_DRU_GET_KEY              0x34
+
+
+#define READER_STATUS_ENTOURAGR                0
+#define READER_STATUS_MASTER                0x01
 #define READER_RES_OK                       0x00
 
 #define READER_VERSION_LEN                  8
 #define READER_SET_CFG                      8
+
+#define READER_MEAL_RTC_POS                 9
 
 #define READER_MEAL_NAME                    13
 #define READER_MEAL_NAME_LEN                13
@@ -79,6 +117,8 @@
 #define READER_MEAL_RTC_LEN                 10
 
 #define READER_PERSON_UID_LEN               10    
+
+#define READER_PERSON_RTC_LEN               18  
 #define READER_PERSON_MONEY_LEN             26 
 
 #define READER_RFID_MOVE_TIME               12
@@ -92,12 +132,17 @@
 #define READER_RSPFRAME_DAT_LEN         (2560)
 #define READER_RSPFRAME_LEN             (READER_RSPFRAME_DAT_LEN + 32)
 
-#define READER_RESFRAME_PERSON_OK		0x02
+
 #define READER_RESFRAME_PERSON_FAIL		0x01
+#define READER_RESFRAME_PERSON_TOTIME		0x02
+#define READER_RESFRAME_PERSON_OK		0x04
+
+
+
 
 //
-#define READER_LINK_TIME                25000                   //125s
-#define READER_OFF_LINE_TICK            1                       //暂定两个心跳后，测试
+#define READER_LINK_TIME                25000//25000                   //125s
+#define READER_OFF_LINE_TICK            2                      
 #define READER_PERSON_BIND_FAIL         0x00
 #define READER_PERSON_ALLERGY           0x01
 
@@ -113,16 +158,20 @@
 #define READER_RSP_NORMAL_DATA          0x01
 #define READER_RSP_OFFLINE_DATA         0x02
 
-#define REDAER_UP_DATA_TICK              100
+#define REDAER_UART_TX_TICK              20
+#define REDAER_UP_DATA_TICK              200
 #define REDAER_UP_DATA_NUM               3
 
-
-#define REDAER_UP_GPB_TICK              5
-#define REDAER_UP_GPB_NUM               3
+#define REDAER_UPMEALINFO_SUCC              0
+#define REDAER_UPMEALINFO_FAIL              0x01
+#define REDAER_UP_GPB_TICK              20
+#define REDAER_UP_GPB_NUM               20
 
 
 #define REDAER_LED_TIM                  0x0A
 
+#define READER_MEAL_MASK_UID_TEST       0xFFFFFFFF
+#define READER_MEAL_MASK_RTC_TEST       0x00000000
 
 
 
@@ -183,15 +232,20 @@ typedef struct readerRspFrame{
     u8 buffer[READER_RSPFRAME_LEN];
     u8 mode;
     u8 flag;
+    u8 tag;
     u8 err;
-    u8 antnum;
     u8 state;
     u8 cmd;
     u8 repeat;
+    u8 status;
+    u8 succFlag;
     u16 destAddr;
+    u32 rtcTime;
     u32 tick;
 }READER_RSPFRAME;
 extern READER_RSPFRAME g_sDeviceRspFrame;
+
+extern READER_RSPFRAME g_sDeviceMealRspFrame;
 
 typedef struct dishTagInfo{  
     char tagBuffer[LCM_TXT_TAG_LEN];
@@ -235,14 +289,16 @@ typedef struct readerRfidInfo{
     u8 num;
     u8 state;
     u8 clash;
-    u32 tick;                   //测试次数
-    u32 okTick;                 //成功此时
-    u32 errTick;                //失败次数
+    u32 tick;                   
+    u32 okTick;                 
+    u32 errTick;
+    u32 succesTick;
+    u32 allTick;
 }READER_RFID_INFO;
 
 extern READER_RFID_INFO g_sReaderRfidTempInfo;
 
-
+#define READER_RFID_ResetFrame(rcvFrame)               do{(rcvFrame).state = RFID_STAT_IDLE; rcvFrame.repat=0;}while(0)
 
 
 
@@ -272,8 +328,24 @@ typedef struct readerOffLineInfo{
     u32 crc;	
 }READER_OFFLINE_INFO;
 
-extern READER_OFFLINE_INFO g_sReaderOffLineInfo;
 
+
+
+typedef struct readerDtuInfo{  
+    u8 state;
+    u8 flag;
+    u8 txBuffrt[UART_BUFFER_MAX_LEN];
+    u8 rxBuffrt[UART_BUFFER_MAX_LEN];
+    u8 repat;
+    u32 tick;
+    u32 crc32;	
+}READER_DTUINFO;
+
+
+extern u32 g_nReaderState;
+extern READER_DTUINFO g_sReaderDtuInfo;
+extern READER_OFFLINE_INFO g_sReaderOffLineInfo;
+extern u32 g_nRtcTime;
 extern u32  g_nTickLink ;
 extern u8 g_nTempLink;
 extern BOOL g_nReaderLink;
@@ -312,6 +384,8 @@ BOOL Reader_Rfid_Init();
 BOOL Reader_WriteDeviceParamenter(void);
 BOOL Reader_ChkReUid(u8 *pRUid, u8 *pTUid);
 BOOL Reader_ReadDeviceParamenter(void);
+
+BOOL Reader_DtuUartFrame(u8 *pFrame, READER_DTUINFO *pDtuInfo, u16 len);
 
 
 //u8 Reader_RfidGetValue(u8 mode, READER_RFID_INFO *pRfidInfo);

@@ -4,6 +4,11 @@
 #include "AnyID_CS1110_Config.h"
 
 #define RTC_BUF_SIZE            6
+
+#define RTC_LSE_TICK            32768 - 1
+#define RTC_LSI_TICK            40000 - 1
+
+
 typedef struct rtc_time{
     u32 counter;
     u8 year;

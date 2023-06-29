@@ -23,6 +23,9 @@
 
 #define RFID_GET_UID                0x30
 #define RFID_FRAME_LEN              30
+
+#define RFID_QEQUST_TIM             100
+#define RFID_QEQUST_TICK             5
 typedef struct rfidInfo{
     u8 state;
     u8 repat;
@@ -32,6 +35,7 @@ typedef struct rfidInfo{
     UART_RCVFRAME rfidRev;
 }RFID_INFO;
 extern RFID_INFO g_sRfidInfo;
+
 
 void Rfid_Init();
 u8 Rfid_Format_GetUid(u8 cmd,  RFID_INFO *pOpResult);

@@ -43,7 +43,7 @@
 #define SOUND_TEST_FLAG_DISABLE         0x0000
 #define SOUND_TEST_FLAG_ENABLE          0x0001
 
-#define SOUND_VOC_STOP_TIM              800
+#define SOUND_VOC_STOP_TIM              1000
 #define Sound_IsRcvFrame(rcvFrame)               ((rcvFrame).state == SOUND_STAT_RCV || (rcvFrame).state == SOUND_STAT_OVR)
 #define Sound_ResetFrame(rcvFrame)               do{(rcvFrame).state = SOUND_STAT_IDLE ; (rcvFrame).repeat =0;}while(0)
                 
