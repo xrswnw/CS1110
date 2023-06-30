@@ -31,16 +31,15 @@ void Key_InitInterface()
     
 u8 Key_GetValue()
 {
-
     u8 k = 0x00;
-
+    
     if(((~KEY_PORT0.Port->IDR) & KEY_PORT0.Pin))
     {
-        k |= 0x01;
+        k |= 0x04;
     }
     else
     {
-        k &= ~0x01; 
+        k &= ~0x04; 
     }
     if(((~KEY_PORT1.Port->IDR) & KEY_PORT1.Pin))
     {
@@ -52,12 +51,15 @@ u8 Key_GetValue()
     }
     if(((~KEY_PORT2.Port->IDR) & KEY_PORT2.Pin))
     {
-        k |= 0x04;
+        k |= 0x01;
     }
     else
     {
-        k &= ~0x04; 
+        k &= ~0x01; 
     }
+    
+  
+
     return k;
 }
 

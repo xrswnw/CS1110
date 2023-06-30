@@ -38,6 +38,8 @@
 
 #define LCM_FONT_COROL_WHITE                0xFFFF       
 #define LCM_FONT_COROL_BLACK                0x0000
+#define LCM_FONT_COROL_GREEN                0xE007
+#define LCM_FONT_COROL_RED                  0x00F8
 #define LCM_DISH_FUN_TXT_SIZE               14
 
 
@@ -142,6 +144,12 @@
 
 
 
+#define LCE_TXT_ADDR_KEY_UP             0x2610
+#define LCE_TXT_ADDR_KEY_MIDDLE         0x2620
+#define LCE_TXT_ADDR_KEY_DOWN           0x2630
+
+#define LCE_TXT_ADDR_LINE_STAT          0x2260
+
 
 #define LCM_TXT_TEST_LEN                 8
 #define LCM_TXT_TEST_BUTTON_LEN          3
@@ -195,7 +203,7 @@
 #define LCM_FLAG_PAGE_NULL_CHG          0x03
 #define LCM_FLAG_PAGE_SET_CHG           0x04   
 
-#define LCM_FLAG_PAGE_TEST              20
+#define LCM_FLAG_PAGE_TEST              21
 
 #define LCM_UP_TICK                     10
 #define LCM_UP_NUM                      3

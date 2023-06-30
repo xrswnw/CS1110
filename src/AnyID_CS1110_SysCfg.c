@@ -229,9 +229,18 @@ void Sys_LedTask(void)
                 Sys_LedGreenOff();
             } 
             
+            if(a_CheckStateBit(g_nReaderState, READER_STAT_WIGHT_ZERO_LOADING))
+            {
+                 Sys_LedBlueOn();
+            }
+            else
+            {
+                Sys_LedBlueOff();
+            } 
+            
             if(a_CheckStateBit(g_nReaderState, READER_STAT_PUT_TAG)) 
             {
-                g_nSysGLed = g_nSysTick;
+                g_sReaderLedInfo.time = g_nSysTick;
                 if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
                 {
                     g_sSoundInfo.state = SOUND_STAT_TX; 
@@ -241,7 +250,7 @@ void Sys_LedTask(void)
             }
             if( a_CheckStateBit(g_nReaderState, READER_STAT_BIND_TAG)) 
             {
-                g_nSysGLed = g_nSysTick;
+                g_sReaderLedInfo.time = g_nSysTick;
                 if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
                 {
                 g_sSoundInfo.state = SOUND_STAT_TX; 
@@ -251,7 +260,7 @@ void Sys_LedTask(void)
             }
             if(a_CheckStateBit(g_nReaderState, READER_STAT_CLASH_TAG)) 
             {
-                g_nSysGLed = g_nSysTick;
+                g_sReaderLedInfo.time = g_nSysTick;
                 if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
                 {
                     g_sSoundInfo.state = SOUND_STAT_TX; 
@@ -271,7 +280,7 @@ void Sys_LedTask(void)
                 {
                     Sys_LedRedOff();
                 }
-                if(g_nSysGLed + READER_LED_TIM < g_nSysTick)
+                if(g_sReaderLedInfo.time + READER_LED_TIM < g_nSysTick)
                 {
                     Sys_LedRedOff();
                     a_ClearStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
@@ -281,55 +290,42 @@ void Sys_LedTask(void)
         }
         else
         {
-            u32 static ledRedTime = 0;
-            u32 static ledGreenTime = 0;
-            u32 static ledBlueTime = 0;
-            BOOL static ledRedFlag = FALSE;
-            BOOL static ledGreenFlag = FALSE;
-            BOOL static ledBlueFlag = FALSE;
-            
-            BOOL static ledFlag[3] = {0};
-            u32 static ledTime[3] = {0};
-            
-
-
-            
-            
-            
-            if(!ledRedFlag && !ledGreenFlag && !ledBlueFlag)
+            //灯测
+            if(g_sReaderLedInfo.flag == READER_LED_RED_ALL_OFF)
             {
-                  Sys_LedRedOn();
-                  ledRedTime = g_nSysTick;
+                Sys_LedRedOn();
+                g_sReaderLedInfo.time = g_nSysTick;
+                g_sReaderLedInfo.flag = READER_LED_RED_ON;
             }
-            
-             if(ledRedFlag && !ledGreenFlag && !ledBlueFlag)
+            else if(g_sReaderLedInfo.flag == READER_LED_RED_OFF)
             {
-                  Sys_LedRedOn();
-                  ledGreenTime = g_nSysTick;
+                Sys_LedGreenOn();
+                g_sReaderLedInfo.time = g_nSysTick;
+                g_sReaderLedInfo.flag = READER_LED_GREEN_ON;
             }
-            
-             if(ledRedFlag && ledGreenFlag && !ledBlueFlag)
+            else if(g_sReaderLedInfo.flag == READER_LED_GREEN_OFF)
             {
-                  Sys_LedRedOn();
-                  ledBlueTime = g_nSysTick;
+                Sys_LedBlueOn();
+                g_sReaderLedInfo.time = g_nSysTick;
+                g_sReaderLedInfo.flag = READER_LED_BLUE_ON;
             }
 
-            if(!ledRedFlag && ledRedTime + 200 < g_nSysTick)
+            if(g_sReaderLedInfo.flag == READER_LED_RED_ON && g_sReaderLedInfo.time + READER_LEN_LIMIT_TIME < g_nSysTick)
             {
                  Sys_LedRedOff();
-                ledRedFlag = TRUE;
+                g_sReaderLedInfo.flag = READER_LED_RED_OFF;
             }
-            
-            if(ledGreenFlag && ledGreenTime + 200 < g_nSysTick)
+            else if(g_sReaderLedInfo.flag == READER_LED_GREEN_ON && g_sReaderLedInfo.time + READER_LEN_LIMIT_TIME < g_nSysTick)
             {
                 Sys_LedGreenOff();
-                ledGreenFlag = TRUE;
+                g_sReaderLedInfo.flag = READER_LED_GREEN_OFF;
             }
-            if(ledBlueFlag && ledBlueTime + 200 < g_nSysTick)
+            else if(g_sReaderLedInfo.flag == READER_LED_BLUE_ON && g_sReaderLedInfo.time + READER_LEN_LIMIT_TIME < g_nSysTick)
             {
                 Sys_LedBlueOff();
-                ledBlueFlag = TRUE;
+                g_sReaderLedInfo.flag = READER_LED_RED_ALL_OFF;
             }
+
         
         }
 
@@ -338,7 +334,7 @@ void Sys_LedTask(void)
 
 void Sys_KeyTask()
 {
-    u8 static k = 0;
+    u8 static k = 0, keyValue = 0;
     
     if(a_CheckStateBit(g_nReaderState, READER_STAT_KEY))
     {
@@ -400,6 +396,42 @@ void Sys_KeyTask()
                 g_sKeyValue.state =KEY_STAT_SAMPLE; 	  
 
             }
+        }
+        
+        
+        if(keyValue != Key_GetValue())
+        {
+            keyValue = Key_GetValue();
+             if(keyValue & KEY_SAMPLE_UP)
+            {
+                Lcm_DishWriteColor(LCE_TXT_ADDR_KEY_UP, LCM_FONT_COROL_BLACK);
+            }
+            else
+            {
+                Lcm_DishWriteColor(LCE_TXT_ADDR_KEY_UP, LCM_FONT_COROL_WHITE);
+            }
+            
+            if(keyValue & KEY_SAMPLE_MIDDLE)
+            {
+                Lcm_DishWriteColor(LCE_TXT_ADDR_KEY_MIDDLE, LCM_FONT_COROL_BLACK);
+            }
+            else
+            {
+                Lcm_DishWriteColor(LCE_TXT_ADDR_KEY_MIDDLE, LCM_FONT_COROL_WHITE);
+            }
+            if(keyValue & KEY_SAMPLE_DOWN)
+            {
+                Lcm_DishWriteColor(LCE_TXT_ADDR_KEY_DOWN, LCM_FONT_COROL_BLACK);
+            }
+            else
+            {
+                Lcm_DishWriteColor(LCE_TXT_ADDR_KEY_DOWN, LCM_FONT_COROL_WHITE);
+            }   
+          
+        }
+        else
+        {
+            keyValue = Key_GetValue();
         }
     }
 #if SYS_ENABLE_WDT
@@ -499,14 +531,8 @@ void Sys_GPBTask()
         }
         else if(g_sGpbInfo.rxBuf.len == GPB_BUF_MIN_LEN - 1)
         {
-            //零点重置完成
-          
-            Sys_LedBlueOn();
-            Sys_Delayms(500); 
-#if SYS_ENABLE_WDT
-    WDG_FeedIWDog();
-#endif
-            Sys_LedBlueOff();
+         
+            a_ClearStateBit(g_nReaderState, READER_STAT_WIGHT_ZERO_LOADING);
             a_ClearStateBit(g_nSysState, SYS_STAT_GPB_FAIL); 
             a_ClearStateBit(g_sGpbInfo.mode, GPB_WORK_SET_ZERO);
         }
@@ -533,6 +559,7 @@ void Sys_GPBTask()
         else 
         {
             GPB_Adjust(&g_sGpbInfo.txBuf);
+            a_SetStateBit(g_nReaderState, READER_STAT_WIGHT_ZERO_LOADING);
         }
         g_sGpbInfo.state = GPB_STAT_WAIT;
     }
@@ -1061,7 +1088,7 @@ void Sys_ReaderTask()
                     Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_OFFLINE_BACK);
                     
                     a_SetStateBit(g_nSysState, SYS_STAT_LINE_OFF);
-                    if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
+                   // if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
                     {
                         g_sSoundInfo.state = SOUND_STAT_TX; 
                         g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
@@ -1075,7 +1102,7 @@ void Sys_ReaderTask()
 
         }
         
-          if(a_CheckStateBit(g_sDeviceMealRspFrame.state, READER_DATA_UP_OK))
+    if(a_CheckStateBit(g_sDeviceMealRspFrame.state, READER_DATA_UP_OK))
     {
         a_ClearStateBit(g_sDeviceMealRspFrame.state, READER_DATA_UP_OK);
         if(Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData) > 0)                 //      数据上传成功
@@ -1184,6 +1211,23 @@ void Sys_ReaderTask()
     }
     else
     {
+        if(a_CheckStateBit(g_nReaderState, READER_STAT_CHK_LINK))
+        {
+            a_ClearStateBit(g_nReaderState, READER_STAT_CHK_LINK); 
+
+            if(g_nTempLink ==  READER_LINK_OK)
+            {
+                if(g_nTickLink + READER_LINK_TIME < g_nSysTick)
+                {
+                    g_nTempLink =  READER_LINK_FAIL; 
+                }
+            }
+            else if(g_nTempLink ==  READER_LINK_FAIL)
+            {
+                a_SetStateBit(g_nSysState, SYS_STAT_LINE_OFF);
+            }
+
+        }
         if(a_CheckStateBit(g_nReaderState, READER_STAT_READER_MARK_OK))     //清除读卡在位标志
         {
             a_ClearStateBit(g_nReaderState, READER_STAT_READER_MARK_OK);
@@ -1193,8 +1237,7 @@ void Sys_ReaderTask()
             a_ClearStateBit(g_nSysState, SYS_STAT_TEST);  
 
             Reader_DisplayTest(&g_sRaderInfo.dishInfo , &g_sWightTempInfo);
-            Reader_ChgTag(g_sReaderRfidTempInfo.state);
-            
+            Reader_ChgStat(g_nTempLink);
             if(g_sSoundInfo.testFlag == SOUND_TEST_FLAG_ENABLE)
             {   
                 g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
@@ -1203,9 +1246,10 @@ void Sys_ReaderTask()
                 {
                     g_sSoundInfo.state = SOUND_STAT_TX; 
                     id++;
+                    g_sSoundInfo.testFlag = SOUND_TEST_FLAG_DISABLE; 
                     if(id == SOUND_VOC_OFF_LINE + 1)
                     {   
-                        g_sSoundInfo.testFlag = SOUND_TEST_FLAG_DISABLE; 
+                        
                         id = SOUND_VOC_PUT_TAG;
                     }
 
@@ -1213,6 +1257,7 @@ void Sys_ReaderTask()
             }
 
         }
+
     }
     
 

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <settings>
     <DebugChecksum>
-        <Checksum>2427492065</Checksum>
+        <Checksum>3105908585</Checksum>
     </DebugChecksum>
     <Trace1>
         <Enabled>0</Enabled>
@@ -19,8 +19,8 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <Disassembly>
-        <MixedMode>1</MixedMode>
         <InstrCount>0</InstrCount>
+        <MixedMode>1</MixedMode>
     </Disassembly>
     <CodeCoverage>
         <Enabled>0</Enabled>
@@ -143,13 +143,7 @@
         <mode>0</mode>
     </DisassembleMode>
     <Breakpoints2>
-        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\Anyid_CS1110_Key.c}.117.13" 0 0 1 "" 0 "" 0</Bp0>
-        <Bp1>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\AnyID_CS1110_SysCfg.c}.310.13" 0 0 1 "" 0 "" 0</Bp1>
-        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\AnyID_CS1110_SysCfg.c}.317.18" 0 0 1 "" 0 "" 0</Bp2>
-        <Bp3>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\AnyID_CS1110_SysCfg.c}.323.17" 0 0 1 "" 0 "" 0</Bp3>
-        <Bp4>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\AnyID_CS1110_SysCfg.c}.328.17" 0 0 1 "" 0 "" 0</Bp4>
-        <Bp5>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\AnyID_CS1110_SysCfg.c}.304.13" 0 0 1 "" 0 "" 0</Bp5>
-        <Count>6</Count>
+        <Count>0</Count>
     </Breakpoints2>
     <Aliases>
         <Count>0</Count>

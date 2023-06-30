@@ -45,6 +45,7 @@
 #define READER_STAT_LCM_FRESH              0x00002000
 #define READER_STAT_CHK_LINK               0x00004000
 #define READER_STAT_UART_TX_WAIT           0x00008000
+#define READER_STAT_WIGHT_ZERO_LOADING     0x00010000
 
 
 
@@ -140,6 +141,17 @@
 
 
 
+#define READER_LED_RED_ALL_OFF           0x00000000
+#define READER_LED_RED_ON                0x00000001
+#define READER_LED_RED_OFF               0x00000002
+#define READER_LED_GREEN_ON              0x00000004
+#define READER_LED_GREEN_OFF             0x00000008
+#define READER_LED_BLUE_ON               0x00000010
+#define READER_LED_BLUE_OFF              0x00000020
+
+#define READER_LEN_LIMIT_TIME           400
+
+
 //
 #define READER_LINK_TIME                25000//25000                   //125s
 #define READER_OFF_LINE_TICK            2                      
@@ -158,7 +170,7 @@
 #define READER_RSP_NORMAL_DATA          0x01
 #define READER_RSP_OFFLINE_DATA         0x02
 
-#define REDAER_UART_TX_TICK              20
+#define REDAER_UART_TX_TICK              40
 #define REDAER_UP_DATA_TICK              200
 #define REDAER_UP_DATA_NUM               3
 
@@ -303,7 +315,7 @@ extern READER_RFID_INFO g_sReaderRfidTempInfo;
 
 
 #define READER_LINK_OK                  0x01
-#define READER_LINK_FAIL                0x02
+#define READER_LINK_FAIL                0x00
 typedef struct readerInfo{  
     u32 wight;
     u32 total;
@@ -313,8 +325,9 @@ typedef struct readerInfo{
     u32 crc32;	
 }READER_INFO;
 
-typedef struct readerLedInfo{  
-    u8 tick;
+typedef struct readerLedInfo{
+    u32 flag;
+    u32 time;
     u32 state;
 }READER_LED_INFO;
 
@@ -362,7 +375,7 @@ void Reader_Init();
 void Reader_DisplayIp(READER_DEVICE_PARAMETER *pBuffer);
 
 
-void Reader_ChgTag(u8 stat);
+
 void Reader_ChgKey(u8 stat);
 void Reader_DisplayLable(DISH_INFO *pBuffer);
 
@@ -375,6 +388,7 @@ void Reader_Font_ChgCorol(u8 background);
 void Reader_InVoTags();
 void Reader_OffLineClear();
 void Fram_Demo();
+void Reader_ChgStat(u8 lineState);                                                                                                  
 
 BOOL Reader_ReadOffLineDataNum(void) ;
 BOOL Reader_ReadOffLineDatas(u16 addr, u16 size, u8 *pBuffer)   ;

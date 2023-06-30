@@ -27,6 +27,11 @@
 #define KEY_LONG_ERR_TIME       2000
 
 
+#define KEY_SAMPLE_UP           0x01
+#define KEY_SAMPLE_MIDDLE       0x02
+#define KEY_SAMPLE_DOWN         0x04
+
+
 typedef struct keyValue{
     u8 state;
     u8 mode;

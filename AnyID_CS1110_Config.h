@@ -19,7 +19,7 @@
 //#define SYS_PROTOCOL_ISO14443B          0x20
 #define SYS_PROTOCOL_MASK               0xF0
 
-#define SYS_ENABLE_WDT              0
+#define SYS_ENABLE_WDT              1
 
 
 //STM32平台相关

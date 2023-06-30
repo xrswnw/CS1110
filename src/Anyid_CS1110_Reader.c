@@ -1,6 +1,6 @@
 #include "AnyID_CS1110_Reader.h"
 
-const u8 READER_VERSION[READER_VERSION_SIZE]@0x08005000 = " CS1110 23062901 G230200";
+const u8 READER_VERSION[READER_VERSION_SIZE]@0x08005000 = " CS1110 23063003 G230200";
 
 u32 g_nReaderState = READER_STAT_IDLE;
 
@@ -426,6 +426,7 @@ u32 Reader_GetWight(GPB_INFO *gpbInfo)
     return tempValue;
 }
 
+/*
 void Reader_ChgTag(u8 stat)                                                                                               //测试模式RFID状态区分              
 {
     if(stat == RFID_TAG_IN)
@@ -446,9 +447,34 @@ void Reader_ChgTag(u8 stat)                                                     
 }
 
 
-void Reader_ChgKey(u8 stat)                                                                                                    
+ */
+
+void Reader_ChgStat(u8 lineState)                                                                                                    
 {
- 
+    static u8 state = 0xFF;
+    char Buf[LCM_TXT_LEN_MAX];
+    if(state != lineState)
+    {
+        state = lineState;
+        if(state == READER_LINK_FAIL)
+        {
+            memcpy(Buf, "离线", LCM_TXT_LEN_MAX);   
+            Lcm_DishWriteColor(LCE_TXT_ADDR_LINE_STAT, LCM_FONT_COROL_RED);
+            Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_TAG_STAT, sizeof(Buf), Buf, LCM_DISH_TX_MODE_LEFT, 0);
+        }
+        else
+        {
+             memcpy(Buf, "在线", LCM_TXT_LEN_MAX); 
+             Lcm_DishWriteColor(LCE_TXT_ADDR_LINE_STAT, LCM_FONT_COROL_GREEN);
+            Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_TAG_STAT, sizeof(Buf), Buf, LCM_DISH_TX_MODE_LEFT, 0);
+        }
+        
+    }
+    else
+    {
+        state = lineState;
+    }
+
 }
 
 
@@ -540,7 +566,8 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
     g_sDeviceRspFrame.cmd = cmd;
     g_sDeviceRspFrame.flag = UART_FRAME_FLAG_OK;
     g_sDeviceRspFrame.err = UART_FRAME_RSP_NOERR;
-    
+    g_nTempLink = READER_LINK_OK;
+    g_nTickLink = g_nSysTick;
     if(pFrame[UART_FRAME_POS_LEN] == 0)
     {
         paramsLen = *((u16 *)(pFrame + UART_FRAME_POS_PAR));
@@ -554,21 +581,18 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
         case READER_CMD_RESET:
             if(paramsLen == 0)
             {
-                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.len = Device_ResponseFrame(NULL, 0, &g_sDeviceRspFrame);
             }
             break;
         case READER_CMD_GET_VERSION:
             if(paramsLen == 0)
             {
-                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.len = Device_ResponseFrame((u8 *)READER_VERSION, READER_VERSION_SIZE, &g_sDeviceRspFrame);
             }
             break;
         case READER_CMD_GET_CPUID:
             if(paramsLen == 0)
             {
-                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
                 g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
                 g_sDeviceRspFrame.len = Device_ResponseFrame((u8 *)STM32_CPUID_ADDR, STM32_CPUID_LEN, &g_sDeviceRspFrame);
@@ -595,14 +619,12 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                     g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
                 
                 }
-                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.len = Reader_Format_Cfg(0, &g_sDeviceRspFrame, &g_sDeviceParamenter);
 
             }
         case READER_CMD_GET_CFG:
             if(paramsLen == 0)
             {
-                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
                 g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
                 g_sDeviceRspFrame.len = Reader_Format_Cfg(1, &g_sDeviceRspFrame, &g_sDeviceParamenter);
@@ -634,7 +656,6 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                     memcpy(&rtcTime, pFrame + READER_MEAL_RTC_POS, 4);
                     g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
                     g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
-                    g_nTempLink = READER_LINK_OK;
                     
                     RTC_SetTime(rtcTime);
                     if((Lcm_ChkPage(LCM_FLAG_PAGE_NULL_CHG) || Lcm_ChkPage(LCM_FLAG_PAGE_NULL_CHG + READER_UI_MODE_BLACK)) && ! Lcm_ChkPage(LCM_FLAG_PAGE_TEST))
@@ -648,7 +669,6 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                     g_sDeviceRspFrame.flag = READER_FRAME_FLAG_FAIL;
                     g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
                }
-               g_nTickLink = g_nSysTick;
                g_sDeviceRspFrame.len = Reader_Format_Heart(&g_sDeviceRspFrame, rtcTime, Sound_GetValue(g_sGpbInfo.wightTemp));   //重量数据代填
             }
             break;
@@ -674,7 +694,6 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                     g_sDeviceRspFrame.flag = READER_FRAME_FLAG_FAIL;
                     g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
                 }
-                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.len = Device_ResponseFrame(NULL, 0, &g_sDeviceRspFrame);
             }
             break;
@@ -709,7 +728,6 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                     g_sDeviceRspFrame.flag = READER_FRAME_FLAG_FAIL;
                     g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
                 }
-                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.len = Device_ResponseFrame(NULL, 0, &g_sDeviceRspFrame);
             }
       break;
@@ -719,7 +737,6 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
                 g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
                 g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
                 g_sDeviceRspFrame.state = READER_DATA_UP_OK;
-                g_nTickLink = g_nSysTick;
                 g_sDeviceRspFrame.len = Device_ResponseFrame(NULL, 0, &g_sDeviceRspFrame);
             }
       break;
@@ -1092,7 +1109,7 @@ void Reader_ChgPage(LCM_INFO *pLcmInfo)
         if(pLcmInfo->flag == LCM_FLAG_PAGE_TEST &&  g_sDeviceParamenter.uiMode == READER_UI_MODE_BLACK)
         {
             Lcm_SelectPage(LCM_FLAG_PAGE_TEST);
-            g_sSoundInfo.testFlag = SOUND_TEST_FLAG_ENABLE;
+            //g_sSoundInfo.testFlag = SOUND_TEST_FLAG_ENABLE;
         }
         else
         {
@@ -1105,7 +1122,7 @@ void Reader_ChgPage(LCM_INFO *pLcmInfo)
                 Lcm_SelectPage(pLcmInfo->page + g_sDeviceParamenter.uiMode);
                 if(pLcmInfo->page + g_sDeviceParamenter.uiMode == LCM_FLAG_PAGE_TEST)
                 {
-                    g_sSoundInfo.testFlag = SOUND_TEST_FLAG_ENABLE;
+                    //g_sSoundInfo.testFlag = SOUND_TEST_FLAG_ENABLE;
                 }
             }
            
