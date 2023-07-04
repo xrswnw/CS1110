@@ -34,7 +34,7 @@
 #define GPBWIGHT_VALUE_NUM		3
 
 #define GPB_WITGH_MASK_VALUE            0x10000000
-
+#define GPB_WITGH_LOW_MASK_VALUE        10
 #define GPB_WITGH_FLAG_PLUS             0
 #define GPB_WITGH_FLAG_MINUS            0x10000000
 #define GPB_WIGHT_VALUE_POS             0x03
@@ -46,6 +46,8 @@
 #define GPB_STAT_OPEN_SAMPLE            0x01
 #define GPB_STAT_STOP_SAMPLE            0x02
 
+#define GPB_FLAG_NORMAL                 0
+#define GPB_FLAG_FAIL                   0x01
 #define GPB_SAMPLE_NUM                  16
 typedef struct wightInfo{
     u32 flag;
@@ -109,6 +111,7 @@ typedef struct wihgtInfo{
     u32 witghSmple;
     u32 wightValue;
     u32 wightTemp;
+    u32 maskValue;
     u32 tick; 
     GPB_TX_BUF txBuf;
     GPB_RX_BUF rxBuf;

@@ -203,7 +203,7 @@
 #define LCM_FLAG_PAGE_NULL_CHG          0x03
 #define LCM_FLAG_PAGE_SET_CHG           0x04   
 
-#define LCM_FLAG_PAGE_TEST              21
+#define LCM_FLAG_PAGE_TEST            21  //20
 
 #define LCM_UP_TICK                     10
 #define LCM_UP_NUM                      3

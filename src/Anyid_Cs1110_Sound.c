@@ -116,11 +116,3 @@ void Sound_TransmitCmd(u8 cmd, u8 feedback,u16 data)
     g_sSoundInfo.txBuf.len = Sound_FormaFrame(cmd, feedback, data,  g_sSoundInfo.txBuf.buffer);
     Sound_WriteBuffer(g_sSoundInfo.txBuf.buffer, g_sSoundInfo.txBuf.len);
 }
-
-u32 Sound_GetValue(u32 sampleValue)
-{
-    u32 value;
-
-    value = (u32)(((sampleValue & 0x000FFFFF) / pow(10,(sampleValue & 0x00F00000) >> 20)) * 1000);
-    return value;
-}

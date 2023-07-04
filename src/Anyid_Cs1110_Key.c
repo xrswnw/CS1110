@@ -53,6 +53,9 @@ void Key_Value_Main(KEY_VALUE *pBuffer)
    
         break;
         case (KEY_VALUE_LONG_LEFT | KEY_VALUE_LONG_MID | KEY_VALUE_LONG_RIGHT):
+          
+         // if(Lcm_ChkPage(LCM_PAGE_NULL_WHITE))
+          {
             g_sDeviceParamenter.reWorkMode = READER_MODE_TEST;
             pBuffer->mode = KEY_MDOE_TEST;
             pBuffer->value = 0;
@@ -61,7 +64,7 @@ void Key_Value_Main(KEY_VALUE *pBuffer)
             g_sReaderRfidTempInfo.succesTick = 0;
             g_sReaderRfidTempInfo.allTick = 0; 
             Lcm_SetPage(LCM_FLAG_PAGE_TEST );    
-            
+          }
         break;
         case (KEY_VALUE_LONG_LEFT | 0 | KEY_VALUE_LONG_RIGHT):
 
@@ -92,7 +95,7 @@ void Key_Value_Test(KEY_VALUE *pBuffer)
             g_sGpbInfo.mode = GPB_WORK_SET_ZERO; 
         break;
         case KEY_VALUE_LONG_MID:
-
+            pBuffer->value = 0;
             g_sSoundInfo.testFlag = SOUND_TEST_FLAG_ENABLE;
         break;
         case KEY_VALUE_LONG_RIGHT:

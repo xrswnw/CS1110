@@ -37,4 +37,6 @@ Anyid_Cs1110_Rfid_HL.pbi: \
   E:\AnyID\AnyID_Embedded\V1.1.0\STM32_lib_V3.3\inc\stm32f10x_tim.h \
   E:\AnyID\AnyID_Embedded\V1.1.0\STM32_lib_V3.3\inc\stm32f10x_usart.h \
   E:\AnyID\AnyID_Embedded\V1.1.0\STM32_lib_V3.3\inc\misc.h \
-  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\stdio.h
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\stdio.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\math.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\DLib_float_setup.h

@@ -25,6 +25,8 @@ void Key_InitInterface()
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Pin = KEY_POW_PORT.Pin;
     GPIO_Init(KEY_POW_PORT.Port, &GPIO_InitStructure);
+
+    KEY_POW_PORT.Port->BSRR = KEY_POW_PORT.Pin;
 	
 
 }
@@ -33,32 +35,21 @@ u8 Key_GetValue()
 {
     u8 k = 0x00;
     
-    if(((~KEY_PORT0.Port->IDR) & KEY_PORT0.Pin))
+    if(((KEY_PORT0.Port->IDR) & KEY_PORT0.Pin) == 0)
     {
-        k |= 0x04;
+        k |= KEY_SAMPLE_DOWN;
     }
-    else
+
+    if(((KEY_PORT1.Port->IDR) & KEY_PORT1.Pin) == 0)
     {
-        k &= ~0x04; 
+        k |= KEY_SAMPLE_MIDDLE;
     }
-    if(((~KEY_PORT1.Port->IDR) & KEY_PORT1.Pin))
+
+    if(((KEY_PORT2.Port->IDR) & KEY_PORT2.Pin) == 0)
     {
-        k |= 0x02;
+        k |= KEY_SAMPLE_UP;
     }
-    else
-    {
-        k &= ~0x02; 
-    }
-    if(((~KEY_PORT2.Port->IDR) & KEY_PORT2.Pin))
-    {
-        k |= 0x01;
-    }
-    else
-    {
-        k &= ~0x01; 
-    }
-    
-  
+ 
 
     return k;
 }

@@ -89,6 +89,7 @@
 #define READER_CMD_GET_VERSION              0xF7
 #define READER_CMD_GET_CPUID                0xF8
 #define READER_CMD_CHG_IP                   0xFF
+#define READER_CMD_DRU_CMD                  0xFE
 
 #define READER_CMD_SET_CFG                  0x20
 #define READER_CMD_GET_CFG                  0x21
@@ -102,6 +103,10 @@
 #define READER_CMD_DRU_LCD                  0x33
 #define READER_CMD_DRU_GET_KEY              0x34
 
+
+#define READER_DTU_FLAG_VOICD                   0x01
+#define READER_DTU_FLAG_LCM                     0x02
+#define READER_DTU_FLAG_GPB                     0x04
 
 #define READER_STATUS_ENTOURAGR                0
 #define READER_STATUS_MASTER                0x01
@@ -170,7 +175,7 @@
 #define READER_RSP_NORMAL_DATA          0x01
 #define READER_RSP_OFFLINE_DATA         0x02
 
-#define REDAER_UART_TX_TICK              40
+#define REDAER_UART_TX_TICK              60
 #define REDAER_UP_DATA_TICK              200
 #define REDAER_UP_DATA_NUM               3
 
@@ -242,6 +247,7 @@ extern READER_IMPARAMS g_sReaderImParams;
 typedef struct readerRspFrame{
     u16 len;
     u8 buffer[READER_RSPFRAME_LEN];
+    u8 dtuFlag;
     u8 mode;
     u8 flag;
     u8 tag;
@@ -389,6 +395,8 @@ void Reader_InVoTags();
 void Reader_OffLineClear();
 void Fram_Demo();
 void Reader_ChgStat(u8 lineState);                                                                                                  
+void Reader_Chk_KeyValue(u8 value);
+void Reader_Normal_Mode();
 
 BOOL Reader_ReadOffLineDataNum(void) ;
 BOOL Reader_ReadOffLineDatas(u16 addr, u16 size, u8 *pBuffer)   ;

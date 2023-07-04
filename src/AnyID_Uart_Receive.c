@@ -66,17 +66,6 @@ void Uart_ReceiveFrame(u8 byte, UART_RCVFRAME *pRcvFrame)
                 }
             }
             pRcvFrame->buffer[pRcvFrame->index++] = byte;
-/*
-            if( pRcvFrame->buffer[7] == 0x1F)
-            {   
-                if(pRcvFrame->index > pRcvFrame->length - 1)
-                //if(pRcvFrame->index >= pRcvFrame->length - 1)
-                {
-                    pRcvFrame->length --;
-                    pRcvFrame->state = UART_STAT_END;
-                }
-            }
-            else*/
             {
                 if(pRcvFrame->index >= pRcvFrame->length)
                 {
