@@ -30,6 +30,7 @@
 #include "stm32f10x.h"
 #include "AnyID_CS1110_SysCfg.h"
 #include "AnyID_CS1110_SysTick_HL.h"
+#include "AnyID_CS1110_Rfid.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

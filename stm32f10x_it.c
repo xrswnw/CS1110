@@ -139,9 +139,14 @@ void SysTick_Handler(void)
 
     if((g_nSysTick % 11) == 0)
     {
-        a_SetStateBit(g_nSysState, SYS_STAT_TEST | SYS_STAT_RUNLED | SYS_STAT_AUTO_TIME );
+        a_SetStateBit(g_nSysState, SYS_STAT_RUNLED | SYS_STAT_AUTO_TIME );
 
     }
+	if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
+	{
+		Uart_IncIdleTime(STICK_TIME_MS, g_sUartRcvFrame);
+		Uart_IncIdleTime(STICK_TIME_MS, g_sRfidInfo.rfidRev);
+	}
     
 
 
@@ -227,17 +232,30 @@ void LCM_TxDMAIRQHandler(void)
     g_sLcmDishRcvFrame.state = GPB_STAT_TX_IDLE;
 }
 
-
-
-
 void Uart_IRQHandler(void)
 {
   if(USART_GetITStatus(UART_PORT, USART_IT_RXNE) != RESET)
     {
         u8 byte = 0;
         USART_ClearITPendingBit(UART_PORT, USART_IT_RXNE);
-        byte = Uart_ReadByte();
-        Uart_ReceiveFrame(byte, &g_sUartRcvFrame);
+		byte = Uart_ReadByte();
+		if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
+		{
+			g_sUartRcvFrame.buffer[g_sUartRcvFrame.index++] = byte;
+			if(g_sUartRcvFrame.index < UART_BUFFER_MAX_LEN)
+			{
+				g_sUartRcvFrame.state |= UART_FLAG_RCV;
+			}
+			else
+			{
+			   g_sUartRcvFrame.state = UART_STAT_END; 
+			}
+			g_sUartRcvFrame.idleTime = 0;
+		}
+		else
+		{
+			Uart_ReceiveFrame(byte, &g_sUartRcvFrame);
+		}
     }
     else 
     {
@@ -253,7 +271,24 @@ void RFID_IRQHandler(void)
         u8 byte = 0;
         USART_ClearITPendingBit(RFID_PORT, USART_IT_RXNE);
         byte = Rfid_ReadByte();
-        Rfid_ReceiveFrame(byte, &g_sRfidInfo.rfidRev);
+		if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
+		{
+			g_sRfidInfo.rfidRev.buffer[g_sRfidInfo.rfidRev.index++] = byte;
+			if(g_sRfidInfo.rfidRev.index < UART_BUFFER_MAX_LEN)
+			{
+				g_sRfidInfo.rfidRev.state |= UART_FLAG_RCV;
+			}
+			else
+			{
+			   g_sRfidInfo.rfidRev.state = UART_STAT_END; 
+			}
+			g_sRfidInfo.rfidRev.idleTime = 0;
+		}
+		else
+		{
+			Rfid_ReceiveFrame(byte, &g_sRfidInfo.rfidRev);	
+		}
+			
     }
     else 
     {

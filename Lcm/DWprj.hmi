@@ -6,6 +6,7 @@ ProVersion=641
 SCREENDSIZE=800X480
 SPADDRESS=5000
 [IMG]
+21=21.bmp
 20=20.bmp
 13=13.bmp
 12=12.bmp
@@ -15,4 +16,3 @@ SPADDRESS=5000
 02=02.bmp
 01=01.bmp
 00=00.bmp
-21=21.bmp

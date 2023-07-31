@@ -11,6 +11,7 @@ void GPB_Init()
     GPB_InitTxDma(g_sGpbInfo.txBuf.buffer, g_sGpbInfo.txBuf.len);
     GPB_InitRxDma( g_sGpbInfo.rxBuf.buffer, g_sGpbInfo.rxBuf.len);
     GPB_EnableRxDma();
+	memset(&(g_sGpbInfo.rxBuf), 0, sizeof(GPB_RX_BUF));
     g_sGpbInfo.state =GPB_STAT_IDLE;
     g_sGpbInfo.witghSmple = GPB_STAT_OPEN_SAMPLE;
     g_sGpbInfo.txBuf.cmd = GPB_MODBUS_READ_REG;
@@ -191,26 +192,54 @@ void GPB_ChgValue(u32 value, char *buf)
 void Witgh_CalAvg(WIGHT_INFO *pInfo, u32 value)
 {
     //16窗口平滑滤波
-    pInfo->index++;
-    pInfo->sum -= pInfo->buffer[pInfo->index & 0x0F];
+	int tempValue = 0;
+	
+	if(value & GPB_WITGH_MASK_VALUE)								//负数
+	{	
+		tempValue = -(int)(value & GPB_WITGH_MASK_VALUE_ABS);
+	}
+	else
+	{
+		tempValue = (int)value;
+	}
+	
+	pInfo->index++;
+    pInfo->sum -= pInfo->buffer[pInfo->index & 0x03];
     if(pInfo->index == 0)
     {
         pInfo->index = GPB_SAMPLE_NUM;
     }
-    pInfo->buffer[pInfo->index & 0x0F] = value;
+    pInfo->buffer[pInfo->index & 0x03] = tempValue;
+    pInfo->sum += tempValue;
+    if(pInfo->index >= GPB_SAMPLE_NUM)
+    {
+        pInfo->avg = pInfo->sum >> 2;
+    }
+    else
+    {
+        pInfo->avg = pInfo->sum / pInfo->index;
+    }/*
+    pInfo->index++;
+    pInfo->sum -= pInfo->buffer[pInfo->index & 0x07];
+    if(pInfo->index == 0)
+    {
+        pInfo->index = GPB_SAMPLE_NUM;
+    }
+    pInfo->buffer[pInfo->index & 0x07] = value;
     pInfo->sum += value;
     if(pInfo->index >= GPB_SAMPLE_NUM)
     {
-        pInfo->avg = pInfo->sum >> 4;
+        pInfo->avg = pInfo->sum >> 3;
     }
     else
     {
         pInfo->avg = pInfo->sum / pInfo->index;
     }
+*/
+	
     
-    if(pInfo->index > 0xFFFFFFFE)
-    {
-        pInfo->index = 0;
-    }
+
 }
+
+
 

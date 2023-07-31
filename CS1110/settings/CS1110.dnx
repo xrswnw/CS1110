@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <settings>
     <DebugChecksum>
-        <Checksum>2911613959</Checksum>
+        <Checksum>3057379094</Checksum>
     </DebugChecksum>
     <Trace1>
         <Enabled>0</Enabled>
@@ -57,14 +57,28 @@
         <ITMlogFile>$PROJ_DIR$\ITM.log</ITMlogFile>
     </SWOTraceHWSettings>
     <struct_types>
-        <Fmt0>GPB_INFO-state	4	0</Fmt0>
-        <Fmt1>GPB_INFO-wightTemp	4	0</Fmt1>
-        <Fmt2>GPB_INFO-wightValue	4	0</Fmt2>
-        <Fmt3>GPB_INFO-witghSmple	4	0</Fmt3>
-        <Fmt4>READER_RSPFRAME-rtcTime	4	0</Fmt4>
+        <Fmt0>GPB_INFO-shankTick	4	0</Fmt0>
+        <Fmt1>GPB_INFO-state	3	0</Fmt1>
+        <Fmt2>GPB_INFO-wightTemp	3	0</Fmt2>
+        <Fmt3>GPB_INFO-wightValue	3	0</Fmt3>
+        <Fmt4>GPB_INFO-witghSmple	4	0</Fmt4>
+        <Fmt5>PERSON_INFO-money	3	0</Fmt5>
+        <Fmt6>READER_RSPFRAME-rtcTime	4	0</Fmt6>
+        <Fmt7>WIGHT_INFO-avg	3	0</Fmt7>
+        <Fmt8>WIGHT_INFO-index	4	0</Fmt8>
     </struct_types>
+    <array_types>
+        <Fmt0>u32[16]	4	0</Fmt0>
+        <Fmt1>u8[1024]	4	0</Fmt1>
+        <Fmt2>u8[50]	1	0</Fmt2>
+    </array_types>
     <watch_formats>
-        <Fmt0>{W}42:vvv	4	0</Fmt0>
+        <Fmt0>{W}42:g_nOffLineLimitTime	3	0</Fmt0>
+        <Fmt1>{W}42:g_nReaderState	4	0</Fmt1>
+        <Fmt2>{W}42:g_nTickLink	3	0</Fmt2>
+        <Fmt3>{W}42:tempvalue	4	0</Fmt3>
+        <Fmt4>{W}42:tempvv	4	0</Fmt4>
+        <Fmt5>{W}42:vvv	4	0</Fmt5>
     </watch_formats>
     <Trace2>
         <Enabled>0</Enabled>
@@ -120,13 +134,6 @@
         <ShowTimeSum>1</ShowTimeSum>
         <SumSortOrder>0</SumSortOrder>
     </EventLog>
-    <DisassembleMode>
-        <mode>0</mode>
-    </DisassembleMode>
-    <Breakpoints2>
-        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\Anyid_CS1110_Reader.c}.771.17" 0 0 1 "" 0 "" 0</Bp0>
-        <Count>1</Count>
-    </Breakpoints2>
     <TermIOLog>
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
@@ -136,10 +143,6 @@
         <LogFile>_ ""</LogFile>
         <Category>_ 0</Category>
     </LogFile>
-    <Aliases>
-        <Count>0</Count>
-        <SuppressDialog>0</SuppressDialog>
-    </Aliases>
     <DriverProfiling>
         <Enabled>0</Enabled>
         <Mode>1</Mode>
@@ -157,4 +160,16 @@
         <Probe0>I0</Probe0>
         <ProbeSetup0>2 1 1 2 0 0</ProbeSetup0>
     </PowerProbe>
+    <DisassembleMode>
+        <mode>0</mode>
+    </DisassembleMode>
+    <Breakpoints2>
+        <Bp0>_ 1 "EMUL_TRACE_FILTER" "g_nSysTick" 0 0 0 0 4294967295 0 0 0</Bp0>
+        <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\src\Anyid_Cs1110_Rfid.c}.178.1" 0 0 1 "" 0 "" 0</Bp1>
+        <Count>2</Count>
+    </Breakpoints2>
+    <Aliases>
+        <Count>0</Count>
+        <SuppressDialog>0</SuppressDialog>
+    </Aliases>
 </settings>

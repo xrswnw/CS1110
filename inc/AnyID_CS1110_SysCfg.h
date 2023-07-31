@@ -9,19 +9,19 @@
 
 
 extern u32 g_nSysState;
-#define SYS_STAT_IDLE                   0x00000001	    
+#define SYS_STAT_IDLE                   0x00000000	    
 #define SYS_STAT_RUNLED                 0x00000002
 #define SYS_STAT_AUTO_TIME              0x00000004
 #define SYS_STAT_OVER_OFFLINE           0x00000008
 #define SYS_STAT_SOUND_FAIL             0x00000010
 #define SYS_STAT_GPB_FAIL               0x00000020
-#define SYS_STAT_LCM_FAIL		0x00000040
+#define SYS_STAT_LCM_FAIL				0x00000040
 #define SYS_STAT_LINE_OFF               0x00000080
 #define SYS_STAT_R_LED_DELAY            0x00000100
 #define SYS_STAT_TEST                   0x00000200
 #define SYS_STAT_OFF_LINE               0x00000400
 #define SYS_STAT_LED_TEST               0x00000800
-
+#define SYS_STAT_DTU                    0x00001000
 
 
 
@@ -49,7 +49,7 @@ extern const PORT_INF SYS_LED_BLUE;
                                             Sys_LedGreenOff();\
                                             Sys_LedGreenOff();\
                                             Sys_LedRedOff();\
-                                            }while(0)
+                                          }while(0)
 #define SYS_CHECK_CFGMODE_TIM           200
 void Sys_Delayms(u32 n);
 void Sys_CfgClock(void);

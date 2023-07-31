@@ -5,7 +5,7 @@
 #include "AnyID_Stdlib.h"
 
 
-#define UART_BUFFER_MAX_LEN             (1024)
+#define UART_BUFFER_MAX_LEN             (3000)
 #define UART_FRAME_DATA_MAX_LEN         252
 #define UART_FRAME_PARAM_MAX_LEN        240
 #define UART_FRAME_DATA_MIN_LEN         8
@@ -70,7 +70,7 @@ void Uart_ReceiveFrame(u8 byte, UART_RCVFRAME *pRcvFrame);
                                                 if((rcvFrame).state & UART_FLAG_RCV)\
                                                 {\
                                                     (rcvFrame).idleTime++;\
-                                                    if((rcvFrame).idleTime >= 2)\
+                                                    if((rcvFrame).idleTime >= 20)\
                                                     {\
                                                         (rcvFrame).state = UART_STAT_TO;\
                                                     }\

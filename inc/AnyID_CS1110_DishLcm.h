@@ -4,9 +4,9 @@
 #include "AnyID_CS1110_DishLcm_HL.h"
 
 #define LCM_STAT_IDLE 	        0x00
-#define LCM_STAT_RCV 		0x01
-#define LCM_STAT_OVR 		0x04
-#define LCM_STAT_TX 		0x08
+#define LCM_STAT_RCV 			0x01
+#define LCM_STAT_OVR 			0x04
+#define LCM_STAT_TX 			0x08
 #define LCM_STAT_TX_IDLE        0x10
 #define LCM_STAT_WAIT           0x20
 

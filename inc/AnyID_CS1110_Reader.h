@@ -49,7 +49,7 @@
 
 
 
-
+#define DEVICE_OFFDATA_LIMIT_TIME		  720000/3   // 12 hours
 #define RFID_ANT_OPEN                     0x00
 #define RFID_ANT_CLOSE                    0x01
 
@@ -60,6 +60,9 @@
 #define READER_UI_MODE_WHITE             0x00
 #define READER_UI_MODE_BLACK             0x0A
 
+
+#define READER_WITHT_LIMIT_VALUE			5
+
 #define READER_RSPFRAME_FLAG_OK          0x00
 #define READER_RSPFRAME_FLAG_FAIL        0x01
 #define READER_OPTAG_RESPONSE_NOERR      0x00
@@ -68,11 +71,10 @@
 #define READER_OPTAG_RESPONSE_NORSP      0x03
 #define READER_OPTAG_RESPONSE_PARERR     0x04
 
-#define RFID_TAG_NULL                     0x00
-#define RFID_TAG_IN                      0x01
-#define RFID_TAG_KEEP                    0x02
-#define RFID_TAG_OUT                     0x04
-#define RFID_TAG_FAIL                    0x08
+
+
+#define READER_OVER_WIGHT_VALUE			1
+#define READER_OVER_WIGHT_TICK			10
 
 #define READER_RFID_UID_POST             19
 
@@ -88,7 +90,7 @@
 #define READER_CMD_RF_CTRL                  0xF0
 #define READER_CMD_GET_VERSION              0xF7
 #define READER_CMD_GET_CPUID                0xF8
-#define READER_CMD_CHG_IP                   0xFF
+#define READER_CMD_CHG_IP                   0x55
 #define READER_CMD_DRU_CMD                  0xFE
 
 #define READER_CMD_SET_CFG                  0x20
@@ -97,16 +99,29 @@
 #define READER_CMD_GET_MEAL_INFO            0x23
 #define READER_CMD_GET_HEART                0x25
 
-#define READER_CMD_DRU_GPB                  0x30
-#define READER_CMD_DRU_SOUND                0x31
-#define READER_CMD_DRU_LED                  0x32
+
+
+
+#define READER_CMD_DRU_RFID                 1
+#define READER_CMD_DRU_WIGHT                2
+#define READER_CMD_DRU_LCM                  3
+#define READER_CMD_DRU_RESET                10
 #define READER_CMD_DRU_LCD                  0x33
 #define READER_CMD_DRU_GET_KEY              0x34
 
 
-#define READER_DTU_FLAG_VOICD                   0x01
-#define READER_DTU_FLAG_LCM                     0x02
-#define READER_DTU_FLAG_GPB                     0x04
+#define READER_SFG_IP_LEN                       0x20
+#define READER_DTU_FLAG_VOICD                   4
+#define READER_DTU_FLAG_LCM                     3
+#define READER_DTU_FLAG_GPB                     2
+#define READER_DTU_FLAG_READER					1
+
+#define READER_DTU_FLAG_NULL					0
+
+#define DEVICE_ADDR_NULL						0x00
+#define DEVICE_ADDR_READER						0x01
+#define DEVICE_ADDR_WIGHT						0x02
+#define DEVICE_ADDR_LCM							0x04
 
 #define READER_STATUS_ENTOURAGR                0
 #define READER_STATUS_MASTER                0x01
@@ -127,7 +142,7 @@
 #define READER_PERSON_RTC_LEN               18  
 #define READER_PERSON_MONEY_LEN             26 
 
-#define READER_RFID_MOVE_TIME               12
+#define READER_RFID_MOVE_TIME               6
 //错误信息
 #define READER_FRAME_FLAG_OK             0x00
 #define READER_FRAME_FLAG_FAIL           0x01
@@ -175,12 +190,13 @@
 #define READER_RSP_NORMAL_DATA          0x01
 #define READER_RSP_OFFLINE_DATA         0x02
 
-#define REDAER_UART_TX_TICK              60
-#define REDAER_UP_DATA_TICK              200
-#define REDAER_UP_DATA_NUM               3
+#define REDAER_UART_TX_TICK              80
+#define REDAER_UP_DATA_TICK              100
+#define REDAER_UP_DATA_NUM               2
 
-#define REDAER_UPMEALINFO_SUCC              0
-#define REDAER_UPMEALINFO_FAIL              0x01
+#define READER_WIGHT_MAX_VALUE			0xFFFFFFFF
+#define REDAER_UPMEALINFO_SUCC			0
+#define REDAER_UPMEALINFO_FAIL			0x01
 #define REDAER_UP_GPB_TICK              20
 #define REDAER_UP_GPB_NUM               20
 
@@ -195,7 +211,7 @@
 
 #define READER_LED_TIM                  50
 
-#define READER_OFFLINE_DATA_BOUNDARY    2
+#define READER_OFFLINE_DATA_BOUNDARY    9
 typedef struct flashDevicePar{  
     u8 uiMode;                          //界面UI模式
     u8 rfCtrl;                           //射频默认状态
@@ -257,6 +273,7 @@ typedef struct readerRspFrame{
     u8 repeat;
     u8 status;
     u8 succFlag;
+	u8 deviceFlag;
     u16 destAddr;
     u32 rtcTime;
     u32 tick;
@@ -307,7 +324,9 @@ typedef struct readerRfidInfo{
     u8 num;
     u8 state;
     u8 clash;
-    u32 tick;                   
+    u32 tick; 
+	u32 clashTicks;
+	u32 clashTick;
     u32 okTick;                 
     u32 errTick;
     u32 succesTick;
@@ -315,13 +334,27 @@ typedef struct readerRfidInfo{
 }READER_RFID_INFO;
 
 extern READER_RFID_INFO g_sReaderRfidTempInfo;
-
+#define READER_LINK_OK                  0x01
+#define READER_LINK_FAIL                0x02
 #define READER_RFID_ResetFrame(rcvFrame)               do{(rcvFrame).state = RFID_STAT_IDLE; rcvFrame.repat=0;}while(0)
 
 
+#define Reader_ChkValue(u, v)     					 ({\
+														int sampleValue = 0;\
+														if(u & GPB_WITGH_MASK_VALUE)\
+														{\
+															sampleValue = -(u & GPB_WITGH_MASK_VALUE_ABS);\
+														}\
+														else \
+														{\
+															sampleValue = (u & GPB_WITGH_MASK_VALUE_ABS);\
+														}\
+														(v - sampleValue);\
+     					 							})\
+														
+	
+											 
 
-#define READER_LINK_OK                  0x01
-#define READER_LINK_FAIL                0x00
 typedef struct readerInfo{  
     u32 wight;
     u32 total;
@@ -350,42 +383,28 @@ typedef struct readerOffLineInfo{
 
 
 
-typedef struct readerDtuInfo{  
-    u8 state;
-    u8 flag;
-    u8 txBuffrt[UART_BUFFER_MAX_LEN];
-    u8 rxBuffrt[UART_BUFFER_MAX_LEN];
-    u8 repat;
-    u32 tick;
-    u32 crc32;	
-}READER_DTUINFO;
 
-
+extern BOOL g_nReaderLink;
+extern BOOL g_nReaderGpbState;
+extern u8 g_nTempLink;
+extern u16 g_nTempId;
 extern u32 g_nReaderState;
-extern READER_DTUINFO g_sReaderDtuInfo;
-extern READER_OFFLINE_INFO g_sReaderOffLineInfo;
 extern u32 g_nRtcTime;
 extern u32  g_nTickLink ;
-extern u8 g_nTempLink;
-extern BOOL g_nReaderLink;
+extern int g_nReaderWightValue;
+extern u32 g_nOffLineLimitTime;
+extern READER_OFFLINE_INFO g_sReaderOffLineInfo;
 extern READER_INFO g_sRaderInfo;
 extern char g_nBufTxt[LCM_TXT_LEN_MAX];
 extern char g_nBufTxt1[LCM_TXT_LEN_MAX];
-
-
-
-extern BOOL g_nReaderGpbState;
 extern u8 g_aReaderISO15693Uid[READER_OP_UID_MAX_NUM * ISO15693_SIZE_UID]; 
+
+
 void Reader_Delayms(u32 n);
 void Reader_Init();
 void Reader_DisplayIp(READER_DEVICE_PARAMETER *pBuffer);
-
-
-
 void Reader_ChgKey(u8 stat);
 void Reader_DisplayLable(DISH_INFO *pBuffer);
-
-
 void Reader_ChkLink(BOOL link);
 void Reader_DisplayDish(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo, LCM_INFO *pLcmInfo);
 void Reader_ChgPage(LCM_INFO *pLcmInfo);
@@ -397,6 +416,8 @@ void Fram_Demo();
 void Reader_ChgStat(u8 lineState);                                                                                                  
 void Reader_Chk_KeyValue(u8 value);
 void Reader_Normal_Mode();
+void Reader_TestLed(u32 tick);
+void Reader_ResolveWitgh();
 
 BOOL Reader_ReadOffLineDataNum(void) ;
 BOOL Reader_ReadOffLineDatas(u16 addr, u16 size, u8 *pBuffer)   ;
@@ -407,7 +428,6 @@ BOOL Reader_WriteDeviceParamenter(void);
 BOOL Reader_ChkReUid(u8 *pRUid, u8 *pTUid);
 BOOL Reader_ReadDeviceParamenter(void);
 
-BOOL Reader_DtuUartFrame(u8 *pFrame, READER_DTUINFO *pDtuInfo, u16 len);
 
 
 //u8 Reader_RfidGetValue(u8 mode, READER_RFID_INFO *pRfidInfo);

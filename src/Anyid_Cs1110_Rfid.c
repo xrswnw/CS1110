@@ -1,11 +1,16 @@
 #include "AnyID_CS1110_Rfid.h"
 RFID_INFO g_sRfidInfo = {0};
 
+
+u32 g_nRfidRomNum = 0;
 void Rfid_Init()
 {
     Rfid_InitInterface(RFID_BAUDRARE);
     Rfid_ConfigInt();
     Rfid_EnableInt(ENABLE,DISABLE);
+	g_sRfidInfo.state = RFID_STAT_TX;
+	
+	g_nRfidRomNum = a_GetCrc((u8 *)STM32_CPUID_ADDR, STM32_CPUID_LEN);
 }
 
 void Rfid_ReceiveFrame(u8 byte, UART_RCVFRAME *pRcvFrame)
@@ -117,8 +122,47 @@ u8 Rfid_Format_GetUid(u8 cmd,  RFID_INFO *pOpResult)
 
     pOpResult->len = pos;
     return pos;
+}
 
 
+u16 Rfid_FormatDtuFrame(u8 cmd, u16 len, u8 *pParam, RFID_INFO *pOpResult)
+{
+    u16 pos = 0;
+    u16 crc = 0;
+    
+    pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD1; // frame head first byte
+    pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD2; // frame haed second byte
+    pOpResult->buffer[pos++] = 0x00;   // length
+    pOpResult->buffer[pos++] = (0000 >> 0) & 0xFF;
+    pOpResult->buffer[pos++] = (0000 >> 8) & 0xFF;
+    pOpResult->buffer[pos++] = (0001 >> 0) & 0xFF;
+    pOpResult->buffer[pos++] = (0001 >> 8) & 0xFF;
+    pOpResult->buffer[pos++] = cmd;
+    pOpResult->buffer[pos++] = UART_FRAME_PARAM_RFU;
+ 
+        if(len > UART_FRAME_PARAM_MAX_LEN)
+    {
+        pOpResult->buffer[pos++] = (len >> 0) & 0xFF;
+        pOpResult->buffer[pos++] = (len >> 8) & 0xFF;
+
+        memcpy(pOpResult->buffer + pos, pParam, len);
+        pos += len;
+    }
+    else
+    {
+		memcpy(pOpResult->buffer + pos, pParam, len);
+        pos += len;
+    }
+    
+    
+    pOpResult->buffer[UART_FRAME_POS_LEN] = pos - 3 + 2; //减去帧头7E 55 LEN 的三个字节，加上CRC的两个字节
+    crc = a_GetCrc(pOpResult->buffer + UART_FRAME_POS_LEN, pos - UART_FRAME_POS_LEN); //从LEN开始计算crc
+    crc = a_GetCrc(pOpResult->buffer + UART_FRAME_POS_LEN, pos - UART_FRAME_POS_LEN); //从LEN开始计算crc
+    pOpResult->buffer[pos++] = crc & 0xFF;
+    pOpResult->buffer[pos++] = (crc >> 8) & 0xFF;
+
+    pOpResult->len = pos;
+    return pos;
 }
 
 
@@ -127,5 +171,6 @@ void Rfid_TransmitCmd(u32 tick)
     g_sRfidInfo.tick = tick;
     g_sRfidInfo.len = Rfid_Format_GetUid(RFID_GET_UID, &g_sRfidInfo);
     Rfid_WriteBuffer(g_sRfidInfo.buffer, g_sRfidInfo.len);
+
 }
 

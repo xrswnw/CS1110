@@ -13,13 +13,13 @@
 #define SYS_WM_NORMAL                1
 
 //设定工作时钟
-#define SYS_CLOCK_FREQ                  72000000
+#define SYS_CLOCK_FREQ                  120000000
 #define SYS_PROTOCOL_ISO15693           0x00
 //#define SYS_PROTOCOL_ISO14443A          0x10
 //#define SYS_PROTOCOL_ISO14443B          0x20
 #define SYS_PROTOCOL_MASK               0xF0
 
-#define SYS_ENABLE_WDT              0
+#define SYS_ENABLE_WDT              1
 
 
 //STM32平台相关

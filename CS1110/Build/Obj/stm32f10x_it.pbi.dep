@@ -71,4 +71,5 @@ stm32f10x_it.pbi: E:\AnyID\Git\YY\CS1110\stm32f10x_it.c \
   E:\AnyID\Git\YY\CS1110\CS1110\..\inc/AnyID_CS1110_Rfid_HL.h \
   E:\AnyID\Git\YY\CS1110\CS1110\..\inc/AnyID_Cs1110_WDG_HL.h \
   E:\AnyID\Git\YY\CS1110\AnyID_Cs1110_Config.h \
-  E:\AnyID\Git\YY\CS1110\CS1110\..\inc\AnyID_CS1110_SysTick_HL.h
+  E:\AnyID\Git\YY\CS1110\CS1110\..\inc\AnyID_CS1110_SysTick_HL.h \
+  E:\AnyID\Git\YY\CS1110\CS1110\..\inc\AnyID_CS1110_Rfid.h

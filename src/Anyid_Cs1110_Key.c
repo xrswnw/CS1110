@@ -64,6 +64,7 @@ void Key_Value_Main(KEY_VALUE *pBuffer)
             g_sReaderRfidTempInfo.succesTick = 0;
             g_sReaderRfidTempInfo.allTick = 0; 
             Lcm_SetPage(LCM_FLAG_PAGE_TEST );    
+			
           }
         break;
         case (KEY_VALUE_LONG_LEFT | 0 | KEY_VALUE_LONG_RIGHT):
@@ -101,7 +102,7 @@ void Key_Value_Test(KEY_VALUE *pBuffer)
         case KEY_VALUE_LONG_RIGHT:
           
             Sys_Delayms(5);
-            //Sys_SoftReset();  
+            Sys_SoftReset();  
 
         break;
         case (KEY_VALUE_LONG_MID | KEY_VALUE_LONG_RIGHT):
@@ -116,7 +117,8 @@ void Key_Value_Test(KEY_VALUE *pBuffer)
             g_sReaderRfidTempInfo.tick = 0; 
             g_sReaderRfidTempInfo.succesTick = 0;
             g_sReaderRfidTempInfo.allTick = 0; 
-            Lcm_SetPage(LCM_PAGE_NULL_WHITE + g_sDeviceParamenter.uiMode);    
+			pBuffer->flag = KEY_FLAG_FRESH;
+            //Lcm_SetPage(LCM_PAGE_NULL_WHITE + g_sDeviceParamenter.uiMode);    
         break;
         case (KEY_VALUE_LONG_LEFT | 0 | KEY_VALUE_LONG_RIGHT):
             pBuffer->value = 0;

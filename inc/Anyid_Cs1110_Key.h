@@ -26,11 +26,13 @@
 #define KEY_LONG_PRESS_TIME     200
 #define KEY_LONG_ERR_TIME       2000
 
-
+#define KEY_FLAG_NULL			0
+#define KEY_FLAG_FRESH			1
 
 
 
 typedef struct keyValue{
+	u8 flag;
     u8 state;
     u8 mode;
     u8 value;
