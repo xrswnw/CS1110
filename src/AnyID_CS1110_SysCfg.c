@@ -328,7 +328,7 @@ void Sys_KeyTask()
     if(a_CheckStateBit(g_nReaderState, READER_STAT_KEY))
     {
         a_ClearStateBit(g_nReaderState, READER_STAT_KEY);
-        Reader_Chk_KeyValue(Key_GetValue());
+        Reader_ChkKeyValue(Key_GetValue());
         Key_Control(&g_sKeyValue);
         
         if(g_sKeyValue.flag == KEY_FLAG_FRESH)
@@ -805,7 +805,7 @@ void Sys_LcmTask()
 
 void Sys_TestTask()
 {
-    static u8 sampleTick = 0, sampleLCmTick = 0;
+    static u8 sampleTick = 0;
     if(a_CheckStateBit(g_nSysState, SYS_STAT_AUTO_TIME))
     {
         a_ClearStateBit(g_nSysState, SYS_STAT_AUTO_TIME); 
@@ -813,7 +813,7 @@ void Sys_TestTask()
         if(!a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
         {
             sampleTick++;
-            sampleLCmTick++;
+
             if((sampleTick & 0x01) == 0x00)
             {
                sampleTick = 0;
@@ -823,10 +823,6 @@ void Sys_TestTask()
                 {
                   g_sGpbInfo.state = GPB_STAT_TX;
                 }
-            }
-            if(sampleLCmTick & 0x04)
-            {
-                sampleLCmTick = 0;
             }
             a_SetStateBit(g_nReaderState, READER_STAT_KEY | READER_STAT_CHK_LINK | READER_STAT_CHK_UPDATA | READER_STAT_MODE_NORMAL);
         }
@@ -848,7 +844,7 @@ void Sys_ReaderTask()
     Reader_ChgPage(&g_sLcmInfo);
     if(!a_CheckStateBit(g_sDeviceParamenter.reWorkMode, READER_MODE_TEST))
     {
-        Reader_Normal_Mode();
+        Reader_NormalMode();
         if(a_CheckStateBit(g_nReaderState, READER_STAT_CHK_LINK))
         {
             a_ClearStateBit(g_nReaderState, READER_STAT_CHK_LINK); 
@@ -857,32 +853,32 @@ void Sys_ReaderTask()
             {
                 g_nTempLink =  READER_LINK_FAIL; 
             }
-            if(g_nTempLink ==  READER_LINK_OK)            	    //未连接是否需要报警
+            if(g_nTempLink == READER_LINK_OK)            	    //未连接是否需要报警
             {
                 offLink = 0;
                 memset(g_nBufTxt1,0, LCM_INFO_TXT_SIZE);
                 Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_N + 1, LCM_ICO_ADDR_OFFLINE_BACK);
                 a_ClearStateBit(g_nSysState, SYS_STAT_LINE_OFF);
-
             }
             else if(g_nTempLink ==  READER_LINK_FAIL)
             {
                 if(g_nTickLink + READER_LINK_TIME * (READER_OFF_LINE_TICK + offLink) < g_nSysTick)
                 {               
-            	memset(g_nBufTxt1,0, LCM_INFO_TXT_SIZE);
-            	memcpy(g_nBufTxt1, "断开连接", 8);
-            	Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_OFFLINE_BACK);
-            	a_SetStateBit(g_nSysState, SYS_STAT_LINE_OFF);
-            	g_sSoundInfo.state = SOUND_STAT_TX; 
-            	g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
-            	g_sSoundInfo.txBuf.data = SOUND_VOC_OFF_LINE;
-            	offLink ++; 
+					memset(g_nBufTxt1,0, LCM_INFO_TXT_SIZE);
+					memcpy(g_nBufTxt1, "断开连接", 8);
+					Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_OFFLINE_BACK);
+					a_SetStateBit(g_nSysState, SYS_STAT_LINE_OFF);
+					g_sSoundInfo.state = SOUND_STAT_TX; 
+					g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
+					g_sSoundInfo.txBuf.data = SOUND_VOC_OFF_LINE;
+					offLink ++; 
                 }
             }
         }
     }
     else
     {
+		/*
         if(a_CheckStateBit(g_nReaderState, READER_STAT_CHK_LINK))
         {
             a_ClearStateBit(g_nReaderState, READER_STAT_CHK_LINK); 
@@ -898,6 +894,7 @@ void Sys_ReaderTask()
                 a_SetStateBit(g_nSysState, SYS_STAT_LINE_OFF);
             }
         }
+*/
 		
         if(a_CheckStateBit(g_nReaderState, READER_STAT_READER_MARK_OK))     //清除读卡在位标志
         {
@@ -909,7 +906,7 @@ void Sys_ReaderTask()
             a_ClearStateBit(g_nSysState, SYS_STAT_TEST);  
 
             Reader_DisplayTest(&g_sRaderInfo.dishInfo , &g_sWightTempInfo);
-            Reader_ChgStat(g_nTempLink);
+            Reader_ChgStat(a_CheckStateBit(g_nReaderState, READER_STAT_RFID_FAIL));
             if(g_sSoundInfo.testFlag == SOUND_TEST_FLAG_ENABLE)
             {   
                 g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
@@ -933,7 +930,7 @@ void Sys_ReaderTask()
     if(g_nOffLineLimitTime + DEVICE_OFFDATA_LIMIT_TIME < g_nSysTick )
     {
         g_nOffLineLimitTime = g_nSysTick;
-        if(Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData))
+        if(Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData))
         {
             memset(&g_sReaderOffLineInfo, 0, sizeof(READER_OFFLINE_INFO));
             Reader_WriteOffLineDataNum();

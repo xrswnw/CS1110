@@ -36,6 +36,9 @@
 #define RFID_TAG_OUT                     0x04
 #define RFID_TAG_FAIL                    0x08
 
+#define RFID_LINK_OK					0
+#define RFID_LINK_FAIL					1
+
 #define RFID_DTU_FLAG					1
 #define RFID_QEQUST_DELAY_TIM       10
 #define RFID_QEQUST_TIM             100

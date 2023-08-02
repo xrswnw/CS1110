@@ -47,8 +47,8 @@ BOOL Flash_SaveInfo(FLASH_DATA *pInfo)
 void Flash_Demo()
 {
 
-    g_sFlashData.id = Reader_Seek_Id(g_sReaderOffLineInfo.readerOffLineData);
-    g_sReaderOffLineInfo.num = Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData);
+    g_sFlashData.id = Reader_SeekId(g_sReaderOffLineInfo.readerOffLineData);
+    g_sReaderOffLineInfo.num = Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData);
     Flash_ReadBuffer(g_sFlashData.id *  FLASE_PAGE_SIZE, FLASH_OFFLINE_DATA_LEN, g_sFlashData.pBuffer);
     
     /*

@@ -14,7 +14,7 @@
 #define KEY_STAT_ERROR          0x20
 
 #define KEY_MDOE_MAIN       	0x00
-#define KEY_MDOE_TEST     	0x01
+#define KEY_MDOE_TEST			0x01
 
 #define KEY_VALUE_LONG_RIGHT    0x24
 #define KEY_VALUE_LONG_MID      0x12

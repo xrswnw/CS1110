@@ -1,6 +1,6 @@
 #include "AnyID_CS1110_Reader.h"
 
-const u8 READER_VERSION[READER_VERSION_SIZE]@0x08005000 = " CS1110 23073102 G230200";
+const u8 READER_VERSION[READER_VERSION_SIZE]@0x08005000 = " CS1110 23080205 G230200";
 
 u32 g_nReaderState = READER_STAT_IDLE;
 
@@ -34,7 +34,7 @@ void Reader_Delayms(u32 n)
 }
 
 
-BOOL Reader_Rfid_Init()
+BOOL Reader_RfidInit()
 {
     BOOL bOk = FALSE;
     St25r3916_InitInterface();
@@ -42,12 +42,12 @@ BOOL Reader_Rfid_Init()
     ISO15693_Init();
     if(g_sDeviceParamenter.rfCtrl == READER_RF_OPEN)
     {
-        St25r3916_OpenAntenna();
-        Reader_Delayms(2);
+		St25r3916_OpenAntenna();
+		Reader_Delayms(2);
     }
     else
     {
-        St25r3916_CloseAntenna();
+		St25r3916_CloseAntenna();
     }
     return bOk;
 
@@ -67,10 +67,10 @@ void Reader_Init()
     {
         g_sLcmInfo.flag = LCM_FLAG_PAGE_LINK_CHG;
     }
-	g_sReaderOffLineInfo.num = Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData);
+	g_sReaderOffLineInfo.num = Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData);
 	g_sReaderOffLineInfo.boundaryNum = g_sReaderOffLineInfo.num;
     g_sDeviceParamenter.reWorkMode = READER_MODE_NORMAL;
-    Reader_Font_ChgCorol(g_sDeviceParamenter.uiMode);
+    Reader_FontChgCorol(g_sDeviceParamenter.uiMode);
 }
 
 
@@ -216,14 +216,14 @@ BOOL Reader_WriteOffLineDatas(u16 addr, u16 size, u8 *pBuffer)
 void Fram_Demo()
 {
 
-    g_sFramData.id = Reader_Seek_Id(g_sReaderOffLineInfo.readerOffLineData);
-    g_sReaderOffLineInfo.num = Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData);
+    g_sFramData.id = Reader_SeekId(g_sReaderOffLineInfo.readerOffLineData);
+    g_sReaderOffLineInfo.num = Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData);
     Reader_ReadOffLineDatas(g_sFramData.id * FLASE_PAGE_SIZE + FRAM_OFF_LINE_ADDR, FLASH_OFFLINE_DATA_LEN, g_sFramData.pBuffer);
     
 
 }
 
-u16 Reader_Seek_Id(u8 *pBuffer)          //扫描离线数据
+u16 Reader_SeekId(u8 *pBuffer)          //扫描离线数据
 {
     u8 tempId = 0x80;
     u16 i = 0;
@@ -250,7 +250,7 @@ u16 Reader_Seek_Id(u8 *pBuffer)          //扫描离线数据
     return 0;
 }
 
-u16 Reader_Seek_Num(u8 *pBuffer)          //扫描离线数据
+u16 Reader_SeekNum(u8 *pBuffer)          //扫描离线数据
 {
     u8 tempId = 0x80;
     u16 num = 0;
@@ -276,7 +276,7 @@ u16 Reader_Seek_Num(u8 *pBuffer)          //扫描离线数据
     return num;
 }
 
-u16 Reader_Seek_Inq(u8 *pBuffer)          //扫描离线数据
+u16 Reader_SeekInq(u8 *pBuffer)          //扫描离线数据
 {
     u8 tempId = 0x80;
     u16 i = 0;
@@ -453,12 +453,13 @@ u8 Reader_DisplayTest(DISH_INFO *pDishInfo, WIGHT_INFO *witghInfo)
     }
      
     Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_1, LCM_TXT_TEST_LEN, Buf, LCM_DISH_TX_MODE_LEFT, LCM_TXT_OFFSET_NULL);
-    sprintf(Buf, "%d个", g_sReaderRfidTempInfo.num);   
+    sprintf(Buf, "%d", g_sReaderRfidTempInfo.num);   
     Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_BUTTON_2, LCM_TXT_TEST_BUTTON_LEN, Buf, LCM_DISH_TX_MODE_MID, LCM_TXT_OFFSET_NULL);
     sprintf(Buf, "%d", g_sReaderRfidTempInfo.allTick );    
     Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_2, LCM_TXT_TEST_LEN, Buf, LCM_DISH_TX_MODE_LEFT, LCM_TXT_OFFSET_NULL);
-	sprintf(Buf, "%d.%d", percentage / 100, percentage % 100);
-    Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_3, LCM_TXT_TEST_LEN, Buf, LCM_DISH_TX_MODE_LEFT, LCM_TXT_OFFSET_NULL);
+	//memset(Buf, 0, LCM_TXT_LEN_MAX);
+	sprintf(Buf, "%.2d.%.2d%c", percentage / 100, percentage % 100, 0x25);
+    Lcm_DishWriteTxt(LCM_TXT_ADDR_TEST_3, LCM_TXT_TEST_LEN - 2 /*Reader_SearchCode(LCM_TXT_TEST_LEN, 0x25, Buf)*/, Buf, LCM_DISH_TX_MODE_LEFT, LCM_TXT_OFFSET_NULL);
     
     return state;
     
@@ -466,14 +467,32 @@ u8 Reader_DisplayTest(DISH_INFO *pDishInfo, WIGHT_INFO *witghInfo)
 
 
 
+u8 Reader_SearchCode(u8 lenth, u8 code, char *pBuf)
+{
+	u8 len = 0;
+	
+	for(len = 0; len < lenth; len++)
+	{
+		if(pBuf[len] == code)
+		{
+			break;
+		}
+	}
+	
+	return ++len;
+
+}
+
+
 void Reader_ChgStat(u8 lineState)																								    
 {
     static u8 state = 0xFF;
     char Buf[LCM_TXT_LEN_MAX];
+
     if(state != lineState)
     {
         state = lineState;
-        if(state == READER_LINK_FAIL)
+        if(state == RFID_LINK_FAIL)
         {
 			memcpy(Buf, "离线", LCM_TXT_LEN_MAX);   
 			Lcm_DishWriteColor(LCE_TXT_ADDR_LINE_STAT, LCM_FONT_COROL_RED);
@@ -630,7 +649,7 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
 			        g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
 			        g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
 			        Reader_WriteDeviceParamenter();
-			        Reader_Font_ChgCorol(g_sDeviceParamenter.uiMode);
+			        Reader_FontChgCorol(g_sDeviceParamenter.uiMode);
 
 			    }
 			    else
@@ -639,7 +658,7 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
 			        g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
 			    
 			    }
-			    g_sDeviceRspFrame.len = Reader_Format_Cfg(0, &g_sDeviceRspFrame, &g_sDeviceParamenter);
+			    g_sDeviceRspFrame.len = Reader_FormatCfg(0, &g_sDeviceRspFrame, &g_sDeviceParamenter);
 
 			}
         case READER_CMD_GET_CFG:
@@ -647,7 +666,7 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
 			{
 			    g_sDeviceRspFrame.flag = READER_FRAME_FLAG_OK;
 			    g_sDeviceRspFrame.err = READER_FRAME_INFO_OK;
-			    g_sDeviceRspFrame.len = Reader_Format_Cfg(1, &g_sDeviceRspFrame, &g_sDeviceParamenter);
+			    g_sDeviceRspFrame.len = Reader_FormatCfg(1, &g_sDeviceRspFrame, &g_sDeviceParamenter);
 			}
 			break;
         case READER_CMD_GET_HEART:
@@ -656,7 +675,7 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
 			    u32 rtcTime = 0;
 			    if(!a_CheckStateBit(g_sReaderRfidTempInfo.state, RFID_TAG_KEEP))
 			    {
-			        if( 0 < *(pFrame + READER_MEAL_NAME_LEN) < 64  && *(pFrame + READER_MEAL_NAME_LEN + *(pFrame + READER_MEAL_NAME_LEN) + 1) <= 35)
+			        if(*(pFrame + READER_MEAL_NAME_LEN) > 0 && *(pFrame + READER_MEAL_NAME_LEN) < 64 && *(pFrame + READER_MEAL_NAME_LEN + *(pFrame + READER_MEAL_NAME_LEN) + 1) <= 35)
 			        {
 						memset(&g_sDishTempInfo, 0, sizeof(DISH_INFO));
 						memcpy(&g_sDishTempInfo.dishName, pFrame + READER_MEAL_NAME_LEN, *(pFrame + READER_MEAL_NAME_LEN) + 1);
@@ -696,7 +715,7 @@ u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len)
 			        g_sDeviceRspFrame.flag = READER_FRAME_FLAG_FAIL;
 			        g_sDeviceRspFrame.err = READER_FRAME_INFO_FAIL;
 			   }
-			   g_sDeviceRspFrame.len = Reader_Format_Heart(&g_sDeviceRspFrame, rtcTime, g_sGpbInfo.wightTemp);   //重量数据代填
+			   g_sDeviceRspFrame.len = Reader_FormatHeart(&g_sDeviceRspFrame, rtcTime, g_sGpbInfo.wightTemp);   //重量数据代填
 			}
 			break;
         case READER_CMD_GET_PERSON_INFO:
@@ -861,7 +880,7 @@ u8 Device_ResponseFrame(u8 *pParam, u8 len, READER_RSPFRAME *pOpResult)
 }
 
 
-u8 Reader_Format_GetPerson(u8 *puid,  READER_RSPFRAME *pOpResult, u32 rtc)
+u8 Reader_FormatGetPerson(u8 *puid,  READER_RSPFRAME *pOpResult, u32 rtc)
 {
     u16 pos = 0;
     u16 crc = 0;
@@ -898,7 +917,7 @@ u8 Reader_Format_GetPerson(u8 *puid,  READER_RSPFRAME *pOpResult, u32 rtc)
 }
 
 
-u8 Reader_Format_Meal(u8 type,u8 *puid, READER_RSPFRAME *pOpResult, u32 rtc, u32 witgh)
+u8 Reader_FormatMeal(u8 type,u8 *puid, READER_RSPFRAME *pOpResult, u32 rtc, u32 witgh)
 {
     u16 pos = 0;
     u16 crc = 0;
@@ -943,7 +962,7 @@ u8 Reader_Format_Meal(u8 type,u8 *puid, READER_RSPFRAME *pOpResult, u32 rtc, u32
 }
 
 
-u8 Reader_Format_Heart( READER_RSPFRAME *pOpResult, u32 rtc,u32 witgh)
+u8 Reader_FormatHeart( READER_RSPFRAME *pOpResult, u32 rtc,u32 witgh)
 {
     u16 pos = 0;
     u16 crc = 0;
@@ -984,7 +1003,7 @@ u8 Reader_Format_Heart( READER_RSPFRAME *pOpResult, u32 rtc,u32 witgh)
     return pos;
 }
 
-u8 Reader_Format_Cfg(u8 mode, READER_RSPFRAME *pOpResult, READER_DEVICE_PARAMETER *pParameter)
+u8 Reader_FormatCfg(u8 mode, READER_RSPFRAME *pOpResult, READER_DEVICE_PARAMETER *pParameter)
 {
     u16 pos = 0;
     u16 crc = 0;
@@ -1271,7 +1290,7 @@ void Reader_ChkMoney(u32 value, char *buf)
     }
 }
 
-void Reader_Font_ChgCorol(u8 background)
+void Reader_FontChgCorol(u8 background)
 {
     if(background == READER_UI_MODE_BLACK)
     {
@@ -1303,18 +1322,18 @@ void Reader_OffLineClear()
 {
     BOOL b = FALSE; 
     
-    g_sFlashData.id = Reader_Seek_Id(g_sReaderOffLineInfo.readerOffLineData);
+    g_sFlashData.id = Reader_SeekId(g_sReaderOffLineInfo.readerOffLineData);
        
     if(b)
     {
         g_sReaderOffLineInfo.readerOffLineData[g_sFlashData.id >> 3] &= ~(0x80 >> (g_sFlashData.id & 0x07));
     }
-    g_sReaderOffLineInfo.num = Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData);
+    g_sReaderOffLineInfo.num = Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData);
         
 
 }
 
-void Reader_Chk_KeyValue(u8 value)
+void Reader_ChkKeyValue(u8 value)
 {
     static u8 keyValue = 0, k = 0;
  
@@ -1411,7 +1430,7 @@ void Reader_Chk_KeyValue(u8 value)
 
 
 
-void Reader_Normal_Mode()
+void Reader_NormalMode()
 {
     static u8 upLink = 0; 
 
@@ -1432,10 +1451,10 @@ void Reader_Normal_Mode()
 			a_ClearStateBit(g_sReaderRfidTempInfo.state, RFID_TAG_IN); 
 			if((Lcm_ChkPage(LCM_PAGE_MAIN_WHITE) || Lcm_ChkPage(LCM_PAGE_INFO_WHITE)) )
 			{
-			    g_sDeviceRspFrame.len = Reader_Format_GetPerson(g_sReaderRfidTempInfo.uid, &g_sDeviceRspFrame, g_nRtcTime);
+			    g_sDeviceRspFrame.len = Reader_FormatGetPerson(g_sReaderRfidTempInfo.uid, &g_sDeviceRspFrame, g_nRtcTime);
 			    g_sReaderRfidTempInfo.tempState = RFID_TAG_IN;
 			    a_SetStateBit(g_nReaderState, READER_STAT_UARTTX);
-				//g_nReaderWightValue = READER_WIGHT_MAX_VALUE;//Gpb_ChkValue(g_sGpbInfo.wightTemp, g_sGpbInfo.wightValue);
+
 			}
         }
         if(a_CheckStateBit(g_sReaderRfidTempInfo.state, RFID_TAG_OUT)) //&& (!a_CheckStateBit(g_nSysState, SYS_STAT_GPB_FAIL)))
@@ -1475,10 +1494,10 @@ void Reader_Normal_Mode()
 			        g_sRaderInfo.dishInfo.peice = 0;
 			        memset(&g_sRaderInfo.personInfo, 0, sizeof(PERSON_INFO));
 															//----测试数据，可删，负值是否需要过滤？
-			        if(g_nReaderWightValue >= READER_WITHT_LIMIT_VALUE && g_nReaderGpbState)
+			        if(g_nReaderWightValue >= READER_WITHT_LIMIT_VALUE && g_nReaderGpbState)      //取用量大于勺重，启用
 			        {
-						g_sDeviceMealRspFrame.len = Reader_Format_Meal(g_sRaderInfo.dishInfo.type, g_sReaderRfidTempInfo.uid, &g_sDeviceMealRspFrame, g_nRtcTime, g_nReaderWightValue);//Gpb_ChkValue(g_sGpbInfo.wightTemp, g_sGpbInfo.wightValue));//RTC???
-						g_nOffLineLimitTime = g_nSysTick;
+						g_sDeviceMealRspFrame.len = Reader_FormatMeal(g_sRaderInfo.dishInfo.type, g_sReaderRfidTempInfo.uid, &g_sDeviceMealRspFrame, g_nRtcTime, g_nReaderWightValue);//Gpb_ChkValue(g_sGpbInfo.wightTemp, g_sGpbInfo.wightValue));//RTC???
+						g_nOffLineLimitTime = g_nSysTick;											//取餐记录时间更新，判定最后一条数据上传时间
 						
 						/*
 						if(g_nReaderWightValue == READER_WIGHT_MAX_VALUE)
@@ -1503,9 +1522,6 @@ void Reader_Normal_Mode()
 			g_nReaderGpbState = FALSE;
         }
      
-     //get_uid = 450ms
-     //change_page = 900;
-       
         if(a_CheckStateBit(g_sReaderRfidTempInfo.state, RFID_TAG_KEEP))
         {
 			if(Lcm_ChkPage(LCM_PAGE_MAIN_WHITE))
@@ -1597,9 +1613,9 @@ void Reader_Normal_Mode()
     if(a_CheckStateBit(g_sDeviceMealRspFrame.state, READER_DATA_UP_OK))
     {
         a_ClearStateBit(g_sDeviceMealRspFrame.state, READER_DATA_UP_OK);
-        if(Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData) > 0)			     //      数据上传成功
+        if(Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData) > 0)			     //      数据上传成功
         {
-			g_sFramData.id = Reader_Seek_Id(g_sReaderOffLineInfo.readerOffLineData);
+			g_sFramData.id = Reader_SeekId(g_sReaderOffLineInfo.readerOffLineData);
 			if(g_sFramData.id == g_sReaderOffLineInfo.index)
 			{
 			     memset(g_sFramData.pBuffer , 0, FRAM_OFFLINE_DATA_LEN);
@@ -1610,6 +1626,7 @@ void Reader_Normal_Mode()
 			        Reader_ReadOffLineDataNum();
 			    }
 			}
+			
 			else 
 			{
 			    memset(g_sFramData.pBuffer , 0, FRAM_OFFLINE_DATA_LEN);
@@ -1620,7 +1637,7 @@ void Reader_Normal_Mode()
 			        Reader_ReadOffLineDataNum();
 			    }
 			}
-			g_sReaderOffLineInfo.num = Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData);
+			g_sReaderOffLineInfo.num = Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData);
 			g_sReaderOffLineInfo.boundaryNum = g_sReaderOffLineInfo.num;
         }
         a_ClearStateBit(g_nReaderState, READER_STAT_UART_WAIT);
@@ -1634,12 +1651,12 @@ void Reader_Normal_Mode()
         if(g_sDeviceMealRspFrame.mode == READER_RSP_NORMAL_DATA)
         {
 			memset(&g_sFramData, 0, sizeof(FRAM_DATA));
-			g_sReaderOffLineInfo.index = Reader_Seek_Inq(g_sReaderOffLineInfo.readerOffLineData);
-			g_sFramData.id = Reader_Seek_Inq(g_sReaderOffLineInfo.readerOffLineData);
+			g_sReaderOffLineInfo.index = Reader_SeekInq(g_sReaderOffLineInfo.readerOffLineData);
+			g_sFramData.id = Reader_SeekInq(g_sReaderOffLineInfo.readerOffLineData);
 			g_sReaderOffLineInfo.readerOffLineData[g_sFramData.id >> 3] |= 0x80 >> (g_sFramData.id & 0x07);
 			Reader_WriteOffLineDataNum();
 			Reader_ReadOffLineDataNum();
-			g_sReaderOffLineInfo.num = Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData);
+			g_sReaderOffLineInfo.num = Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData);
 			memcpy(g_sFramData.pBuffer , FlashTempData, FRAM_OFFLINE_DATA_LEN);
 			Reader_WriteOffLineDatas((g_sFramData.id * FRAM_OFFLINE_DATA) + FRAM_OFF_LINE_ADDR, FRAM_OFFLINE_DATA_LEN, g_sFramData.pBuffer);
         
@@ -1649,19 +1666,19 @@ void Reader_Normal_Mode()
     
 	if(a_CheckStateBit(g_nTempLink, READER_LINK_OK))
     {
-		if(!a_CheckStateBit(g_nReaderState, READER_STAT_UART_WAIT))        //卡住
+		if(!a_CheckStateBit(g_nReaderState, READER_STAT_UART_WAIT) && !a_CheckStateBit(g_nReaderState, READER_STAT_UARTRX))        //卡住
         {       
 			if(a_CheckStateBit(g_nReaderState, READER_STAT_CHK_UPDATA))
 			{
 			    upLink ++;
 			    a_ClearStateBit(g_nReaderState, READER_STAT_CHK_UPDATA);    
-			    if(upLink == REDAER_UP_DATA_TICK)
+			    if(upLink >= REDAER_UP_DATA_TICK / 3)
 			    {
 			         upLink = 0;
-			         if(Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData) > 0)						        //离线数据上传-
+			         if(Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData) > 0)						        //离线数据上传-
 			         {
-						g_sReaderOffLineInfo.index = Reader_Seek_Id(g_sReaderOffLineInfo.readerOffLineData);
-						g_sFramData.id = Reader_Seek_Id(g_sReaderOffLineInfo.readerOffLineData);
+						g_sReaderOffLineInfo.index = Reader_SeekId(g_sReaderOffLineInfo.readerOffLineData);
+						g_sFramData.id = Reader_SeekId(g_sReaderOffLineInfo.readerOffLineData);
 
 						Reader_ReadOffLineDatas((g_sFramData.id * FRAM_OFFLINE_DATA) + FRAM_OFF_LINE_ADDR, FRAM_OFFLINE_DATA_LEN, g_sFramData.pBuffer);
 						memcpy(&g_sDeviceMealRspFrame.buffer, &g_sFramData.pBuffer, READER_RSP_OFFLINE_DATA_LEN);
@@ -1678,11 +1695,11 @@ void Reader_Normal_Mode()
     
     if(g_nTempLink == READER_LINK_FAIL)          
     {
-        if(/*Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData)*/ g_sReaderOffLineInfo.num > READER_OFFLINE_DATA_BOUNDARY)						        //离线数据超出设定值
+        if(/*Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData)*/ g_sReaderOffLineInfo.num > READER_OFFLINE_DATA_BOUNDARY)						        //离线数据超出设定值
         {
-			if(g_sReaderOffLineInfo.boundaryNum < Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData))
+			if(g_sReaderOffLineInfo.boundaryNum < Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData))
 			{
-			    g_sReaderOffLineInfo.boundaryNum = Reader_Seek_Num(g_sReaderOffLineInfo.readerOffLineData);
+			    g_sReaderOffLineInfo.boundaryNum = Reader_SeekNum(g_sReaderOffLineInfo.readerOffLineData);
 				g_sSoundInfo.state = SOUND_STAT_TX; 
 				g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
 				g_sSoundInfo.txBuf.data = SOUND_VOC_OFF_LINE;

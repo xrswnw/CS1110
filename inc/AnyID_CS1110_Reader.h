@@ -25,9 +25,6 @@
 #define READER_RFID_READ_BLOCK            0x02
 
 
-
-
-
 #define READER_STAT_IDLE                   0x00000000
 #define READER_STAT_DTU                    0x00000001
 #define READER_STAT_CHK_UPDATA             0x00000002
@@ -155,7 +152,7 @@
 
 
 #define READER_RESFRAME_PERSON_FAIL		0x01
-#define READER_RESFRAME_PERSON_TOTIME		0x02
+#define READER_RESFRAME_PERSON_TOTIME	0x02
 #define READER_RESFRAME_PERSON_OK		0x04
 
 
@@ -191,7 +188,7 @@
 #define READER_RSP_OFFLINE_DATA         0x02
 
 #define REDAER_UART_TX_TICK              80
-#define REDAER_UP_DATA_TICK              100
+#define REDAER_UP_DATA_TICK              60
 #define REDAER_UP_DATA_NUM               2
 
 #define READER_WIGHT_MAX_VALUE			0xFFFFFFFF
@@ -409,13 +406,13 @@ void Reader_ChkLink(BOOL link);
 void Reader_DisplayDish(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo, LCM_INFO *pLcmInfo);
 void Reader_ChgPage(LCM_INFO *pLcmInfo);
 void Reader_ChkMoney(u32 value, char *buf);
-void Reader_Font_ChgCorol(u8 background);
+void Reader_FontChgCorol(u8 background);
 void Reader_InVoTags();
 void Reader_OffLineClear();
 void Fram_Demo();
 void Reader_ChgStat(u8 lineState);                                                                                                  
-void Reader_Chk_KeyValue(u8 value);
-void Reader_Normal_Mode();
+void Reader_ChkKeyValue(u8 value);
+void Reader_NormalMode();
 void Reader_TestLed(u32 tick);
 void Reader_ResolveWitgh();
 
@@ -423,7 +420,7 @@ BOOL Reader_ReadOffLineDataNum(void) ;
 BOOL Reader_ReadOffLineDatas(u16 addr, u16 size, u8 *pBuffer)   ;
 BOOL Reader_WriteOffLineDatas(u16 addr, u16 size, u8 *pBuffer)   ;
 BOOL Reader_WriteOffLineDataNum(void);
-BOOL Reader_Rfid_Init();
+BOOL Reader_RfidInit();
 BOOL Reader_WriteDeviceParamenter(void);
 BOOL Reader_ChkReUid(u8 *pRUid, u8 *pTUid);
 BOOL Reader_ReadDeviceParamenter(void);
@@ -435,16 +432,18 @@ u8 Reader_RfidTask(u8 mode, PERSON_INFO *personInfo, READER_RFID_INFO *rfidInfo)
 u8 Reader_RfidGetValue(u8 *pBuffer, READER_RFID_INFO *pRfidInfo);
 u8 Device_ResponseFrame(u8 *pParam, u8 len, READER_RSPFRAME *pOpResult);
 u8 Reader_DisplayTest(DISH_INFO *pDishInfo, WIGHT_INFO *witghInfo)  ;
-u8 Reader_Format_Meal(u8 type,u8 *puid, READER_RSPFRAME *pOpResult, u32 rtc, u32 witgh);
-u8 Reader_Format_Heart( READER_RSPFRAME *pOpResult, u32 rtc,u32 witgh);
-u8 Reader_Format_Cfg(u8 mode, READER_RSPFRAME *pOpResult, READER_DEVICE_PARAMETER *pParameter);
+u8 Reader_FormatMeal(u8 type,u8 *puid, READER_RSPFRAME *pOpResult, u32 rtc, u32 witgh);
+u8 Reader_FormatHeart( READER_RSPFRAME *pOpResult, u32 rtc,u32 witgh);
+u8 Reader_FormatCfg(u8 mode, READER_RSPFRAME *pOpResult, READER_DEVICE_PARAMETER *pParameter);
 u8 Reader_Lable(u8 *pBuffer, DISH_INFO *pDishInfo);
-u8 Reader_Format_GetPerson(u8 *puid,  READER_RSPFRAME *pOpResult, u32 rtc);
+u8 Reader_FormatGetPerson(u8 *puid,  READER_RSPFRAME *pOpResult, u32 rtc);
+u8 Reader_SearchCode(u8 lenth, u8 code, char *pBuf);
 u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len);
-u16 Reader_Seek_Id(u8 *pBuffer);
-u16 Reader_Seek_Num(u8 *pBuffer);
-u16 Reader_Seek_Inq(u8 *pBuffer) ;
+u16 Reader_SeekId(u8 *pBuffer);
+u16 Reader_SeekNum(u8 *pBuffer);
+u16 Reader_SeekInq(u8 *pBuffer) ;
 u32 Reader_GetUartBaudrate();
 u32 Reader_GetWight(GPB_INFO *gpbInfo);
+
 
 #endif
