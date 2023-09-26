@@ -23,10 +23,15 @@
 #define RFID_FLAG_FAIL              0x04
 
 
-#define RFID_ONE_TAG_TIME			2
+#define RFID_VERSION_SIZE			50
+#define RFID_MODE_GET_UID		    0
+#define RFID_MODE_GET_VERSION		1
+
+#define RFID_ONE_TAG_TIME			3
 #define RFID_ONE_MORE_TIME			4
 
 
+#define RFID_GET_VERSION			0xF7
 #define RFID_GET_UID                0x30
 #define RFID_FRAME_LEN              30
 
@@ -46,11 +51,12 @@
 
 #define RFID_OP_DLY_TIM				20
 
-#define Rfid_StartOpDelay(t) 	do{g_sRfidInfo.state = RFID_STAT_DELAY_TIME; g_sRfidInfo.tick = (t); }while(0)
+#define Rfid_StartOpDelay(t) 			do{g_sRfidInfo.state = RFID_STAT_DELAY_TIME; g_sRfidInfo.tick = (t); }while(0)
 
 
 #define Rfid_ResetFrame(rcvFrame)     do{(rcvFrame)->state = UART_STAT_IDLE; (rcvFrame)->length = 0; (rcvFrame)->repat = 0;(rcvFrame)->index = 0;memset(&g_sRfidRcvTempFrame, 0, sizeof(UART_RCVFRAME));memcpy(&g_sRfidRcvTempFrame, &g_sRfidInfo.rfidRev, sizeof(UART_RCVFRAME));}while(0)
 typedef struct rfidInfo{
+	u8 mode;
     u8 state;
     u8 repat;
 	u8 flag;
@@ -58,6 +64,7 @@ typedef struct rfidInfo{
     u8 buffer[RFID_FRAME_LEN];
 	u32 delayTick;
     u32 tick;
+	u8 verSion[RFID_VERSION_SIZE];
     UART_RCVFRAME rfidRev;
 }RFID_INFO;
 extern RFID_INFO g_sRfidInfo;

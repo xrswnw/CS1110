@@ -75,20 +75,20 @@ void Sys_CfgClock(void)
 void Sys_CfgPeriphClk(FunctionalState state)
 {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
-            	       RCC_APB2Periph_GPIOB |
-            	       RCC_APB2Periph_GPIOC |
-            	       RCC_APB2Periph_AFIO  |
-            	       RCC_APB2Periph_SPI1  |
-            	       RCC_APB2Periph_USART1|
-            	       RCC_APB2Periph_GPIOD , state);
+                       RCC_APB2Periph_GPIOB |
+                       RCC_APB2Periph_GPIOC |
+                       RCC_APB2Periph_AFIO  |
+                       RCC_APB2Periph_SPI1  |
+                       RCC_APB2Periph_USART1|
+                       RCC_APB2Periph_GPIOD , state);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, state);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2 |
-            	       RCC_APB1Periph_USART3 |
-            	       RCC_APB1Periph_UART5 |
-            	       RCC_APB1Periph_UART4  |
-            	       RCC_APB1Periph_SPI2   |
-            	       RCC_APB1Periph_PWR    |
-            	       RCC_APB1Periph_BKP , state);
+                       RCC_APB1Periph_USART3 |
+                       RCC_APB1Periph_UART5 |
+                       RCC_APB1Periph_UART4  |
+                       RCC_APB1Periph_SPI2   |
+                       RCC_APB1Periph_PWR    |
+                       RCC_APB1Periph_BKP , state);
 
 }
 
@@ -148,8 +148,9 @@ void Sys_Init(void)
     Key_Init();
     Sys_LedRedOn();
     Sys_Delayms(500); 
+
 #if SYS_ENABLE_WDT
-    WDG_FeedIWDog();
+    WDG_InitIWDG();
 #endif
     Sys_LedGreenOn();
     Sys_Delayms(500); 
@@ -166,15 +167,16 @@ void Sys_Init(void)
     Flash_InitInterface();
     Flash_Init();
 
-    //Reader_WriteOffLineDataNum();
+    Reader_WriteOffLineDataNum();
     Reader_ReadOffLineDataNum();
     Rfid_Init();
 #if SYS_ENABLE_WDT
     WDG_FeedIWDog();
 #endif
     
-    Reader_Init();
+    
     Sound_Init();
+    Reader_Init();
     GPB_Init();
     Sys_LedRedOff();
     Uart_Init();
@@ -230,51 +232,56 @@ void Sys_LedTask(void)
             } 
             
             if(a_CheckStateBit(g_nReaderState, READER_STAT_PUT_TAG)) 
-            {
+            {/*
                 g_sReaderLedInfo.time = g_nSysTick;
-                if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
-                {
-            	g_sSoundInfo.state = SOUND_STAT_TX; 
-                }
                 a_ClearStateBit(g_nReaderState, READER_STAT_PUT_TAG);
-                a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
+				
+                //if(!a_CheckStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY))                {
+                    a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
+                }*/
+				if((ledTimers % 0x04) == 0)
+                {
+                    Sys_LedRedOn();
+                }
+                else 
+                {
+                    Sys_LedRedOff();
+                }
             }
             if( a_CheckStateBit(g_nReaderState, READER_STAT_BIND_TAG)) 
             {
                 g_sReaderLedInfo.time = g_nSysTick;
-                if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
-                {
-                	g_sSoundInfo.state = SOUND_STAT_TX; 
-                }
                 a_ClearStateBit(g_nReaderState, READER_STAT_BIND_TAG);
-                a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
+                if(!a_CheckStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY))
+                {
+                    a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
+                }
             }
             if(a_CheckStateBit(g_nReaderState, READER_STAT_CLASH_TAG)) 
             {
                 g_sReaderLedInfo.time = g_nSysTick;
-                if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
-                {
-            	g_sSoundInfo.state = SOUND_STAT_TX; 
-                }
                 a_ClearStateBit(g_nReaderState, READER_STAT_CLASH_TAG);
-                a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
+                if(!a_CheckStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY))
+                {
+                    a_SetStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
+                }
             }
 
             
             if(a_CheckStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY))
             {
-                if(ledTimers & 0x01)
+                if((ledTimers % 0x04) == 0)
                 {
-            		Sys_LedRedOn();
+                    Sys_LedRedOn();
                 }
                 else 
                 {
-            		Sys_LedRedOff();
+                    Sys_LedRedOff();
                 }
                 if(g_sReaderLedInfo.time + READER_LED_TIM < g_nSysTick)
                 {
-					Sys_LedRedOff();
-					a_ClearStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
+                    Sys_LedRedOff();
+                    a_ClearStateBit(g_sReaderLedInfo.state, SYS_STAT_R_LED_DELAY);
                 }
             } 
         }
@@ -342,7 +349,8 @@ void Sys_KeyTask()
 
 void Sys_SoundTask()
 {
-    //串口错误处理:重新初始化
+    /////////------------------------
+      //串口错误处理:重新初始化
     if(USART_GetFlagStatus(SOUND_PORT, USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE ))
     {
         USART_ClearFlag(SOUND_PORT, USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE );
@@ -352,43 +360,123 @@ void Sys_SoundTask()
         memset(&g_sSoundInfo, 0, sizeof(SOUND_INFO));
         g_sSoundInfo.state = SOUND_STAT_IDLE; 
     }
-  
-    if(Sound_IsRcvFrame(g_sSoundInfo))
+     if(Sound_IsRcvFrame(g_sSoundInfo))
     {
-        a_ClearStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT);
-        if(Sounde_Chk(g_sSoundInfo.rxBuf.buffer))
+        if(a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_RCV))
         {
-            Sound_ResetFrame(g_sSoundInfo);
-        }
-    }
-   
-    if(a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_TX)) 
-    {
-        a_ClearStateBit(g_sSoundInfo.state, SOUND_STAT_TX);
-        g_sSoundInfo.tick = g_nSysTick;
-        Sound_TransmitCmd(g_sSoundInfo.txBuf.cmd,0, g_sSoundInfo.txBuf.data);             //测试关闭
-        a_SetStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT);
-    }
-    if(a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT)) 
-    {  
-        if(g_sSoundInfo.tick + SOUND_VOC_STOP_TIM < g_nSysTick)              
-        {
-            g_sSoundInfo.repeat ++ ;
-            if(g_sSoundInfo.repeat == 3)       
+            if(Sounde_Chk(g_sSoundInfo.rxBuf.buffer))  
             {
-                g_sSoundInfo.repeat = 0;
-                a_SetStateBit(g_nSysState, SYS_STAT_SOUND_FAIL);
+                g_sSoundInfo.txBuf.result = SOUND_RESULT_OK;
+                g_sSoundInfo.txBuf.flag = SOUNE_VOICE_IDLE;
+                if(g_sSoundInfo.txBuf.op[g_sSoundInfo.txBuf.index] == g_sSoundInfo.txBuf.op[g_sSoundInfo.txBuf.index + 1])
+                {
+                    a_SetState(g_sSoundInfo.state, SOUND_STAT_OP_DIY);
+                    g_sSoundInfo.txBuf.tick = g_nSysTick;
+                }
+                else
+                {
+                    a_SetState(g_sSoundInfo.state, SOUND_STAT_STEP);
+                }
+                //if(g_sSoundInfo.txBuf.op[g_sSoundInfo.txBuf.index] == SOUND_VOICE_PUT_TAG)
+                {
+                    if(g_sSoundInfo.txBuf.op[g_sSoundInfo.txBuf.index] != SOUND_VOICE_PUT_TAG)
+                    {
+                        a_ClearStateBit(g_nReaderState, READER_STAT_PUT_TAG);
+                    }
+                }
+
+                Sound_ClearRxBuffer();
             }
-            a_ClearStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT);
-            a_SetStateBit(g_sSoundInfo.state, SOUND_STAT_TX);
+            else
+            {
+                g_sSoundInfo.state = SOUND_STAT_RCV;                         
+                g_sSoundInfo.idleTime = 0;
+            }
         }
     }
     
-    if(a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_RCV))
+    if(a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_TX))      
     {
-        g_sSoundInfo.repeat = 0;
+        a_ClearStateBit(g_sSoundInfo.state, SOUND_STAT_TX);
+
+        if(g_sSoundInfo.txBuf.index < g_sSoundInfo.txBuf.num)
+        {
+            Sound_ClearRxBuffer();
+            if(g_sSoundInfo.txBuf.op[g_sSoundInfo.txBuf.index] == SOUND_VOICE_PUT_TAG)
+            {
+				if(!g_sGpbInfo.stableFlag)
+				{ 
+					a_SetStateBit(g_nReaderState, READER_STAT_PUT_TAG);
+					Sound_CtrTxCmd(&g_sSoundInfo.txBuf, g_nSysTick);
+				}	
+            }
+			else if(g_sSoundInfo.txBuf.op[g_sSoundInfo.txBuf.index] == SOUND_VOICE_BIND_NULL)
+			{
+				if(a_CheckStateBit(g_sReaderRfidTempInfo.state, RFID_TAG_KEEP))
+				{ 
+					Sound_CtrTxCmd(&g_sSoundInfo.txBuf, g_nSysTick);
+				}
+			}
+			else {
+
+				Sound_CtrTxCmd(&g_sSoundInfo.txBuf, g_nSysTick);
+			}
+			g_sSoundInfo.txBuf.flag = SOUNE_VOICE_LOADING;
+			a_SetState(g_sSoundInfo.state, SOUND_STAT_RCV | SOUND_STAT_WAIT);
+        }
     }
-  
+    
+    if(a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))    
+    {
+        if(g_sSoundInfo.txBuf.tick + g_sSoundInfo.txBuf.to[g_sSoundInfo.txBuf.index] < g_nSysTick)
+        {
+            g_sSoundInfo.txBuf.repeat[g_sSoundInfo.txBuf.index]--;              
+            if(g_sSoundInfo.txBuf.repeat[g_sSoundInfo.txBuf.index] == 0)
+            {
+                a_ClearStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT);
+                if(g_sSoundInfo.txBuf.op[g_sSoundInfo.txBuf.index] == g_sSoundInfo.txBuf.op[g_sSoundInfo.txBuf.index + 1])
+                {
+                    a_SetState(g_sSoundInfo.state, SOUND_STAT_OP_DIY);
+                }
+                else
+                {
+                    a_SetState(g_sSoundInfo.state, SOUND_STAT_STEP);
+                }
+				if(g_sSoundInfo.txBuf.op[g_sSoundInfo.txBuf.index] != SOUND_VOICE_PUT_TAG)
+				{
+                    a_ClearStateBit(g_nReaderState, READER_STAT_PUT_TAG);
+				}
+                
+                g_sSoundInfo.txBuf.result = SOUND_RESULT_TO;  
+                g_sSoundInfo.txBuf.flag = SOUNE_VOICE_IDLE;
+
+            }
+            else
+            {
+                //g_sSoundInfo.state = SOUND_STAT_TX;       //无需重发            
+            }
+        }
+    }
+    
+    if(g_sSoundInfo.state == SOUND_STAT_OP_DIY)
+    {
+        if(g_sSoundInfo.txBuf.tick + SOUND_OP_DLY_TIM < g_nSysTick)
+        {
+            g_sSoundInfo.state = SOUND_STAT_STEP;
+        }
+    }
+    
+    if(a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_STEP))    
+    {
+        a_ClearStateBit(g_sSoundInfo.state, SOUND_STAT_STEP);
+        Sound_ConnectStep(&g_sSoundInfo.txBuf); 
+        
+        a_SetState(g_sSoundInfo.state, SOUND_STAT_TX);
+        if(g_sSoundInfo.txBuf.index >= g_sSoundInfo.txBuf.num )              
+        {
+            memset(&g_sSoundInfo.txBuf, 0 ,sizeof(SOUND_TX_BUF));
+        }
+    }
 }
 
     
@@ -406,33 +494,46 @@ void Sys_GPBTask()
     if(Gpb_IsRcvFrame(g_sGpbInfo))
     {
         Gpb_ResetFrame(g_sGpbInfo);
-		
-		if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
-		{
-			if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_WIGHT)
-			{
-				Uart_WriteBuffer(g_sGpbInfo.rxBuf.buffer, g_sGpbInfo.rxBuf.len);
-			}
-		}
-		else
-		{
-			if(g_sGpbInfo.rxBuf.len >= GPB_BUF_MIN_LEN)
-			{
-				if(GPB_CheckFrame(&g_sGpbInfo.rxBuf))
-				{ 
-					a_ClearStateBit(g_nSysState, SYS_STAT_GPB_FAIL); 
-					Reader_ResolveWitgh();
-				}
-			}
-			else if(g_sGpbInfo.rxBuf.len == GPB_BUF_MIN_LEN - 1)
-			{
-				a_ClearStateBit(g_nReaderState, READER_STAT_WIGHT_ZERO_LOADING);
-				a_ClearStateBit(g_nSysState, SYS_STAT_GPB_FAIL); 
-				a_ClearStateBit(g_sGpbInfo.mode, GPB_WORK_SET_ZERO);
-			}
-		}
-
-		
+        
+        if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
+        {
+            if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_WIGHT)
+            {
+                Uart_WriteBuffer(g_sGpbInfo.rxBuf.buffer, g_sGpbInfo.rxBuf.len);
+            }
+        }
+        else
+        {
+            if(g_sGpbInfo.rxBuf.len >= GPB_BUF_MIN_LEN)
+            {
+                if(GPB_CheckFrame(&g_sGpbInfo.rxBuf))
+                { 
+                    
+                    if(Gpb_ChkFrame(&g_sGpbInfo.rxBuf, GPB_MODBUS_READ_REG,GPB_READ_WITHT_VALUE_LEN))
+                    {
+                        Reader_ResolveWitgh();
+                    }
+                    else
+                    {
+                        
+                    }
+                    
+                    if(a_CheckStateBit(g_nSysState, SYS_STAT_GPB_FAIL))
+                    {
+                        a_ClearStateBit(g_nSysState, SYS_STAT_GPB_FAIL); 
+                    }
+                }
+            }
+            else if(g_sGpbInfo.rxBuf.len == GPB_BUF_MIN_LEN - 1)
+            {
+                if(Gpb_ChkFrame(&g_sGpbInfo.rxBuf, GPB_MODBUS_SET_REG,GPB_READ_WITHT_VALUE_LEN - 1))
+                {
+                    a_ClearStateBit(g_nReaderState, READER_STAT_WIGHT_ZERO_LOADING);
+                    a_ClearStateBit(g_nSysState, SYS_STAT_GPB_FAIL); 
+                    a_ClearStateBit(g_sGpbInfo.mode, GPB_WORK_SET_ZERO);
+                }
+            }
+        }
     }
     
     if(!a_CheckStateBit(g_sReaderRfidTempInfo.state, RFID_TAG_KEEP))
@@ -445,14 +546,14 @@ void Sys_GPBTask()
         g_sGpbInfo.tick = g_nSysTick;
         if(g_sGpbInfo.mode == GPB_WOEK_NORMAL)
         {
-			GPB_TransmitCmd(&g_sGpbInfo.txBuf);
+            GPB_TransmitCmd(&g_sGpbInfo.txBuf);
         }
         else 
-		{
-			GPB_Adjust(&g_sGpbInfo.txBuf);
-			a_SetStateBit(g_nReaderState, READER_STAT_WIGHT_ZERO_LOADING);
-		}
-		g_sGpbInfo.state = GPB_STAT_WAIT;
+        {
+            GPB_Adjust(&g_sGpbInfo.txBuf);
+            a_SetStateBit(g_nReaderState, READER_STAT_WIGHT_ZERO_LOADING);
+        }
+        g_sGpbInfo.state = GPB_STAT_WAIT;
 
     }
     
@@ -502,53 +603,60 @@ void Sys_RfidTask()
     //串口数据帧解析
     if(Uart_IsRcvFrame(g_sRfidInfo.rfidRev))
     {
-		memcpy(&g_sRfidRcvTempFrame, &g_sRfidInfo.rfidRev, sizeof(UART_RCVFRAME));
+        memcpy(&g_sRfidRcvTempFrame, &g_sRfidInfo.rfidRev, sizeof(UART_RCVFRAME));
         Uart_ResetFrame(&g_sRfidInfo.rfidRev);
-		if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
-		{
-				if(g_sRfidRcvTempFrame.index >= (UART_FRAME_MIN_LEN - 8))
-				{
-					if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
-					{
-						if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_RFID)
-						{	
-							Uart_WriteBuffer(g_sRfidRcvTempFrame.buffer, g_sRfidRcvTempFrame.index);
-						}
-					}
-				}
-		}
-		else
-		{
-			u16 crc1 = 0, crc2 = 0;
-			crc1 = Uart_GetFrameCrc(g_sRfidRcvTempFrame.buffer, g_sRfidRcvTempFrame.length);
-			crc2 = a_GetCrc(g_sRfidRcvTempFrame.buffer + UART_FRAME_POS_LEN, g_sRfidRcvTempFrame.length - 4);
-			if(crc1 == crc2)
-			{
-				if( *(g_sRfidRcvTempFrame.buffer  + UART_FRAME_POS_CMD + 1) == RFID_GET_UID)
-				{
-					Reader_RfidGetValue(g_sRfidRcvTempFrame.buffer, &g_sReaderRfidTempInfo);
-					if(g_sRfidRcvTempFrame.buffer[READER_RFID_UID_POST])
-					{
-						a_SetStateBit(g_nReaderState, READER_STAT_RFID_KEEP);
-					}
-					else
-					{
-						a_ClearStateBit(g_nReaderState, READER_STAT_RFID_KEEP);
-					}
-				}
-				Rfid_StartOpDelay(g_nSysTick);
-				g_nRfidRomNum = a_lfsr(g_nRfidRomNum);
-				g_sRfidInfo.delayTick = RFID_OP_DLY_TIM + (g_nRfidRomNum % 10);
-				a_ClearStateBit(g_nReaderState, READER_STAT_RFID_FAIL);
-			}
-			 //g_sRfidInfo.state = RFID_STAT_TX;//测试
-		}
-
+        if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
+        {
+                if(g_sRfidRcvTempFrame.index >= (UART_FRAME_MIN_LEN - 8))
+                {
+                    if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
+                    {
+                        if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_RFID)
+                        {    
+                            Uart_WriteBuffer(g_sRfidRcvTempFrame.buffer, g_sRfidRcvTempFrame.index);
+                        }
+                    }
+                }
+        }
+        else
+        {
+            u16 crc1 = 0, crc2 = 0;
+            crc1 = Uart_GetFrameCrc(g_sRfidRcvTempFrame.buffer, g_sRfidRcvTempFrame.length);
+            crc2 = a_GetCrc(g_sRfidRcvTempFrame.buffer + UART_FRAME_POS_LEN, g_sRfidRcvTempFrame.length - 4);
+            if(crc1 == crc2)
+            {
+                if(g_sRfidInfo.mode == RFID_MODE_GET_VERSION)
+                {
+                    memcpy(g_sRfidInfo.verSion, g_sRfidRcvTempFrame.buffer  + UART_FRAME_POS_PAR + 1, READER_SOFT_VERSON_LEN);
+                    g_sRfidInfo.mode = RFID_MODE_GET_UID;
+                }
+                else
+                {
+                    if( *(g_sRfidRcvTempFrame.buffer  + UART_FRAME_POS_CMD + 1) == RFID_GET_UID)
+                    {
+                        Reader_RfidGetValue(g_sRfidRcvTempFrame.buffer, &g_sReaderRfidTempInfo);
+                        if(g_sRfidRcvTempFrame.buffer[READER_RFID_UID_POST])
+                        {
+                            a_SetStateBit(g_nReaderState, READER_STAT_RFID_KEEP);
+                        }
+                        else
+                        {
+                            a_ClearStateBit(g_nReaderState, READER_STAT_RFID_KEEP);
+                        }
+                    }
+                }
+                Rfid_StartOpDelay(g_nSysTick);
+                g_nRfidRomNum = a_lfsr(g_nRfidRomNum);
+                g_sRfidInfo.delayTick = RFID_OP_DLY_TIM + (g_nRfidRomNum % 10);
+                a_ClearStateBit(g_nReaderState, READER_STAT_RFID_FAIL);
+            }
+             //g_sRfidInfo.state = RFID_STAT_TX;//测试
+        }
     }
     
     if((a_CheckStateBit(g_sRfidInfo.state, RFID_STAT_TX)))//
     {   
-        if(g_sLcmInfo.flag !=  LCM_FLAG_PAGE_NULL_CHG)    //初始页面不读卡
+        if(g_sLcmInfo.flag !=  LCM_FLAG_PAGE_NULL_CHG || g_sRfidInfo.mode == RFID_MODE_GET_VERSION)    //初始页面不读卡
         {
             g_sRfidInfo.state = RFID_STAT_WAIT;
             Rfid_TransmitCmd(g_nSysTick);   
@@ -581,9 +689,9 @@ void Sys_RfidTask()
 }
 
 
-void Sys_UartTask(void)
+void Sys_UartTask()
 {
-    //串口错误处理:重新初始化
+      //串口错误处理:重新初始化 
     if(USART_GetFlagStatus(UART_PORT, USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE))
     {
         USART_ClearFlag(UART_PORT, USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE);
@@ -597,185 +705,235 @@ void Sys_UartTask(void)
         Uart_EnableInt(ENABLE, DISABLE);
     }
 
-    //串口数据帧解析
-    {
-        if(Uart_IsRcvFrame(g_sUartRcvFrame))
-        {
-			u16 crc1 = 0, crc2 = 0;
-			u16 txLen = 0;
-			
-            memset(&g_sUartRcvTempFrame, 0, sizeof(UART_RCVFRAME));
+	if(Uart_IsRcvFrame(g_sUartRcvFrame))
+	{
+            u16 crc1 = 0, crc2 = 0;
+            u16 txLen = 0;
             memcpy(&g_sUartRcvTempFrame, &g_sUartRcvFrame, sizeof(UART_RCVFRAME));
             memset(&g_sUartRcvFrame, 0, sizeof(UART_RCVFRAME));
-            Lcm_ChkLink(g_sLcmInfo);  
-			if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
-			{
-				if(g_sUartRcvTempFrame.index >= (UART_FRAME_MIN_LEN - 8))
-				{
-					if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
-					{
-						if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_RFID)
-						{
-							Rfid_WriteBuffer(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.index - 1);
-						}
-						else if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_LCM)
-						{
-							Lcm_DishWriteBuffer(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.index);
-						}
-						else if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_WIGHT)
-						{
-							GPB_WriteBuffer(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.index);
-						}
-						
-						if(g_sUartRcvTempFrame.buffer[UART_FRAME_POS_CMD] == READER_CMD_DRU_CMD)
-						{    
-							Reader_ProcessUartFrame(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.length);
-							if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_RESET)
-							{
-								txLen = Reader_ProcessUartFrame(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.length);
-								if(txLen)
-								{
-									Uart_WriteBuffer(g_sDeviceRspFrame.buffer, g_sDeviceRspFrame.len);
-									Sys_Delayms(5);
-									Sys_SoftReset();
-								}
-							}
-							
-						}
-						
-					}
-				}
-			
-			}
-			else
-			{
-				if(g_sUartRcvTempFrame.length >= (UART_FRAME_MIN_LEN))
-            	{
-					
-					crc1 = Uart_GetFrameCrc(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.length);
-					crc2 = a_GetCrc(g_sUartRcvTempFrame.buffer + UART_FRAME_POS_LEN, g_sUartRcvTempFrame.length - 4);
-					if(crc1 == crc2)
-					{
-						txLen = Reader_ProcessUartFrame(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.length);
-						if(txLen && g_sUartRcvTempFrame.buffer[UART_FRAME_POS_PAR - 1] != READER_CMD_GET_MEAL_INFO && g_sUartRcvTempFrame.buffer[UART_FRAME_POS_PAR - 1] != READER_CMD_GET_PERSON_INFO && g_sUartRcvTempFrame.buffer[UART_FRAME_POS_PAR - 2] !=  READER_CMD_CHG_IP )
-						{
-							a_SetStateBit(g_nReaderState, READER_STAT_UARTTX);
-						}
-					
-					}
-				}
-			
-			}
+              
+            if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
+            {
+                if(g_sUartRcvTempFrame.index >= (UART_FRAME_MIN_LEN - 8))
+                {
+                    if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
+                    {
+                        if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_RFID)
+                        {
+                            Rfid_WriteBuffer(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.index - 1);
+                        }
+                        else if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_LCM)
+                        {
+                            Lcm_DishWriteBuffer(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.index);
+                        }
+                        else if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_WIGHT)
+                        {
+                            GPB_WriteBuffer(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.index);
+                        }
+                        
+                        if(g_sUartRcvTempFrame.buffer[UART_FRAME_POS_CMD] == READER_CMD_DRU_CMD)
+                        {    
+                            txLen = Reader_ProcessUartFrames(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.length);
+                            if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_RESET)
+                            {
+                                if(txLen)
+                                {
+                                    Uart_WriteBuffer(g_sDeviceRspFrame.buffer, g_sDeviceRspFrame.len);
+                                    Sys_Delayms(5);
+                                    Sys_SoftReset();
+                                }
+                            }
+                        }
+                    }
+                }
+            
+            }
+            else
+            {
+                if(g_sUartRcvTempFrame.length >= (UART_FRAME_MIN_LEN))
+                {
+                    crc1 = Uart_GetFrameCrc(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.length);
+                    crc2 = a_GetCrc(g_sUartRcvTempFrame.buffer + UART_FRAME_POS_LEN, g_sUartRcvTempFrame.length - 4);
+                    if(crc1 == crc2)
+                    {
+                        if(Reader_ProcessUartFrames(g_sUartRcvTempFrame.buffer, g_sUartRcvTempFrame.length))
+                        {
+                            if(g_sReaderData.data[g_sReaderData.index].buffer[UART_FRAME_POS_CMD] == READER_CMD_GET_PERSON_INFO ||
+                               g_sReaderData.data[g_sReaderData.index].buffer[UART_FRAME_POS_CMD] == READER_CMD_GET_MEAL_INFO)
+                            {
+                                g_sReaderData.state = READER_DEVICE_STAT_NEXT_STEP;
+                            }
+                            else 
+                            {
+                                if(g_sDeviceRspFrame.cmd == g_sUartRcvTempFrame.buffer[UART_FRAME_POS_CMD])
+                                {
+                                    Sys_Delayms(5);
+                                    Uart_WriteBuffer(g_sDeviceRspFrame.buffer, g_sDeviceRspFrame.len);
+                                    g_sReaderData.priority = READER_DATA_PRIORITY_LOW;
+									if(g_sDeviceRspFrame.cmd == READER_CMD_RESET)
+									{
+										  Sys_Delayms(5);
+										  Sys_SoftReset();
+									}
+                                }
+                            }
+                            g_sReaderData.sign = READER_DATA_SIGN_IDLE;    
+                            g_sReaderData.relust = READER_DEVICE_DATA_TX_RELUST_OK;
+                        }
+                    }
+                  }
+            }
             Uart_ResetFrame(&g_sUartRcvTempFrame);
-        }
+      }
         
-        if((a_CheckStateBit(g_nReaderState, READER_STAT_UARTTX)))
-        {   
-            a_ClearStateBit(g_nReaderState, READER_STAT_UARTTX);
-            Uart_WriteBuffer(g_sDeviceRspFrame.buffer, g_sDeviceRspFrame.len);
-            g_sDeviceRspFrame.tick = g_nSysTick;
-            a_SetStateBit(g_nReaderState, READER_STAT_UART_TX_WAIT);
-            if(g_sDeviceRspFrame.cmd == READER_CMD_RESET)
+    if(g_sReaderData.state == READER_DEVICE_STAT_TX)
+    {
+        if(g_sReaderData.index < g_sReaderData.num)
+        {
+			 Sys_Delayms(5);
+			 Uart_WriteBuffer(g_sReaderData.data[g_sReaderData.index].buffer, g_sReaderData.data[g_sReaderData.index].len);
+			 g_sReaderData.state = READER_DEVICE_STAT_WAIT;
+            if(g_sReaderData.data[g_sReaderData.index].buffer[UART_FRAME_POS_CMD] == READER_CMD_GET_PERSON_INFO ||
+                               g_sReaderData.data[g_sReaderData.index].buffer[UART_FRAME_POS_CMD] == READER_CMD_GET_MEAL_INFO
+                               )
             {
-                Sys_Delayms(5);
-                Sys_SoftReset();
+                   g_sReaderData.relust = READER_DEVICE_DATA_TX_RELUST_FAIL;
             }
-            if(g_sDeviceRspFrame.cmd == READER_CMD_DRU_CMD)
-            {
-                a_SetStateBit(g_nReaderState, READER_STAT_DTU);    
-            }
+               g_sReaderData.tick = g_nSysTick;
         }
-        
-        if((a_CheckStateBit(g_nReaderState, READER_STAT_UART_TX_WAIT)))
-        {   
-            if(g_sDeviceRspFrame.tick + REDAER_UART_TX_TICK < g_nSysTick) 
-            {
-                if(g_sDeviceRspFrame.status == READER_STATUS_MASTER)
-                {
-					if(g_sDeviceRspFrame.repeat < REDAER_UP_DATA_NUM)
-					{
-						g_sDeviceRspFrame.tick = g_nSysTick;
-						a_SetStateBit(g_nReaderState, READER_STAT_UARTTX); 
-						g_sDeviceRspFrame.repeat ++ ;
-					}
-					else
-					{    
-						g_sDeviceRspFrame.status = 0;
-						g_sDeviceRspFrame.repeat = 0;
-						g_sDeviceRspFrame.tick = g_nSysTick;
-						g_sDeviceRspFrame.succFlag = READER_RESFRAME_PERSON_TOTIME;
-					}
-                }
-                else
-                { 
-					g_sDeviceRspFrame.repeat = 0;
-					g_sDeviceRspFrame.tick = g_nSysTick;
-                }
-
-                a_ClearStateBit(g_nReaderState, READER_STAT_UART_TX_WAIT);
-            }
-        }
-        
-        if((a_CheckStateBit(g_nReaderState, READER_STAT_UARTRX)))
-        {   
-            a_ClearStateBit(g_nReaderState, READER_STAT_UARTRX);
-            Uart_WriteBuffer(g_sDeviceMealRspFrame.buffer, g_sDeviceMealRspFrame.len);
-            a_SetStateBit(g_nReaderState, READER_STAT_UART_WAIT);
-        }
-        
-        if((a_CheckStateBit(g_nReaderState, READER_STAT_UART_WAIT)))
-        {   
-            if(g_sDeviceMealRspFrame.tick + REDAER_UP_DATA_TICK < g_nSysTick) 
-            {
-                
-                if(g_sDeviceMealRspFrame.repeat < REDAER_UP_DATA_NUM)
-                {
-					g_sDeviceMealRspFrame.repeat ++ ;
-					g_sDeviceMealRspFrame.tick = g_nSysTick;
-					a_SetStateBit(g_nReaderState, READER_STAT_UARTRX);  
-                }
-                else     
-                {   
-					g_sDeviceMealRspFrame.repeat = 0;
-					memcpy(FlashTempData, g_sDeviceMealRspFrame.buffer, g_sDeviceMealRspFrame.len);
-					g_sDeviceMealRspFrame.tag = REDAER_UPMEALINFO_FAIL;
-                }  
-                a_ClearStateBit(g_nReaderState, READER_STAT_UART_WAIT);
-            }
+        else
+        {
+            g_sReaderData.state = READER_DEVICE_STAT_IDLE;
         }
     }
+    else if(g_sReaderData.state == READER_DEVICE_STAT_WAIT)
+    {
+        if(g_sReaderData.data[g_sReaderData.index].buffer[UART_FRAME_POS_CMD] == READER_CMD_GET_PERSON_INFO ||
+           g_sReaderData.data[g_sReaderData.index].buffer[UART_FRAME_POS_CMD] == READER_CMD_GET_MEAL_INFO
+           )
+        {
+            if(g_sReaderData.tick +READER_DEVICE_OP_TIME < g_nSysTick)
+            {
+               if(g_sReaderData.repat >= READER_DEVICE_DATA_REPAT_TICK)
+               {
+                   g_sReaderData.state = READER_DEVICE_STAT_NEXT_STEP;
+                   g_sReaderData.repat = 0;
+               }
+               else
+               {
+                  g_sReaderData.repat++;
+                  Reader_UartDelay(g_nSysTick);
+               }
+            
+            }
+        }
+        else
+        {
+            g_sReaderData.state = READER_DEVICE_STAT_NEXT_STEP;
+        }
+    }
+    else if(g_sReaderData.state == READER_DEVICE_STAT_DELAY)
+    {
+        if(g_sReaderData.tick +READER_DEVICE_DELAY_TIME < g_nSysTick)
+        {
+            g_sReaderData.state = READER_DEVICE_STAT_TX;
+        }
+    }
+    else if(g_sReaderData.state == READER_DEVICE_STAT_NEXT_STEP)
+    {
+        
+        if(g_sReaderData.relust == READER_DEVICE_DATA_TX_RELUST_OK)
+        {
+            if(g_sReaderData.index < g_sReaderData.num && g_sReaderData.num <= READER_DATA_NUM)
+            {
+               g_sReaderData.index ++;
+               g_sReaderData.state = READER_DEVICE_STAT_TX;
+               if(g_sReaderData.index >= g_sReaderData.num)
+               {
+                    g_sReaderData.index = g_sReaderData.num = 0;
+					memset(g_sReaderData.data, 0, sizeof(READER_DATA_SUB) * READER_DATA_NUM);
+                    g_sReaderData.priority = READER_DATA_PRIORITY_LOW;
+               }
+            }
+            else
+            {
+                g_sReaderData.index = g_sReaderData.num = 0;
+                g_sReaderData.state = READER_DEVICE_STAT_IDLE;
+				memset(g_sReaderData.data, 0, sizeof(READER_DATA_SUB) * READER_DATA_NUM);
+                g_sReaderData.priority = READER_DATA_PRIORITY_LOW;
+            }
+              
+        }
+        else
+        {
+            //此数据上传三次且超时失败！！！
+           //数据离线存储
+          if(g_sReaderData.data[g_sReaderData.index].buffer[UART_FRAME_POS_CMD] == READER_CMD_GET_PERSON_INFO)    //待测
+          {
+              g_sRaderInfo.personInfo.successFlag = READER_PERSON_INFO_RSP_OP;
+              g_sRaderInfo.personInfo.flag = READER_PERSON_BIND_MASK_OP_TIME;
+          }
+          else if(g_sReaderData.data[g_sReaderData.index].buffer[UART_FRAME_POS_CMD] == READER_CMD_GET_MEAL_INFO)
+          {
+             //if(g_sReaderData.sign != READER_DATA_SIGN_BUSY)
+             {
+                g_sReaderData.sign = READER_DATA_SIGN_DATA_ADD;
+                Reader_OLInfoHanld();
+             }
+          }
+          if(g_sReaderData.index < g_sReaderData.num && g_sReaderData.num <= READER_DATA_NUM)
+          {
+              g_sReaderData.index ++;
+              g_sReaderData.state = READER_DEVICE_STAT_TX;
+                if(g_sReaderData.index >= g_sReaderData.num)
+               {
+                       g_sReaderData.index = g_sReaderData.num = 0;
+					   memset(g_sReaderData.data, 0, sizeof(READER_DATA_SUB) * READER_DATA_NUM);
+               }
+          }
+          else
+          {
+              g_sReaderData.index = g_sReaderData.num = 0;
+			  memset(g_sReaderData.data, 0, sizeof(READER_DATA_SUB) * READER_DATA_NUM);
+          }
+        }
+    }
+
+
+
+
 }
+
 
 void Sys_LcmTask()
 {
 
- 
     if(USART_GetFlagStatus(LCM_DISH_PORT, USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE))
     {
         Lcm_Stop();
         Sys_Delayms(5);
         USART_ClearFlag(LCM_DISH_PORT, USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE); 
-		Lcm_Init();
+        Lcm_Init();
     }
 
     if(Lcm_IsRcvFrame(g_sLcmDishRcvFrame))
     {
-		memcpy(&g_sLcmDishRcvTempFrame, &g_sLcmDishRcvFrame, sizeof(LCM_DISH_RCVFRAME));
-		Lcm_EnableRxDma();
+        memcpy(&g_sLcmDishRcvTempFrame, &g_sLcmDishRcvFrame, sizeof(LCM_DISH_RCVFRAME));
+        Lcm_EnableRxDma();
         Lcm_ResetFrame(&g_sLcmDishRcvFrame);
-		if(g_sLcmDishRcvTempFrame.length)
-		{
-			if(1)
-			{
-				 if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
+        if(g_sLcmDishRcvTempFrame.length)
+        {
+            if(1)
+            {
+                 if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
                 {
-					if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_LCM)
-					{
-						Uart_WriteBuffer(g_sLcmDishRcvTempFrame.buffer, g_sLcmDishRcvTempFrame.length);
-					}
+                    if(g_sDeviceRspFrame.deviceFlag == READER_CMD_DRU_LCM)
+                    {
+                        Uart_WriteBuffer(g_sLcmDishRcvTempFrame.buffer, g_sLcmDishRcvTempFrame.length);
+                    }
                 }
-			}
-		}
+            }
+        }
     }
 
     if(a_CheckStateBit(g_sLcmDishRcvFrame.state, LCM_STAT_TX))
@@ -788,7 +946,7 @@ void Sys_LcmTask()
 
     if(a_CheckStateBit(g_sLcmDishRcvFrame.state, LCM_STAT_WAIT))
     {
-    	if(g_sLcmDishTxFrame.tick + LCM_UP_TICK < g_nSysTick) 
+        if(g_sLcmDishTxFrame.tick + LCM_UP_TICK < g_nSysTick) 
         {
             g_sLcmDishTxFrame.repat ++ ;
             if(g_sLcmDishTxFrame.repat == LCM_UP_NUM)         
@@ -809,22 +967,20 @@ void Sys_TestTask()
     if(a_CheckStateBit(g_nSysState, SYS_STAT_AUTO_TIME))
     {
         a_ClearStateBit(g_nSysState, SYS_STAT_AUTO_TIME); 
-        
         if(!a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
         {
             sampleTick++;
-
-            if((sampleTick & 0x01) == 0x00)
+            if((sampleTick % 0x02) == 0x00)
             {
-               sampleTick = 0;
+                //sampleTick = 0;
                 a_SetStateBit(g_nReaderState, READER_STAT_LCM_FRESH);
-				a_SetStateBit(g_nSysState, SYS_STAT_TEST);
+                a_SetStateBit(g_nSysState, SYS_STAT_TEST);
                 if(g_sGpbInfo.state != GPB_STAT_WAIT)
                 {
                   g_sGpbInfo.state = GPB_STAT_TX;
                 }
             }
-            a_SetStateBit(g_nReaderState, READER_STAT_KEY | READER_STAT_CHK_LINK | READER_STAT_CHK_UPDATA | READER_STAT_MODE_NORMAL);
+            a_SetStateBit(g_nReaderState, READER_STAT_KEY | READER_STAT_CHK_LINK | READER_STAT_CHK_UPDATA | READER_STAT_MODE_NORMAL | READER_STAT_CHK_PERSON_INFO);
         }
     }
 
@@ -842,18 +998,32 @@ void Sys_ReaderTask()
     static u16 id = SOUND_VOC_PUT_TAG;
     static u32 offLink = 0;
     Reader_ChgPage(&g_sLcmInfo);
+    
+    
+    if(g_sDeviceParamenter.scoWt != READER_DEFAULT_PARAMETER_SOWT)
+    {
+         //Sys_LedBlueOn();
+         g_sDeviceParamenter.scoWt = READER_DEFAULT_PARAMETER_SOWT;
+    
+    }
+    
+    
     if(!a_CheckStateBit(g_sDeviceParamenter.reWorkMode, READER_MODE_TEST))
     {
         Reader_NormalMode();
+        Reader_OLInfoHanld();
         if(a_CheckStateBit(g_nReaderState, READER_STAT_CHK_LINK))
         {
             a_ClearStateBit(g_nReaderState, READER_STAT_CHK_LINK); 
-			
+            
             if(g_nTickLink + READER_LINK_TIME * READER_OFF_LINE_TICK < g_nSysTick)
             {
-                g_nTempLink =  READER_LINK_FAIL; 
+                if(g_nTempLink !=  READER_LINK_FAIL)
+                {
+                        g_nTempLink =  READER_LINK_FAIL; 
+                }
             }
-            if(g_nTempLink == READER_LINK_OK)            	    //未连接是否需要报警
+            if(g_nTempLink == READER_LINK_OK)                    //未连接是否需要报警
             {
                 offLink = 0;
                 memset(g_nBufTxt1,0, LCM_INFO_TXT_SIZE);
@@ -864,62 +1034,39 @@ void Sys_ReaderTask()
             {
                 if(g_nTickLink + READER_LINK_TIME * (READER_OFF_LINE_TICK + offLink) < g_nSysTick)
                 {               
-					memset(g_nBufTxt1,0, LCM_INFO_TXT_SIZE);
-					memcpy(g_nBufTxt1, "断开连接", 8);
-					Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_OFFLINE_BACK);
-					a_SetStateBit(g_nSysState, SYS_STAT_LINE_OFF);
-					g_sSoundInfo.state = SOUND_STAT_TX; 
-					g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
-					g_sSoundInfo.txBuf.data = SOUND_VOC_OFF_LINE;
-					offLink ++; 
+                    memcpy(g_nBufTxt1, &LCM_TXT_DEVICE_OFF_LINK, 8);
+                    Lcm_SelectIco(LCM_CTR_ICO_DISPLAY_L, LCM_ICO_ADDR_OFFLINE_BACK);
+                    a_SetStateBit(g_nSysState, SYS_STAT_LINE_OFF);
+                    Device_VoiceApoFrame(SOUND_FRAME_CMD_APPOINT_FOLDER, SOUND_CNT_TIME_1S * 1.5, SOUND_REPAT_NULL, SOUND_VOICE_OFF_LINE, SOUND_VOC_OFF_LINE);
+                       a_SetStateBit(g_nSysState, SYS_STAT_OVER_OFFLINE);
+                    offLink ++; 
                 }
             }
         }
     }
     else
     {
-		/*
-        if(a_CheckStateBit(g_nReaderState, READER_STAT_CHK_LINK))
-        {
-            a_ClearStateBit(g_nReaderState, READER_STAT_CHK_LINK); 
-            if(g_nTempLink ==  READER_LINK_OK)
-            {
-                if(g_nTickLink + READER_LINK_TIME < g_nSysTick)
-                {
-            		g_nTempLink =  READER_LINK_FAIL; 
-                }
-            }
-            else if(g_nTempLink ==  READER_LINK_FAIL)
-            {
-                a_SetStateBit(g_nSysState, SYS_STAT_LINE_OFF);
-            }
-        }
-*/
-		
         if(a_CheckStateBit(g_nReaderState, READER_STAT_READER_MARK_OK))     //清除读卡在位标志
         {
             a_ClearStateBit(g_nReaderState, READER_STAT_READER_MARK_OK);
         }
-		
+        
         if(a_CheckStateBit(g_nSysState, SYS_STAT_TEST))
         { 
             a_ClearStateBit(g_nSysState, SYS_STAT_TEST);  
-
+            g_nTickLink = g_nSysTick;
             Reader_DisplayTest(&g_sRaderInfo.dishInfo , &g_sWightTempInfo);
             Reader_ChgStat(a_CheckStateBit(g_nReaderState, READER_STAT_RFID_FAIL));
             if(g_sSoundInfo.testFlag == SOUND_TEST_FLAG_ENABLE)
             {   
-                g_sSoundInfo.txBuf.cmd = SOUND_FRAME_CMD_APPOINT_NUM;
-                g_sSoundInfo.txBuf.data = id;
                 if(!a_CheckStateBit(g_sSoundInfo.state, SOUND_STAT_WAIT))
                 {
-					g_sSoundInfo.state = SOUND_STAT_TX; 
-					id++;
-					g_sSoundInfo.testFlag = SOUND_TEST_FLAG_DISABLE; 
-					if(id == SOUND_VOC_OFF_LINE + 1)
-					{   
-						id = SOUND_VOC_PUT_TAG;
-					}
+                    g_sSoundInfo.testFlag = SOUND_TEST_FLAG_DISABLE; 
+                    Device_VoiceApoFrame(SOUND_FRAME_CMD_APPOINT_FOLDER, SOUND_CNT_TIME_1S * 1.5, SOUND_REPAT_NULL, SOUND_VOICE_OFF_LINE, id++);
+                    if(id == SOUND_VOC_OFF_LINE + 1)
+                    {   
+                        id = SOUND_VOC_PUT_TAG;
+                    }
                 } 
             }
 

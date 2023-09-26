@@ -82,3 +82,10 @@ void Uart_WriteBuffer(u8 *pFrame, u16 len)
         while(((UART_PORT)->SR & USART_FLAG_TXE) == (u16)RESET);
     }
 }
+
+void Uart_WriteCmd(char *str)
+{
+    Uart_WriteBuffer((u8 *)str, strlen(str));
+    Uart_WriteByte('\r');
+    Uart_WriteByte('\n');
+}

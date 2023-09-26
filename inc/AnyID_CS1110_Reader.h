@@ -43,6 +43,7 @@
 #define READER_STAT_CHK_LINK               0x00004000
 #define READER_STAT_UART_TX_WAIT           0x00008000
 #define READER_STAT_WIGHT_ZERO_LOADING     0x00010000
+#define READER_STAT_CHK_PERSON_INFO        0x00020000
 
 
 
@@ -139,7 +140,7 @@
 #define READER_PERSON_RTC_LEN               18  
 #define READER_PERSON_MONEY_LEN             26 
 
-#define READER_RFID_MOVE_TIME               6
+#define READER_RFID_MOVE_TIME               5
 //错误信息
 #define READER_FRAME_FLAG_OK             0x00
 #define READER_FRAME_FLAG_FAIL           0x01
@@ -169,9 +170,15 @@
 #define READER_LEN_LIMIT_TIME           400
 
 
+
+//参数
+
+#define READER_DEFAULT_PARAMETER_SOWT	20		
+#define READER_DEFAULT_PARAMETER_IP		0xFF		
+
 //
-#define READER_LINK_TIME                25000//25000                   //125s
-#define READER_OFF_LINE_TICK            2                      
+#define READER_LINK_TIME                24000		//30s		//25000//25000                   //125s
+#define READER_OFF_LINE_TICK            1                      
 #define READER_PERSON_BIND_FAIL         0x00
 #define READER_PERSON_ALLERGY           0x01
 
@@ -187,9 +194,9 @@
 #define READER_RSP_NORMAL_DATA          0x01
 #define READER_RSP_OFFLINE_DATA         0x02
 
-#define REDAER_UART_TX_TICK              80
+#define REDAER_UART_TX_TICK              100
 #define REDAER_UP_DATA_TICK              60
-#define REDAER_UP_DATA_NUM               2
+#define REDAER_UP_DATA_NUM               3
 
 #define READER_WIGHT_MAX_VALUE			0xFFFFFFFF
 #define REDAER_UPMEALINFO_SUCC			0
@@ -197,6 +204,7 @@
 #define REDAER_UP_GPB_TICK              20
 #define REDAER_UP_GPB_NUM               20
 
+#define READER_SOFT_VERSON_LEN			15
 
 #define REDAER_LED_TIM                  0x0A
 
@@ -204,9 +212,9 @@
 #define READER_MEAL_MASK_RTC_TEST       0x00000000
 
 
+#define READER_LIMIT_RE_PERSONINFO		40
 
-
-#define READER_LED_TIM                  50
+#define READER_LED_TIM                  300
 
 #define READER_OFFLINE_DATA_BOUNDARY    9
 typedef struct flashDevicePar{  
@@ -300,14 +308,26 @@ typedef struct dishInfo{
 }DISH_INFO;
 extern DISH_INFO g_sDishTempInfo ;
 
-typedef struct personInfo{  
+#define READER_PERSON_BIND_MASK_FAIL		0
+#define READER_PERSON_BIND_MASK_OK			1
+#define READER_PERSON_BIND_MASK_OP_TIME     2
+
+#define READER_PERSON_INFO_RSP_FAIL             0x00
+#define READER_PERSON_INFO_RSP_OK               0x01
+#define READER_PERSON_INFO_RSP_OP               0x02
+#define READER_PERSON_INFO_RSP_LOADING          0x04
+
+
+typedef struct personInfo{
+	u8 flag;
+    u8 successFlag;
     u8 tick;
     u8 state;
-    u32 time;
-    u32 money;
     u8 bind;
     u8 allergy;
-    u32 crc32;
+    u32 time;
+    u32 money;
+	u32 limitTick;
 }PERSON_INFO;
 
 
@@ -349,8 +369,21 @@ extern READER_RFID_INFO g_sReaderRfidTempInfo;
 														(v - sampleValue);\
      					 							})\
 														
-	
-											 
+#define Device_VoiceApoFrame(cmd,opt,repat,mode,vn)     do{\
+															if(g_sSoundInfo.txBuf.num <  SOUND_OP_NUM)\
+															{\
+																g_sSoundInfo.txBuf.cd[g_sSoundInfo.txBuf.num] = cmd;\
+																g_sSoundInfo.txBuf.to[g_sSoundInfo.txBuf.num] = opt;\
+																g_sSoundInfo.txBuf.id[g_sSoundInfo.txBuf.num] = vn;\
+																g_sSoundInfo.txBuf.repeat[g_sSoundInfo.txBuf.num] = repat;\
+																g_sSoundInfo.txBuf.op[g_sSoundInfo.txBuf.num++] = mode;\
+																if(g_sSoundInfo.state == SOUND_STAT_IDLE || g_sSoundInfo.txBuf.op[g_sSoundInfo.txBuf.index] != mode)\
+																{\
+																	g_sSoundInfo.txBuf.index = g_sSoundInfo.txBuf.num - 1;\
+																	g_sSoundInfo.state = SOUND_STAT_TX;\
+																}\
+															}\
+														}while(0)											 
 
 typedef struct readerInfo{  
     u32 wight;
@@ -369,7 +402,8 @@ typedef struct readerLedInfo{
 
 extern READER_LED_INFO g_sReaderLedInfo;
 
-typedef struct readerOffLineInfo{  
+typedef struct readerOffLineInfo{ 
+	u16 id;
     u16 num;
     u16 boundaryNum;
     u16 index;
@@ -378,6 +412,82 @@ typedef struct readerOffLineInfo{
 }READER_OFFLINE_INFO;
 
 
+
+//队列数据
+
+#define READER_CMD_FRAME_LEN_RSP_OK            0xFF
+#define READER_CMD_FRAME_LEN_SET_CFG           7
+#define READER_CMD_FRAME_LEN_MEAL              12
+#define READER_CMD_FRAME_LEN_PERSON            21
+#define READER_WITHT_SCOTW_MIN                 5
+
+#define READER_MEAL_NAME_LEN_MIN                0
+#define READER_MEAL_NAME_LEN_MAX                64
+#define READER_MEAL_TAG_NAME_LEN_MIN            36
+
+#define READER_DATA_NUM                         32
+#define READER_DATA_SUB_LEN                     64
+
+
+#define READER_DEVICE_STAT_IDLE                 0
+#define READER_DEVICE_STAT_TX                   1
+#define READER_DEVICE_STAT_WAIT                 2
+#define READER_DEVICE_STAT_DELAY                3
+#define READER_DEVICE_STAT_RX                   4
+#define READER_DEVICE_STAT_NEXT_STEP            5
+
+#define READER_DEVICE_DATA_REPAT_TICK           2
+#define READER_DEVICE_DELAY_TIME                20
+#define READER_DEVICE_OP_TIME                   60
+
+#define Reader_UartDelay(t)                      {g_sReaderData.state = READER_DEVICE_STAT_DELAY; g_sReaderData.tick = t;}
+#define Reader_UartAddList(pBuffer,lenth)          do{\
+                                                      	if(g_sReaderData.num <= READER_DATA_NUM)\
+                                                      	{\
+															memcpy(g_sReaderData.data[g_sReaderData.num].buffer, pBuffer, lenth);\
+															g_sReaderData.data[g_sReaderData.num].rtcTick = g_nRtcTime;\
+															g_sReaderData.data[g_sReaderData.num].len = lenth;\
+															g_sReaderData.num++;\
+															if(g_sReaderData.state == READER_DEVICE_STAT_IDLE)\
+															{\
+															   g_sReaderData.state = READER_DEVICE_STAT_TX;\
+															}\
+                                                      	}\
+                                                    }while(0)
+#define READER_DEVICE_DATA_TX_RELUST_OK          0x01
+#define READER_DEVICE_DATA_TX_RELUST_FAIL           0
+
+                                                      
+#define READER_DATA_PRIORITY_HIGH              0
+#define READER_DATA_PRIORITY_LOW               1
+                                                      
+#define READER_DATA_SIGN_IDLE                  0
+#define READER_DATA_SIGN_BUSY                  1                                                   
+#define READER_DATA_SIGN_DATA_ADD              2
+#define READER_DATA_SIGN_UP_OK                 3 
+                                                      
+typedef struct readerDataSub{
+  u8 len;
+  u8 buffer[READER_DATA_SUB_LEN];
+  u32 rtcTick;
+}READER_DATA_SUB;
+
+typedef struct readerData{
+  u8 sign;
+  u8 flag;
+  u8 relust;
+  u8 state;
+  u8 index;
+  u8 num;
+  u8 repat;
+  u8 priority;
+  u32 tick;
+  READER_DATA_SUB data[READER_DATA_NUM];
+}READER_DATA;
+
+extern READER_DATA g_sReaderData;
+  
+//
 
 
 
@@ -400,21 +510,17 @@ extern u8 g_aReaderISO15693Uid[READER_OP_UID_MAX_NUM * ISO15693_SIZE_UID];
 void Reader_Delayms(u32 n);
 void Reader_Init();
 void Reader_DisplayIp(READER_DEVICE_PARAMETER *pBuffer);
-void Reader_ChgKey(u8 stat);
 void Reader_DisplayLable(DISH_INFO *pBuffer);
-void Reader_ChkLink(BOOL link);
 void Reader_DisplayDish(DISH_INFO *pDishInfo, GPB_INFO *gpbInfo, LCM_INFO *pLcmInfo);
 void Reader_ChgPage(LCM_INFO *pLcmInfo);
 void Reader_ChkMoney(u32 value, char *buf);
 void Reader_FontChgCorol(u8 background);
-void Reader_InVoTags();
-void Reader_OffLineClear();
 void Fram_Demo();
 void Reader_ChgStat(u8 lineState);                                                                                                  
 void Reader_ChkKeyValue(u8 value);
 void Reader_NormalMode();
-void Reader_TestLed(u32 tick);
 void Reader_ResolveWitgh();
+void Reader_OLInfoHanld();
 
 BOOL Reader_ReadOffLineDataNum(void) ;
 BOOL Reader_ReadOffLineDatas(u16 addr, u16 size, u8 *pBuffer)   ;
@@ -424,8 +530,6 @@ BOOL Reader_RfidInit();
 BOOL Reader_WriteDeviceParamenter(void);
 BOOL Reader_ChkReUid(u8 *pRUid, u8 *pTUid);
 BOOL Reader_ReadDeviceParamenter(void);
-
-
 
 //u8 Reader_RfidGetValue(u8 mode, READER_RFID_INFO *pRfidInfo);
 u8 Reader_RfidTask(u8 mode, PERSON_INFO *personInfo, READER_RFID_INFO *rfidInfo);
@@ -438,7 +542,7 @@ u8 Reader_FormatCfg(u8 mode, READER_RSPFRAME *pOpResult, READER_DEVICE_PARAMETER
 u8 Reader_Lable(u8 *pBuffer, DISH_INFO *pDishInfo);
 u8 Reader_FormatGetPerson(u8 *puid,  READER_RSPFRAME *pOpResult, u32 rtc);
 u8 Reader_SearchCode(u8 lenth, u8 code, char *pBuf);
-u16 Reader_ProcessUartFrame(u8 *pFrame, u16 len);
+u16 Reader_ProcessUartFrames(u8 *pFrame, u16 len);
 u16 Reader_SeekId(u8 *pBuffer);
 u16 Reader_SeekNum(u8 *pBuffer);
 u16 Reader_SeekInq(u8 *pBuffer) ;

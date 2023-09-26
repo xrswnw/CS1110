@@ -142,15 +142,14 @@ void SysTick_Handler(void)
         a_SetStateBit(g_nSysState, SYS_STAT_RUNLED | SYS_STAT_AUTO_TIME );
 
     }
+	/*
 	if(a_CheckStateBit(g_nReaderState, READER_STAT_DTU))
 	{
-		Uart_IncIdleTime(STICK_TIME_MS, g_sUartRcvFrame);
 		Uart_IncIdleTime(STICK_TIME_MS, g_sRfidInfo.rfidRev);
 	}
-    
-
-
-  
+*/
+	Uart_IncIdleTime(STICK_TIME_MS, g_sRfidInfo.rfidRev);
+	Uart_IncIdleTime(STICK_TIME_MS, g_sUartRcvFrame);
 }
 
 

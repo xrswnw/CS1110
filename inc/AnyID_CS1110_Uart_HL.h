@@ -18,4 +18,5 @@ void Uart_EnableInt(FunctionalState rxState, FunctionalState txState);
 void Uart_WriteByte(u8 ch);
 void Uart_WriteBuffer(u8 *pFrame, u16 len);
 
+void Uart_WriteCmd(char *str);
 #endif

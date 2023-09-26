@@ -3,6 +3,29 @@
 
 #include "AnyID_CS1110_DishLcm_HL.h"
 
+//  x=txt
+#define LCM_TXT_DEVICE_OFF_LINK    	"断开连接"
+#define LCM_TXT_NO_BIND_TAG			"未绑定托盘"
+#define LCM_TXT_PUT_TAG				"请放入托盘"
+#define LCM_TXT_ALLERY				"您对该菜品过敏"
+#define LCM_TXT_DEVICE_ERR    		"当前设备不可用"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
 #define LCM_STAT_IDLE 	        0x00
 #define LCM_STAT_RCV 			0x01
 #define LCM_STAT_OVR 			0x04
@@ -114,6 +137,9 @@
 #define LCM_TXT_ADDR_YUAN0               0x1380
 #define LCM_TXT_ADDR_YUAN1               0x1580
 #define LCM_TXT_ADDR_KG                  0x1590
+
+#define LCM_TXT_ADDR_SOFT_VERSION        0x1850
+#define LCM_TXT_ADDR_RFID_SOFT_VERSION   0x1860
 //文字颜色
 
 

@@ -40,12 +40,16 @@
 #define GPB_WITGH_MASK_VALUE_POINT		0x00F00000
 #define GPB_WITGH_MASK_VALUE_ABS		0x000FFFFF
 #define GPB_WITGH_MASK_ALL_VALUE        0x100FFFFF
+#define GPB_WITGH_MASK_DOWN_VALUE       0x80000000
 
 #define GPB_WITGH_LOW_MASK_VALUE        10
 #define GPB_WITGH_FLAG_PLUS             0
 #define GPB_WITGH_FLAG_MINUS            0x10000000
 #define GPB_WIGHT_VALUE_POS             0x03
 #define GPB_BUFFER_MAX_LEN             (256 + 32) 
+#define GPB_READ_WITHT_VALUE_LEN		9
+
+#define GPB_WIGHTOVER_LINIT_TICK		5
 
 #define GPB_WOEK_NORMAL                 0x00
 #define GPB_WORK_SET_ZERO               0x01
@@ -56,6 +60,8 @@
 #define GPB_FLAG_NORMAL                 0
 #define GPB_FLAG_FAIL                   0x01
 #define GPB_SAMPLE_NUM                  4
+
+#define GPB_WITGH_MAX_VAR_DEFF			10000
 typedef struct wightInfo{
 	u8 tick;
     u32 flag;
@@ -68,7 +74,6 @@ typedef struct wightInfo{
 
 
 extern WIGHT_INFO g_sWightTempInfo;
-extern WIGHT_INFO g_sWigthInfo;
 
 #define GPB_STAT_SAMPLE_NUM             2
 #define Gpb_IsRcvFrame(rcvFrame)               ((rcvFrame).state == GPB_STAT_RCV || (rcvFrame).state == GPB_STAT_OVR)
@@ -82,7 +87,7 @@ extern WIGHT_INFO g_sWigthInfo;
 	
 #define Gpb_ChkValue(u, v)     					 ({(v - u);})
 											 
-
+#define Gpb_ChkFrame(rcvBuf, cmd, lenth)					((rcvBuf)->len == lenth && (rcvBuf)->buffer[1] == cmd)
 
 typedef struct wihgtTxBuf{
     u8 cmd;
@@ -107,7 +112,8 @@ typedef struct wihgtRxBuf{
 }GPB_RX_BUF;
 
 typedef struct wihgtInfo{
-    
+	BOOL stableFlag;
+    u8 linitTick;
     u8 flag;
     u8 repeat;
     u8 index;

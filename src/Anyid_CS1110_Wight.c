@@ -1,8 +1,7 @@
 #include "AnyID_CS1110_Wight.h"
 
-GPB_INFO g_sGpbInfo = {0};
+GPB_INFO g_sGpbInfo ;
 GPB_RX_BUF g_sGpbTempRcv = {0};
-WIGHT_INFO g_sWigthInfo = {0};
 WIGHT_INFO g_sWightTempInfo = {0};
 void GPB_Init()
 {	
@@ -194,22 +193,25 @@ void Witgh_CalAvg(WIGHT_INFO *pInfo, u32 value)
     //16窗口平滑滤波
 	int tempValue = 0;
 	
+	
 	if(value & GPB_WITGH_MASK_VALUE)								//负数
 	{	
-		tempValue = -(int)(value & GPB_WITGH_MASK_VALUE_ABS);
+		tempValue = -(int)(((value & GPB_WITGH_MASK_VALUE_ABS) / pow(10, (value & GPB_WITGH_MASK_VALUE_POINT) >> 20)) * 1000);
 	}
 	else
 	{
-		tempValue = (int)value;
+		tempValue = (int)(((value & GPB_WITGH_MASK_VALUE_ABS) / pow(10, (value & GPB_WITGH_MASK_VALUE_POINT) >> 20)) * 1000);
 	}
 	
-	pInfo->index++;
+	
     pInfo->sum -= pInfo->buffer[pInfo->index & 0x03];
+	
     if(pInfo->index == 0)
     {
         pInfo->index = GPB_SAMPLE_NUM;
     }
     pInfo->buffer[pInfo->index & 0x03] = tempValue;
+	pInfo->index++;
     pInfo->sum += tempValue;
     if(pInfo->index >= GPB_SAMPLE_NUM)
     {
@@ -218,27 +220,8 @@ void Witgh_CalAvg(WIGHT_INFO *pInfo, u32 value)
     else
     {
         pInfo->avg = pInfo->sum / pInfo->index;
-    }/*
-    pInfo->index++;
-    pInfo->sum -= pInfo->buffer[pInfo->index & 0x07];
-    if(pInfo->index == 0)
-    {
-        pInfo->index = GPB_SAMPLE_NUM;
     }
-    pInfo->buffer[pInfo->index & 0x07] = value;
-    pInfo->sum += value;
-    if(pInfo->index >= GPB_SAMPLE_NUM)
-    {
-        pInfo->avg = pInfo->sum >> 3;
-    }
-    else
-    {
-        pInfo->avg = pInfo->sum / pInfo->index;
-    }
-*/
-	
-    
-
+   
 }
 
 

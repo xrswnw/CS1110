@@ -9,7 +9,7 @@ void Rfid_Init()
     Rfid_ConfigInt();
     Rfid_EnableInt(ENABLE,DISABLE);
 	g_sRfidInfo.state = RFID_STAT_TX;
-	
+	g_sRfidInfo.mode = RFID_MODE_GET_VERSION;
 	g_nRfidRomNum = a_GetCrc((u8 *)STM32_CPUID_ADDR, STM32_CPUID_LEN);
 }
 
@@ -125,6 +125,41 @@ u8 Rfid_Format_GetUid(u8 cmd,  RFID_INFO *pOpResult)
 }
 
 
+u8 Rfid_Format_GetVersion(u8 cmd,  RFID_INFO *pOpResult)
+{
+    u16 pos = 0;
+    u16 crc = 0;
+    
+    pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD1; // frame head first byte
+    pOpResult->buffer[pos++] = UART_FRAME_FLAG_HEAD2; // frame haed second byte
+    pOpResult->buffer[pos++] = 0x00;   // length
+    pOpResult->buffer[pos++] = (0000 >> 0) & 0xFF;
+    pOpResult->buffer[pos++] = (0000 >> 8) & 0xFF;
+    pOpResult->buffer[pos++] = (0001 >> 0) & 0xFF;
+    pOpResult->buffer[pos++] = (0001 >> 8) & 0xFF;
+    pOpResult->buffer[pos++] = cmd;
+    pOpResult->buffer[pos++] = UART_FRAME_PARAM_RFU;
+ 
+    pOpResult->buffer[pos++] = (0x00) & 0xFF;
+    pOpResult->buffer[pos++] = (0x01) & 0xFF;
+    pOpResult->buffer[pos++] = (0x00) & 0xFF;
+    pOpResult->buffer[pos++] = (0x00) & 0xFF;
+    pOpResult->buffer[pos++] = (0x00) & 0xFF;
+    pOpResult->buffer[pos++] = (0x00) & 0xFF;
+    pOpResult->buffer[pos++] = (0x00) & 0xFF;
+    
+    
+    pOpResult->buffer[UART_FRAME_POS_LEN] = pos - 3 + 2; //减去帧头7E 55 LEN 的三个字节，加上CRC的两个字节
+    crc = a_GetCrc(pOpResult->buffer + UART_FRAME_POS_LEN, pos - UART_FRAME_POS_LEN); //从LEN开始计算crc
+    crc = a_GetCrc(pOpResult->buffer + UART_FRAME_POS_LEN, pos - UART_FRAME_POS_LEN); //从LEN开始计算crc
+    pOpResult->buffer[pos++] = crc & 0xFF;
+    pOpResult->buffer[pos++] = (crc >> 8) & 0xFF;
+
+    pOpResult->len = pos;
+    return pos;
+}
+
+
 u16 Rfid_FormatDtuFrame(u8 cmd, u16 len, u8 *pParam, RFID_INFO *pOpResult)
 {
     u16 pos = 0;
@@ -169,7 +204,14 @@ u16 Rfid_FormatDtuFrame(u8 cmd, u16 len, u8 *pParam, RFID_INFO *pOpResult)
 void Rfid_TransmitCmd(u32 tick)
 {
     g_sRfidInfo.tick = tick;
-    g_sRfidInfo.len = Rfid_Format_GetUid(RFID_GET_UID, &g_sRfidInfo);
+	if(g_sRfidInfo.mode == RFID_MODE_GET_VERSION)
+	{
+		g_sRfidInfo.len = Rfid_FormatDtuFrame(RFID_GET_VERSION, 0, 0, &g_sRfidInfo);
+	}
+	else
+	{
+    	g_sRfidInfo.len = Rfid_Format_GetUid(RFID_GET_UID, &g_sRfidInfo);
+	}
     Rfid_WriteBuffer(g_sRfidInfo.buffer, g_sRfidInfo.len);
 
 }

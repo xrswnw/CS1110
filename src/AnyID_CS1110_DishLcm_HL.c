@@ -77,8 +77,9 @@ void Lcm_DishWriteBuffer(u8 *pFrame, u16 len)
     Lcm_DishDelayms(1);
     for(i = 0; i < len; i++)
     {
-        (LCM_DISH_PORT)->DR = (pFrame[i] & (u16)0x01FF);
-        while(((LCM_DISH_PORT)->SR & USART_FLAG_TXE) == (u16)RESET);       //删除导致数据发送不完整
+		Lcm_DishWriteByte(pFrame[i]);
+        /*(LCM_DISH_PORT)->DR = (pFrame[i] & (u16)0x01FF);
+        while(((LCM_DISH_PORT)->SR & USART_FLAG_TXE) == (u16)RESET);  */     //删除导致数据发送不完整
     }
 }
 

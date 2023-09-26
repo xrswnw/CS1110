@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <settings>
     <DebugChecksum>
-        <Checksum>2857757206</Checksum>
+        <Checksum>266323496</Checksum>
     </DebugChecksum>
     <Trace1>
         <Enabled>0</Enabled>
@@ -19,8 +19,8 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <Disassembly>
-        <MixedMode>1</MixedMode>
         <InstrCount>0</InstrCount>
+        <MixedMode>1</MixedMode>
     </Disassembly>
     <CodeCoverage>
         <Enabled>0</Enabled>
@@ -59,26 +59,32 @@
     <struct_types>
         <Fmt0>GPB_INFO-shankTick	4	0</Fmt0>
         <Fmt1>GPB_INFO-state	3	0</Fmt1>
-        <Fmt2>GPB_INFO-wightTemp	3	0</Fmt2>
+        <Fmt2>GPB_INFO-wightTemp	4	0</Fmt2>
         <Fmt3>GPB_INFO-wightValue	3	0</Fmt3>
         <Fmt4>GPB_INFO-witghSmple	4	0</Fmt4>
         <Fmt5>PERSON_INFO-money	3	0</Fmt5>
-        <Fmt6>READER_RSPFRAME-rtcTime	4	0</Fmt6>
-        <Fmt7>WIGHT_INFO-avg	3	0</Fmt7>
-        <Fmt8>WIGHT_INFO-index	4	0</Fmt8>
+        <Fmt6>READER_DATA_SUB-len	4	0</Fmt6>
+        <Fmt7>READER_RSPFRAME-rtcTime	4	0</Fmt7>
+        <Fmt8>WIGHT_INFO-avg	3	0</Fmt8>
+        <Fmt9>WIGHT_INFO-index	4	0</Fmt9>
     </struct_types>
     <array_types>
         <Fmt0>u32[16]	4	0</Fmt0>
-        <Fmt1>u8[1024]	4	0</Fmt1>
-        <Fmt2>u8[50]	1	0</Fmt2>
+        <Fmt1>u32[32]	4	0</Fmt1>
+        <Fmt2>u8[1024]	4	0</Fmt2>
+        <Fmt3>u8[3000]	4	0</Fmt3>
+        <Fmt4>u8[32]	3	0</Fmt4>
+        <Fmt5>u8[4]	3	0</Fmt5>
+        <Fmt6>u8[50]	1	0</Fmt6>
     </array_types>
     <watch_formats>
         <Fmt0>{W}42:g_nOffLineLimitTime	3	0</Fmt0>
         <Fmt1>{W}42:g_nReaderState	4	0</Fmt1>
-        <Fmt2>{W}42:g_nTickLink	3	0</Fmt2>
-        <Fmt3>{W}42:tempvalue	4	0</Fmt3>
-        <Fmt4>{W}42:tempvv	4	0</Fmt4>
-        <Fmt5>{W}42:vvv	4	0</Fmt5>
+        <Fmt2>{W}42:g_nRtcTime	3	0</Fmt2>
+        <Fmt3>{W}42:g_nTickLink	3	0</Fmt3>
+        <Fmt4>{W}42:tempvalue	4	0</Fmt4>
+        <Fmt5>{W}42:tempvv	4	0</Fmt5>
+        <Fmt6>{W}42:vvv	4	0</Fmt6>
     </watch_formats>
     <Trace2>
         <Enabled>0</Enabled>
@@ -165,8 +171,8 @@
     </DisassembleMode>
     <Breakpoints2>
         <Bp0>_ 1 "EMUL_TRACE_FILTER" "g_nSysTick" 0 0 0 0 4294967295 0 0 0</Bp0>
-        <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\src\Anyid_Cs1110_Rfid.c}.178.1" 0 0 1 "" 0 "" 0</Bp1>
-        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\Anyid_CS1110_Reader.c}.1618.12" 0 0 1 "" 0 "" 0</Bp2>
+        <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\src\Anyid_Cs1110_Rfid.c}.220.1" 0 0 1 "" 0 "" 0</Bp1>
+        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\AnyID_CS1110_SysCfg.c}.1006.10" 0 0 1 "" 0 "" 0</Bp2>
         <Count>3</Count>
     </Breakpoints2>
     <Aliases>

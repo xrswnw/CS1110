@@ -26,7 +26,6 @@ typedef struct framOffLineDatas{
     u16 id;
     u16 len;
     u8 pBuffer[FRAM_OFFLINE_DATA_LEN];
-    u32 crc32;
 }FRAM_DATA;
 extern FRAM_DATA g_sFramData;
 
